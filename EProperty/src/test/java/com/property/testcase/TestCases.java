@@ -2,19 +2,20 @@ package com.property.testcase;
 
 import org.junit.Test;
 
+import com.property.dao.impl.GetPropertyDataDaoImpl;
 import com.property.service.impl.GetPropertyServiceImpl;
 
 public class TestCases {
 	
 	@Test
 	public void getAllCategories() {
-		GetPropertyServiceImpl getRetailServiceImpl=new GetPropertyServiceImpl();
-		try {
-			getRetailServiceImpl.getAllCategories();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		GetPropertyDataDaoImpl getRetailServiceImpl=new GetPropertyDataDaoImpl();
+		
+			try {
+				getRetailServiceImpl.authenticateUser("deepak.giri@outlook.com".trim(), "!snap@123Q");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	
 	}
-
 }
