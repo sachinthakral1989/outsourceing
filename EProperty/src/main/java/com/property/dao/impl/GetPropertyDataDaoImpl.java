@@ -41,7 +41,8 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		return response;
 	}
 
-	public ViewResponse senPropertyCall(Request request) throws Exception {
+	public ViewResponse senPropertyCall(String request) throws Exception {
+		System.out.println("Request is "+ request);
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		View view = couchbaseClient.getView(

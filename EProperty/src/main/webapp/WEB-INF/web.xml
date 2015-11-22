@@ -3,7 +3,7 @@
          xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          id="WebApp_ID" version="3.0">
-    <display-name>RetailPoc</display-name>
+    <display-name>EProperty</display-name>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
@@ -12,7 +12,7 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     <listener>
-        <listener-class>com.windstream.retail.listener.RetailContextListener</listener-class>
+        <listener-class>com.property.listener.PropertyContextListener</listener-class>
     </listener>
    <context-param>
         <param-name>contextConfigLocation</param-name>

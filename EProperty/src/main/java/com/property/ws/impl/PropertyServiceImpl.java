@@ -1,24 +1,30 @@
 package com.property.ws.impl;
 
-import java.util.List;
 
-import com.gl.poc.couchbase.dto.CategoryDto;
-import com.gl.poc.couchbase.dto.LandingScreenDetailDTO;
+
+
 import com.property.service.BaseService;
 import com.property.service.impl.GetPropertyServiceImpl;
 import com.property.ws.PropertyServiceApi;
+import com.property.ws.Request;
 
 
 public class PropertyServiceImpl implements PropertyServiceApi {
 
 	BaseService getPropertyService = GetPropertyServiceImpl.getInstance();
 
-	public LandingScreenDetailDTO getAllCategories() throws Exception {
-		LandingScreenDetailDTO landingScreenDetailDTO = new LandingScreenDetailDTO();
-		List<CategoryDto> categoriesDto = getPropertyService.getAllCategories();
-		landingScreenDetailDTO.getCategoryList().addAll(categoriesDto);
-		return landingScreenDetailDTO;
+	
+	public void authenticateUser(String userName, String Password) throws Exception {
+		getPropertyService.getAllCategories();
 	}
+
+	
+	public void sendPropertyCall( Request request) {
+		System.out.println("Request Info "+request.getNetworkId()+" "+request.getBranch()+" "+request.getNetworkId());
+	
+	}
+
+	
 
 	
 }

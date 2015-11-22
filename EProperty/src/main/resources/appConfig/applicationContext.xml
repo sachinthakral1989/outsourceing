@@ -18,13 +18,13 @@
 <context:annotation-config />
 <aop:aspectj-autoproxy />
 	
-  	<jaxrs:server id="retailServiceRouter" address="/"  beanNames="retailSeviceImpl">
+  	<jaxrs:server id="propertyServiceRouter" address="/"  beanNames="propertySeviceImpl">
   		<jaxrs:providers>
   			<bean class="org.apache.cxf.jaxrs.provider.JAXBElementProvider"/>
    			<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
 		</jaxrs:providers>
   	</jaxrs:server>
-  	<bean name="retailSeviceImpl" class="com.windstream.retail.ws.impl.RetailServiceImpl"/>
+  	<bean name="propertySeviceImpl" class="com.property.ws.impl.PropertyServiceImpl"/>
   	
   	<context:component-scan base-package="com">
 		<context:include-filter type="regex"
