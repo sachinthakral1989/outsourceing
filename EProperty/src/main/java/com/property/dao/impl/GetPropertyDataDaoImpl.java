@@ -10,7 +10,6 @@ import com.property.constants.ViewConstants;
 import com.property.dao.GetPropertyDataDao;
 import com.property.util.CouchbaseConnectionManager;
 
-
 public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 
 	public ViewResponse getAllCategories() throws Exception {
@@ -21,12 +20,13 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 				ViewConstants.RETAIL_FILTER_CATEGORIES_VIEW);
 		Query query = new Query();
 		ViewResponse response = couchbaseClient.query(view, query);
-		
+
 		System.out.println(response);
 		return response;
 	}
-	
-	public ViewResponse authenticateUser(String userName,String Password) throws Exception {
+
+	public ViewResponse authenticateUser(String userName, String Password)
+			throws Exception {
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		View view = couchbaseClient.getView(
@@ -36,11 +36,22 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		System.out.println(userName);
 		query.setKey(userName.trim());
 		query.setIncludeDocs(true);
-		System.out.println("Till here");
 		ViewResponse response = couchbaseClient.query(view, query);
 		System.out.println(response);
 		return response;
 	}
 
+	public ViewResponse senPropertyCall(Request request) throws Exception {
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
+		View view = couchbaseClient.getView(
+				ViewConstants.RETAIL_DESIGN_DOCUMENT,
+				ViewConstants.RETAIL_FILTER_CATEGORIES_VIEW);
+		Query query = new Query();
+		query.setIncludeDocs(true);
+		ViewResponse response = couchbaseClient.query(view, query);
+		System.out.println(response);
+		return response;
+	}
 
 }

@@ -8,7 +8,7 @@ import com.property.service.impl.GetPropertyServiceImpl;
 public class TestCases {
 	
 	@Test
-	public void getAllCategories() {
+	public void authenticateUser() {
 		GetPropertyDataDaoImpl getRetailServiceImpl=new GetPropertyDataDaoImpl();
 		
 			try {
