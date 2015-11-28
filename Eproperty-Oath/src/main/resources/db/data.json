@@ -1,0 +1,66 @@
+{
+  "type": "User",
+  "userName": "kushalagarwal1993@gmail.com",
+  "password": "!snap@123Q",
+  "active": "Y",
+  "role": "user",
+  "createdDate": "04-Nov-2015:00:00",
+  "createdUser": "AppUser"
+}
+
+{
+  "type": "User",
+  "userName": "kushalagarwal1993@gmail.com",
+  "password": "!snap@123Q",
+  "active": "Y",
+  "role": "user",
+  "createdDate": "04-Nov-2015:00:00",
+  "createdUser": "AppUser"
+}
+
+
+{
+  "type": "User",
+  "userName": "sachinthakral1989@gmail.com",
+  "password": "!snap@123Q",
+  "active": "Y",
+  "role": "manager",
+  "createdDate": "04-Nov-2015:00:00",
+  "createdUser": "AppUser"
+}
+
+
+{
+  "type": "User",
+  "userName": "deepak.giri@outlook.com",
+  "password": "!snap@123Q",
+  "active": "Y",
+  "role": "user",
+  "createdDate": "04-Nov-2015:00:00",
+  "createdUser": "AppUser"
+}
+
+
+function(doc,meta){
+if(meta.type=="json" && doc.type){
+emit(doc.userName);
+}}
+function(doc, meta) {
+	if(doc._class == "com.tce.spring.oauth2.domain.CouchbaseOAuth2AccessToken" && doc.clientId) {
+		emit(doc.clientId, null);
+	}
+}
+
+function(doc, meta) {
+	if(doc._class == "com.tce.spring.oauth2.domain.CouchbaseOAuth2AccessToken" && doc.clientId && doc.userName) {
+		emit([doc.clientId, doc.userName], null);
+	}
+}
+
+function (doc, meta) {
+  if(doc._class == "com.tce.spring.oauth2.domain.CouchbaseOAuth2AccessToken" && doc.userName) {
+    emit(doc.userName, null);
+  }
+}
+
+
