@@ -1,62 +1,78 @@
 package com.property.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
+
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.RestTemplate;
 
-import com.couchbase.client.protocol.views.ViewResponse;
-import com.couchbase.client.protocol.views.ViewRow;
-/*import com.gl.poc.couchbase.dto.CategoryDto;*/
-import com.google.gson.Gson;
+import com.epropertyui.model.Token;
 import com.property.dao.GetPropertyDataDao;
-import com.property.dao.impl.GetPropertyDataDaoImpl;
+import com.property.entity.Response;
+import com.property.entity.UserDTO;
 import com.property.service.BaseService;
-import com.property.util.AsyncExecutor;
+import com.property.util.ServiceUrl;
 
 public class GetPropertyServiceImpl implements BaseService {
 
-	private static final BaseService instance = new GetPropertyServiceImpl();
-	private static final Logger logger = Logger.getLogger(GetPropertyServiceImpl.class);
-	Gson gson = new Gson();
+	private final String retailServiceUrl;
+	private final RestTemplate restTemplate;
 	
-	private GetPropertyDataDao getRetailDataDao = new GetPropertyDataDaoImpl();
-
-	public static BaseService getInstance() {
-		return instance;
+	private static final Logger logger = Logger.getLogger(GetPropertyServiceImpl.class);
+	
+	public GetPropertyServiceImpl() throws Exception {
+		
+		restTemplate = new RestTemplate();
+		retailServiceUrl = ServiceUrl.getInstance().getRetailServiceUrl();
 	}
 
-	/*@Override
-	public List<CategoryDto> getAllCategories() throws Exception {
-		
-		Callable<List<CategoryDto>> asyncTask = new Callable<List<CategoryDto>> () {
-			
-			@Override
-			public List<CategoryDto> call() throws Exception {
-				List<CategoryDto> categories = null;
-				ViewResponse response = getRetailDataDao.getAllCategories();
-				if (response != null) {
-					categories = new ArrayList<CategoryDto>();
-					for (ViewRow row : response) {
-						String id = row.getId();
-						String title = row.getValue();
-						System.out.println("id is "+id +" And "+ title);
-						CategoryDto category = new CategoryDto();
-						category.setId(id);
-						category.setTitle(title);
-						categories.add(category);
+	@Autowired
+	GetPropertyDataDao getPropertyDao;
 
-					}
-				}
-				return categories;
-			}
-		};
+	public Response login(String username, Response response) throws Exception {
+		System.out.println("<<<<<<<<<<<Entered into authenticate()>>>>>>>>>>>");
 		
-		Future<List<CategoryDto>> asyncResult = AsyncExecutor.queueAndExecute(asyncTask);
-		List<CategoryDto> categories = asyncResult.get();
-	    return categories;
-	}*/
+		Token token = new Token();
+		ObjectMapper mapper1 = new ObjectMapper();
+		
+		//Get data based on username
+		UserDTO userDTO = getPropertyDao.login(username);
+
+		// Set username and role in response
+		response.setUsername(userDTO.getUsername());
+		response.setEnKey(userDTO.getPassword());
+		response.setRole(userDTO.getRole());
+
+		String tokenJson = restTemplate.getForObject(retailServiceUrl, String.class);
+		
+		try {
+			token = mapper1.readValue(tokenJson, Token.class);
+			if (token.getAccess_token() != null) {
+				System.out.println("inside");
+				response.setAccess_token(token.getAccess_token());
+				response.setToken_type(token.getToken_type());
+				response.setScope(token.getScope());
+				response.setExpires_in((token.getExpires_in()));
+
+			}
+
+		} catch (JsonParseException e) {
+			logger.error("jsonparsingException occured "+ e);
+
+		} catch (JsonMappingException e) {
+			logger.error("JsonMappingException has occured "+ e);
+
+		} catch (Exception e) {
+			logger.error("Exception has occured "+ e);
+
+		}
+		return response;
+
+	}
+
 	
+
 }

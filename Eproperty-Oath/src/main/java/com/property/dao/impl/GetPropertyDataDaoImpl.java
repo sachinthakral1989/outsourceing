@@ -9,12 +9,13 @@ import com.couchbase.client.protocol.views.ViewResponse;
 import com.couchbase.client.protocol.views.ViewRow;
 import com.property.constants.ViewConstants;
 import com.property.dao.GetPropertyDataDao;
+import com.property.entity.Response;
 import com.property.entity.UserDTO;
 import com.property.util.CouchbaseConnectionManager;
 
 public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 
-	public UserDTO authenticateUser(String userName)
+	public UserDTO login(String userName)
 			throws Exception {
 		String isActive = "Y";
 		String passwordDb = "";

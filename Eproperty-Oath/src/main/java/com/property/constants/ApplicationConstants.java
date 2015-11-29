@@ -1,6 +1,8 @@
 package com.property.constants;
 
 public class ApplicationConstants {
+	
+	
 
 	public static final String APPLICATION_PROPERTIES_FILE_NAME = "appConfig/application.properties";
 	public static final String CONNECTION_URL_TEMPLATE = "http://{HOST_NAME}:{PORT}/pools";
@@ -14,4 +16,5 @@ public class ApplicationConstants {
 	public static final String CORE_THREAD_POOL_SIZE  = "core.thread.pool.size";
 	public static final String MAX_THREAD_POOL_SIZE = "max.thread.pool.size";
 	public static final String THREAD_KEEP_ALIVE_MINUTE = "thread.keep.alive.minute";
+	public static final String PROPERTY_TOKEN_URL="http://localhost:8080/oauth2-auth-server/oauth/token?grant_type=client_credentials&client_id=test&client_secret=test";
 }

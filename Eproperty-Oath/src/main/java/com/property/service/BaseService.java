@@ -1,15 +1,15 @@
 package com.property.service;
 
-import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
-/*import com.gl.poc.couchbase.dto.CategoryDto;*/
+
+import com.property.entity.Response;
 
 
 @Transactional
 public interface BaseService {
 	
-	/*public  List<CategoryDto> getAllCategories() throws Exception;*/
+	public  Response login(String username,Response response) throws Exception;
 	
 
 }

@@ -14,4 +14,7 @@
    <property name="prefix" value="/WEB-INF/pages/" />
    <property name="suffix" value=".jsp" />
 </bean>
+
+<bean id="getPropertyService" class="com.property.service.impl.GetPropertyServiceImpl"></bean>
+<bean id="getPropertyDao" class="com.property.dao.impl.GetPropertyDataDaoImpl"></bean>
 </beans>
