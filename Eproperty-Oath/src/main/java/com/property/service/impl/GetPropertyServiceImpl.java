@@ -157,6 +157,10 @@ public class GetPropertyServiceImpl implements BaseService {
 		return brokerRequestDto;
 
 	}
+	
+	public String verifyToken(String token) throws Exception {
+		return getPropertyDao.verifyToken(token);
+	}
 
 
 }

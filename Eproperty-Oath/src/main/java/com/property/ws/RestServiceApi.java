@@ -38,5 +38,13 @@ public class RestServiceApi {
 			return null;
 		
 		}
+	
+	@RequestMapping(value = "/verifyToken/{token}", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody String verifyToken(@PathVariable String token) throws Exception {
+		
+		String response =getPropertyService.verifyToken(token.trim());
+		return response;
+
+	}
 
 }

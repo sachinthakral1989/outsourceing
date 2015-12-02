@@ -81,8 +81,39 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		couchbaseClient.add(registerationDTO.getEmail(), registrationRequestDoc);
+		createVerificationTokenKey(registerationDTO.getEmail(),registerationDTO.getvTokenString());
 
 	}
+	
+	public String verifyToken(String  token) throws Exception {
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
+		String code=(String)couchbaseClient.get(token);
+		if( code!=null ) {
+			System.out.println("Code found "+code);
+			System.out.println("deleting the token ");
+			couchbaseClient.delete(token);
+		}
+		return code;
+
+	}
+	
+	private boolean createVerificationTokenKey(String email,String verificationToken) throws Exception {
+		
+		boolean success=true;
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
+		try {
+		couchbaseClient.add(verificationToken, email);
+		} catch(Exception ex) {
+			success=false;
+			throw new Exception(ex.getMessage());
+			
+		}
+		return success;
+
+	}
+	
 	
 		
 

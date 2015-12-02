@@ -15,4 +15,6 @@ public interface GetPropertyDataDao {
 	public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Exception;
 
     public void addUser(RegisterationDTO registerationDTO) throws Exception;
+    
+    public String verifyToken(String token) throws Exception;
 }
