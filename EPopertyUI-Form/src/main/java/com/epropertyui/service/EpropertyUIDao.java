@@ -3,9 +3,13 @@ package com.epropertyui.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.couchbase.client.CouchbaseClient;
 import com.couchbase.client.protocol.views.ComplexKey;
@@ -15,6 +19,7 @@ import com.couchbase.client.protocol.views.View;
 import com.couchbase.client.protocol.views.ViewResponse;
 import com.couchbase.client.protocol.views.ViewRow;
 import com.epropertyui.constants.ViewConstants;
+import com.epropertyui.model.Registeration;
 import com.epropertyui.model.Request;
 import com.epropertyui.model.Response;
 import com.epropertyui.model.Role;
@@ -22,34 +27,53 @@ import com.epropertyui.model.Token;
 import com.epropertyui.model.User;
 import com.epropertyui.model.UserDTO;
 import com.epropertyui.util.CouchbaseConnectionManager;
+import com.epropertyui.util.ServiceUrl;
 import com.google.gson.Gson;
 
 @Repository
 public class EpropertyUIDao {
 
-	public User loadUserByUsername(final String username)  {
+	RestTemplate restTemplate;
+	ObjectMapper mapper;
+	HttpSession session;
+	String propertyServiceUrl;
+
+	public EpropertyUIDao() throws Exception {
+
+		restTemplate = new RestTemplate();
+		mapper = new ObjectMapper();
+		propertyServiceUrl = ServiceUrl.getInstance().getPropertyServiceUrl();
+		
+	}
+
+	public void init() throws Exception {
+		System.out.println("Init method after properties are set :");
+		
+
+	}
+
+	public HttpSession getSession() {
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder
+				.currentRequestAttributes();
+		session = attr.getRequest().getSession();
+		return session;
+	}
+
+	public User loadUserByUsername(final String username) {
 		User user = null;
-		UserDTO userDTO = null;
+		
 		try {
-			Request request=new Request();
-			Response response =new Response();
-			RestTemplate restTemplate = new RestTemplate();
-			String url = "http://localhost:8080/oauth2-auth-server/api/login/"+username;
+			
+			Response response = new Response();
+			String url = propertyServiceUrl + "api/login/" + username;
 			System.out.println("Url " + url);
-			Gson gson = new Gson();
-			String jsonRequest=gson.toJson(request);
-			String tokenJson = restTemplate.getForObject(url,String.class);
-			ObjectMapper mapper1 = new ObjectMapper();
+			String tokenJson = restTemplate.getForObject(url, String.class);
+
 			try {
-				response = mapper1.readValue(tokenJson, Response.class);
-				System.out.println("Response "+response.getRole());
-				System.out.println("Response "+response.getUsername());
-				System.out.println("Response "+response.getEnKey());
+				response = mapper.readValue(tokenJson, Response.class);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-			
-			/*userDTO = authenticateUser(username);*/
 
 			user = new User();
 			user.setFirstName("a");
@@ -57,9 +81,9 @@ public class EpropertyUIDao {
 			user.setUsername(response.getUsername());
 			user.setPassword(response.getEnKey().trim());
 			Role role = new Role();
+			System.out.println("Role name is " + response.getRole().trim());
 			role.setName(response.getRole().trim());
 			List<Role> roles = new ArrayList<Role>();
-			user.setAuthorities(roles);
 			user.setAuthorities(roles);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -68,50 +92,40 @@ public class EpropertyUIDao {
 
 	}
 
-	public UserDTO authenticateUser(String userName) throws Exception {
-		String isActive = "Y";
-		String passwordDb = "";
-		String role = "";
-		boolean sucessOrFail;
-		UserDTO userDTO = new UserDTO();
-		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
-				.getConnection();
-		View view = couchbaseClient.getView(
-				ViewConstants.PROPERTY_DESIGN_DOCUMENT,
-				ViewConstants.PROPERTY_FILTER_CATEGORIES_VIEW);
-		Query query = new Query();
-		query.setIncludeDocs(false);
-		query.setStale(Stale.FALSE);
-		query.setKey(ComplexKey.of(userName.trim(), isActive.trim()));
-		ViewResponse response = couchbaseClient.query(view, query);
-		System.out.println(response);
-		for (ViewRow row : response) {
-
-			String valueTemp[] = row.getValue().replaceAll("\\[|\\]|\"", "")
-					.split(",");
-			passwordDb = valueTemp[0];
-			role = valueTemp[1];
-			System.out.println("passwordDB" + passwordDb);
-			userDTO.setUsername(userName);
-			userDTO.setRole(role);
-			userDTO.setPassword(passwordDb);
-			/* sucessOrFail = checkAuthentication(password, passwordDb); */
-			/* System.out.println("Authentication " + sucessOrFail); */
-			/*
-			 * if (sucessOrFail) { userDTO.setUsername(userName);
-			 * userDTO.setRole(role); System.out.println(userDTO.getUsername());
-			 * System.out.println(userDTO.getRole()); return userDTO; } else {
-			 * userDTO.setErrorMsg("Invalid Username or password"); }
-			 */
+	public Token getAuthenticatedToken() {
+		Token token = new Token();
+		String url = propertyServiceUrl
+				+ "oauth/token?grant_type=client_credentials&client_id=test&client_secret=test";
+		try {
+			String tokenJson = restTemplate.getForObject(url, String.class);
+			token = mapper.readValue(tokenJson, Token.class);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		return userDTO;
+
+		return token;
+	}
+	
+	public boolean addUser(Registeration register) {
+		System.out.println("Inside addUser ");
+		HttpSession session=getSession();
+		String accessToken = (String) session.getAttribute("accessToken");
+		String url = propertyServiceUrl+"api"+"/addUser";
+		try {
+			restTemplate.postForEntity(url, register,String.class);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return true;
 	}
 
-	/*
-	 * private boolean checkAuthentication(String password, String passwordDb) {
-	 * if (password.equals(passwordDb)) { return true; } return false;
-	 * 
-	 * }
-	 */
-
+	public String sendUserProperty(String property) {
+		session = getSession();
+		String accessToken = (String) session.getAttribute("accessToken");
+		String url = propertyServiceUrl + "secure/" + "sendUserProperty?"
+				+ "?access_token=" + accessToken;
+		System.out.println("Url with token is " + url);
+		return url;
+		/* restTemplate.postForEntity(url, request, responseType) */
+	}
 }

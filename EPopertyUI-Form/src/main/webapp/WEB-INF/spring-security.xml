@@ -5,6 +5,9 @@
 	http://www.springframework.org/schema/security
 	http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
+    <http pattern="/page/registeration" security="none"/>
+    <http pattern="/sendEmailToRecipient.html" security="none"/>
+    
 	<http auto-config="true">
 		<intercept-url pattern="/admin**" access="ROLE_USER" />
 		
@@ -18,6 +21,7 @@
 		<!-- enable csrf protection -->
 		<csrf/>
 	</http>
+	
 
 
 	<authentication-manager>
@@ -33,5 +37,5 @@
 		 </beans:bean>
     
     
-    <beans:bean name="epropertyUIDao" class="com.epropertyui.service.EpropertyUIDao" />  
+    <beans:bean name="epropertyUIDao" class="com.epropertyui.service.EpropertyUIDao" init-method="init" />  
 	</beans:beans>

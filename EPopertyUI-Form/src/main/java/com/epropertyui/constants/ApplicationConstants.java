@@ -14,4 +14,14 @@ public class ApplicationConstants {
 	public static final String CORE_THREAD_POOL_SIZE  = "core.thread.pool.size";
 	public static final String MAX_THREAD_POOL_SIZE = "max.thread.pool.size";
 	public static final String THREAD_KEEP_ALIVE_MINUTE = "thread.keep.alive.minute";
+
+	public static final String EMAIL_SEND_HOST = "host";
+	public static final String EMAIL_SEND_PORT = "port";
+	public static final String EMAIL_SEND_USER = "user";
+	public static final String EMAIL_SEND_PASS = "pass";
+	
+	public static final String PROPERTY_SERVICE_HOST_NAME = "property.service.host";
+	public static final String PROPERTY_SERVICE_HOST_PORT = "property.service.host.port";
+	public static final String PROPERTY_URL_TEMPLATE = "http://{HOST_NAME}:{PORT}/oauth2-auth-server/";
+	
 }
