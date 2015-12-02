@@ -41,6 +41,11 @@ public class EpropertyUIService implements UserDetailsService {
 		 return epropertyUIDao.getAuthenticatedToken();
 		
 	}
+	
+	public String verifyToken(String token) {
+		return epropertyUIDao.verifyToken(token);
+		
+	}
 	public HttpSession getSession() {
 		return epropertyUIDao.getSession();
 	}

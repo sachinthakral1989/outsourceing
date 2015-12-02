@@ -128,4 +128,15 @@ public class EpropertyUIDao {
 		return url;
 		/* restTemplate.postForEntity(url, request, responseType) */
 	}
+	
+	public String verifyToken(String token) {
+		String url = propertyServiceUrl + "api/verifyToken/" + token;
+		System.out.println("Url " + url);
+		String response = restTemplate.getForObject(url, String.class);
+		System.out.println(response);
+        return response;
+		
+		
+		
+	}
 }

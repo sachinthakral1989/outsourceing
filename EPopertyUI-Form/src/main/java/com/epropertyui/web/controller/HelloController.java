@@ -123,7 +123,9 @@ public class HelloController {
 	   }  
 	
 		@RequestMapping(value = "/verifyEmail/{token}", method = RequestMethod.GET)
-		public ModelAndView verifyEmail(String token) {
+		public ModelAndView verifyEmail(@PathVariable("token") String token) {
+			ePropertyUIService.verifyToken(token);
+			
 		System.out.println("Email has been verified sucessfully "+ token);
 		ModelAndView model = new ModelAndView();
 		/*model.addObject("title", "Spring Security Custom Login Form");
