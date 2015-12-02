@@ -1,5 +1,7 @@
 package com.property.dao.impl;
 
+import java.util.UUID;
+
 import com.couchbase.client.CouchbaseClient;
 import com.couchbase.client.protocol.views.ComplexKey;
 import com.couchbase.client.protocol.views.Query;
@@ -9,19 +11,23 @@ import com.couchbase.client.protocol.views.ViewResponse;
 import com.couchbase.client.protocol.views.ViewRow;
 import com.property.constants.ViewConstants;
 import com.property.dao.GetPropertyDataDao;
+import com.property.entity.BrokerRequestDto;
+import com.property.entity.RegisterationDTO;
 import com.property.entity.Response;
 import com.property.entity.UserDTO;
+import com.property.entity.UserRequestDto;
 import com.property.util.CouchbaseConnectionManager;
+import com.property.util.JsonUtil;
 
 public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 
-	public UserDTO login(String userName)
-			throws Exception {
+	public UserDTO login(String userName) throws Exception {
 		String isActive = "Y";
 		String passwordDb = "";
 		String role = "";
 		UserDTO userDTO = new UserDTO();
-		CouchbaseClient couchbaseClient = CouchbaseConnectionManager.getConnection();
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
 		View view = couchbaseClient.getView(
 				ViewConstants.PROPERTY_DESIGN_DOCUMENT,
 				ViewConstants.PROPERTY_FILTER_CATEGORIES_VIEW);
@@ -33,42 +39,51 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		System.out.println(response);
 		for (ViewRow row : response) {
 
-			String valueTemp[] = row.getValue().replaceAll("\\[|\\]|\"", "").split(",");
+			String valueTemp[] = row.getValue().replaceAll("\\[|\\]|\"", "")
+					.split(",");
 			passwordDb = valueTemp[0];
 			role = valueTemp[1];
-			
-				userDTO.setUsername(userName);
-				userDTO.setPassword(passwordDb);
-				userDTO.setRole(role);
-				System.out.println(userDTO.getUsername());
-				System.out.println(userDTO.getRole());
-				System.out.println("passwordDb "+passwordDb);
-			} 
-			return userDTO;
+
+			userDTO.setUsername(userName);
+			userDTO.setPassword(passwordDb);
+			userDTO.setRole(role);
+			System.out.println(userDTO.getUsername());
+			System.out.println(userDTO.getRole());
+			System.out.println("passwordDb " + passwordDb);
 		}
-	
-
-
-	private boolean checkAuthentication(String password, String passwordDb) {
-		if (password.equals(passwordDb)) {
-			return true;
-		}
-		return false;
-
+		return userDTO;
 	}
 
-	public ViewResponse senPropertyCall(String request) throws Exception {
-		System.out.println("Request is " + request);
+	public void sendUserProperty(UserRequestDto userRequestDto) throws Exception {
+		System.out.println("Entered into sendUserProperty() "+userRequestDto.getSaleOrRent()+userRequestDto.getBerooms());
+		userRequestDto.setId(UUID.randomUUID().toString());
+		String userRequestDoc = JsonUtil.marshal(userRequestDto);
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
-		View view = couchbaseClient.getView(
-				ViewConstants.PROPERTY_DESIGN_DOCUMENT,
-				ViewConstants.PROPERTY_FILTER_CATEGORIES_VIEW);
-		Query query = new Query();
-		query.setIncludeDocs(true);
-		ViewResponse response = couchbaseClient.query(view, query);
-		System.out.println(response);
-		return response;
+		couchbaseClient.add(userRequestDto.getId(), userRequestDoc);
+
+		System.out.println("<<<<<<<<<<<<<<<<sendUserProperty()>>>>>>>>>>>>>>>>>>>>>>>>>>");
 	}
+
+
+	public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Exception {
+		
+		//brokerRequestDto.setId(UUID.randomUUID().toString());
+		String brokerRequestDoc = JsonUtil.marshal(brokerRequestDto);
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
+		couchbaseClient.add(brokerRequestDto.getNetwork().getNetwork_id(), brokerRequestDoc);
+
+	}
+	
+	public void addUser(RegisterationDTO registerationDTO) throws Exception {
+		String registrationRequestDoc = JsonUtil.marshal(registerationDTO);
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
+		couchbaseClient.add(registerationDTO.getEmail(), registrationRequestDoc);
+
+	}
+	
+		
 
 }

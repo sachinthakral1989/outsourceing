@@ -40,6 +40,17 @@
   "createdUser": "AppUser"
 }
 
+{ 
+"saleOrRent" : "sale",
+"propertyType" : "Land",
+"image"       : "c://image",
+"berooms"  :  2,
+"propertyDesc" : "Owner Property",
+"price" :  200,
+"contractPeriod": "1 month"
+}
+
+
 
 function(doc,meta){
 if(meta.type=="json" && doc.type){

@@ -4,9 +4,12 @@ package com.property.ws;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.epropertyui.model.Registeration;
 import com.property.entity.Response;
 import com.property.service.impl.GetPropertyServiceImpl;
 
@@ -26,5 +29,14 @@ public class RestServiceApi {
 		return response;
 
 	}
+	
+	@RequestMapping(value = "/addUser", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public @ResponseBody Response addUser(@RequestBody Registeration register) throws Exception {
+
+		System.out.println("Inside create user Controller");
+		getPropertyService.addUser(register);
+			return null;
+		
+		}
 
 }
