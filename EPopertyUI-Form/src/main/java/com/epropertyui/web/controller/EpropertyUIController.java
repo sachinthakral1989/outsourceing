@@ -5,11 +5,11 @@ package com.epropertyui.web.controller;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.epropertyui.constants.ApplicationConstants;
 import com.epropertyui.constants.EpropertyConstants;
 import com.epropertyui.model.Registeration;
+import com.epropertyui.model.UserProperty;
 import com.epropertyui.service.EpropertyUIService;
 import com.epropertyui.util.EmailUtility;
 import com.epropertyui.util.EncryptionUtil;
@@ -50,8 +51,6 @@ public class EpropertyUIController {
 
 	}
 	
-	
-
     protected boolean hasRole(String role) {
         // get security context from thread local
         SecurityContext context = SecurityContextHolder.getContext();
@@ -84,6 +83,32 @@ public class EpropertyUIController {
 			System.out.println("adminRole");
 			model.setViewName("adminProperty");
 		}
+		return model;
+
+	}
+	@Secured(value = { "ROLE_ADMIN" })
+	@RequestMapping(value = {  "/adminProperty" }, method = RequestMethod.GET)
+	public ModelAndView adminProperty(@ModelAttribute Authentication authentication) {
+		ModelAndView model = new ModelAndView();
+		
+		return model;
+
+	}
+	@Secured(value = { "ROLE_USER"})
+	@RequestMapping(value = {  "/userProperty" }, method = RequestMethod.GET)
+	public ModelAndView userProperty(@ModelAttribute UserProperty UserProperty) {
+		System.out.println("user can access it");
+		ModelAndView model = new ModelAndView();
+		
+		return model;
+
+	}
+	
+	@Secured(value = { "ROLE_BROKER" })
+	@RequestMapping(value = {  "/userProperty" }, method = RequestMethod.GET)
+	public ModelAndView brokerProperty(@ModelAttribute Authentication authenticate) {
+		ModelAndView model = new ModelAndView();
+		
 		return model;
 
 	}
