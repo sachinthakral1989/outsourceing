@@ -4,13 +4,13 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
 import com.epropertyui.model.BrokerRequest;
 import com.epropertyui.model.Token;
 import com.epropertyui.model.UserRequest;
+import com.property.constants.EntityTypeConstants;
 import com.property.dao.GetPropertyDataDao;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
@@ -47,7 +47,7 @@ public class GetPropertyServiceImpl implements BaseService {
 		ObjectMapper mapper1 = new ObjectMapper();
 
 		// Get data based on username
-		UserDTO userDTO = getPropertyDao.login(username);
+		UserDTO userDTO = getPropertyDao.loadUserByUserName(username);
 
 		// Set username and role in response
 		response.setUsername(userDTO.getUsername());

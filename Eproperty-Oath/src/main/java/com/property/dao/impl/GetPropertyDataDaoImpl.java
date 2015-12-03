@@ -4,11 +4,13 @@ import java.util.UUID;
 
 import com.couchbase.client.CouchbaseClient;
 import com.couchbase.client.protocol.views.ComplexKey;
+import com.couchbase.client.protocol.views.DesignDocument;
 import com.couchbase.client.protocol.views.Query;
 import com.couchbase.client.protocol.views.Stale;
 import com.couchbase.client.protocol.views.View;
 import com.couchbase.client.protocol.views.ViewResponse;
 import com.couchbase.client.protocol.views.ViewRow;
+import com.property.constants.EntityTypeConstants;
 import com.property.constants.ViewConstants;
 import com.property.dao.GetPropertyDataDao;
 import com.property.entity.BrokerRequestDto;
@@ -21,8 +23,7 @@ import com.property.util.JsonUtil;
 
 public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 
-	public UserDTO login(String userName) throws Exception {
-		String isActive = "Y";
+	public UserDTO loadUserByUserName(String userName) throws Exception {
 		String passwordDb = "";
 		String role = "";
 		UserDTO userDTO = new UserDTO();
@@ -34,7 +35,7 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		Query query = new Query();
 		query.setIncludeDocs(false);
 		query.setStale(Stale.FALSE);
-		query.setKey(ComplexKey.of(userName.trim(), isActive.trim()));
+		query.setKey(ComplexKey.of(userName.trim(), EntityTypeConstants.IS_ACTIVE_Y.trim()));
 		ViewResponse response = couchbaseClient.query(view, query);
 		System.out.println(response);
 		for (ViewRow row : response) {
@@ -80,22 +81,42 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		String registrationRequestDoc = JsonUtil.marshal(registerationDTO);
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
-		couchbaseClient.add(registerationDTO.getEmail(), registrationRequestDoc);
-		createVerificationTokenKey(registerationDTO.getEmail(),registerationDTO.getvTokenString());
+		
+		couchbaseClient.add(registerationDTO.getUserName(), registrationRequestDoc);
+		createVerificationTokenKey(registerationDTO.getUserName(),registerationDTO.getvTokenString());
 
 	}
 	
 	public String verifyToken(String  token) throws Exception {
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
-		String code=(String)couchbaseClient.get(token);
-		if( code!=null ) {
-			System.out.println("Code found "+code);
-			System.out.println("deleting the token ");
-			couchbaseClient.delete(token);
+		String code="";
+		synchronized (this) {
+			code=(String)couchbaseClient.get(token);
+			if( code!=null ) {
+				JsonUtil<RegisterationDTO> jsonUtil = new JsonUtil<>();
+				//Load UserByUserName
+				String doc=getUserByUserName(code);
+				RegisterationDTO registerDto=jsonUtil.unmarshal(doc, RegisterationDTO.class);
+				System.out.println("Active "+ registerDto.getActive());
+				registerDto.setActive(EntityTypeConstants.IS_ACTIVE_Y);
+				String registerDtoDoc = JsonUtil.marshal(registerDto);
+				couchbaseClient.set(registerDto.getUserName(),registerDtoDoc);
+				System.out.println("deleting the token ");
+				couchbaseClient.delete(token);
+			}
 		}
 		return code;
 
+	}
+	
+	public String getUserByUserName(String userName) {
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
+		String doc=(String)couchbaseClient.get(userName);
+		return doc;
+		
+		
 	}
 	
 	private boolean createVerificationTokenKey(String email,String verificationToken) throws Exception {

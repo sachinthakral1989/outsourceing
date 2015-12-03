@@ -8,7 +8,7 @@ import com.property.entity.UserRequestDto;
 
 public interface GetPropertyDataDao {
 
-	public UserDTO login(String userName) throws Exception;
+	public UserDTO loadUserByUserName(String userName) throws Exception;
 	
 	public void sendUserProperty(UserRequestDto userRequestDto) throws Exception;
 

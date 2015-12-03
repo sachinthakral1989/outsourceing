@@ -39,13 +39,5 @@ public class PropertyServiceApi {
 		
 		}
 	
-	@RequestMapping(value = "/addUser", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public @ResponseBody Response addUser(@RequestBody Registeration register) throws Exception {
-
-		System.out.println("Inside create user Controller");
-		getPropertyService.addUser(register);
-			return null;
-		
-		}
 
 }

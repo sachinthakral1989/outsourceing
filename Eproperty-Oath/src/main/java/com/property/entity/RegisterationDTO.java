@@ -13,10 +13,26 @@ public class RegisterationDTO implements Serializable {
 	private String fullName;
 	private String active;
 	private String enKey;
-	private String email;
+	private String userName;
 	private String vTokenString;
 	private String createdDate;
 	private String createdUser;
+	private String role;
+	
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
 
 	public String getType() {
 		return type;
@@ -74,12 +90,6 @@ public class RegisterationDTO implements Serializable {
 		this.fullName = fullName;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
+	
 
 }

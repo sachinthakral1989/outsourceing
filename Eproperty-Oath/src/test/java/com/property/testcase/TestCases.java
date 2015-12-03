@@ -12,8 +12,8 @@ public class TestCases {
 		GetPropertyDataDaoImpl getRetailServiceImpl = new GetPropertyDataDaoImpl();
 
 		try {
-			getRetailServiceImpl.authenticateUser(
-					"sach".trim());
+			getRetailServiceImpl.getUserByUserName("test@test.com");
+					
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
