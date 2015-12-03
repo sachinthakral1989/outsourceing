@@ -2,34 +2,19 @@ package com.epropertyui.service;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpSession;
-
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import com.couchbase.client.CouchbaseClient;
-import com.couchbase.client.protocol.views.ComplexKey;
-import com.couchbase.client.protocol.views.Query;
-import com.couchbase.client.protocol.views.Stale;
-import com.couchbase.client.protocol.views.View;
-import com.couchbase.client.protocol.views.ViewResponse;
-import com.couchbase.client.protocol.views.ViewRow;
-import com.epropertyui.constants.ViewConstants;
 import com.epropertyui.model.Registeration;
-import com.epropertyui.model.Request;
 import com.epropertyui.model.Response;
 import com.epropertyui.model.Role;
 import com.epropertyui.model.Token;
 import com.epropertyui.model.User;
-import com.epropertyui.model.UserDTO;
-import com.epropertyui.util.CouchbaseConnectionManager;
 import com.epropertyui.util.EncryptionUtil;
 import com.epropertyui.util.ServiceUrl;
-import com.google.gson.Gson;
 
 @Repository
 public class EpropertyUIDao {
@@ -85,6 +70,7 @@ public class EpropertyUIDao {
 			System.out.println("Role name is " + response.getRole().trim());
 			role.setName(response.getRole().trim());
 			List<Role> roles = new ArrayList<Role>();
+			roles.add(role);
 			user.setAuthorities(roles);
 		} catch (Exception e) {
 			e.printStackTrace();

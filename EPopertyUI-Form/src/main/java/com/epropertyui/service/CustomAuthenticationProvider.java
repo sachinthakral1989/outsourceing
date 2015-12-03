@@ -43,9 +43,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         session.setAttribute("username", user.getUsername());
         session.setAttribute("accessToken", accessToken);
         session.setMaxInactiveInterval(10*60);
-        System.out.println("username and Access Token is "+username + accessToken);
+        System.out.println("username and Access Token is "+username + accessToken+user.getAuthorities());
         
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+        /*authorities.add(new GrantedAuthorityImpl('ROLE_NEWROLE'));*/
         
         return new UsernamePasswordAuthenticationToken(user, password, authorities);
     }
