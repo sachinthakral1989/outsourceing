@@ -3,10 +3,9 @@ package com.epropertyui.web.controller;
 
 
 import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,44 +14,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.epropertyui.constants.ApplicationConstants;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.service.EpropertyUIService;
 import com.epropertyui.util.EmailUtility;
 import com.epropertyui.util.EncryptionUtil;
 import com.epropertyui.util.PropertiesReader;
+
 @Controller
 public class HelloController {
 	
 	@Autowired
 	EpropertyUIService ePropertyUIService;
 	
-
-	@RequestMapping(value = {  "/welcome" }, method = RequestMethod.GET)
-	public ModelAndView welcomePage() {
-		ModelAndView model = new ModelAndView();
-		String url=ePropertyUIService.sendUserProperty("hello");
-		model.addObject("title", "Spring Security Custom Login Form");
-		model.addObject("message", "This is welcome page! "+ url);
-		
-		model.setViewName("userProperty");
-		return model;
-
-	}
-
-	@RequestMapping(value = "/admin**", method = RequestMethod.GET)
-	public ModelAndView adminPage() {
-
-		ModelAndView model = new ModelAndView();
-		model.addObject("title", "Spring Security Custom Login Form");
-		model.addObject("message", "This is protected page!");
-		model.setViewName("admin");
-
-		return model;
-
-	}
-
 	@RequestMapping(value = { "/", "/login" }, method = RequestMethod.GET)
 	public ModelAndView login(@RequestParam(value = "error", required = false) String error,
 			@RequestParam(value = "logout", required = false) String logout) {
@@ -71,6 +45,20 @@ public class HelloController {
 
 	}
 	
+
+	@RequestMapping(value = {  "/userOrAdmin" }, method = RequestMethod.GET)
+	public ModelAndView welcomePage(Authentication authenticate) {
+		ModelAndView model = new ModelAndView();
+		System.out.println(authenticate.getAuthorities());
+		String url=ePropertyUIService.sendUserProperty("hello");
+		model.addObject("title", "Spring Security Custom Login Form");
+		model.addObject("message", "This is welcome page! "+ url);
+		
+		model.setViewName("userProperty");
+		return model;
+
+	}
+
 	@RequestMapping(value="/page/{pagename}")
 	public ModelAndView loadProductPage(ModelMap model, @PathVariable("pagename") String pagename) {
 	    model.addAttribute("productname",pagename);
@@ -81,7 +69,6 @@ public class HelloController {
 	  public ModelAndView sendEmailToRecipient( @ModelAttribute Registeration register,HttpServletRequest request) throws Exception {  
 		ModelAndView model = new ModelAndView();
 		System.out.println("email id is "+register.getUserName() );
-		String fullName= register.getFullName();  
 	    String enkey = EncryptionUtil.Encode(register.getEnKey());
 	    String recipient= register.getUserName(); 
 	    String host = PropertiesReader.getPropertyValue(ApplicationConstants.EMAIL_SEND_HOST).trim();
@@ -119,9 +106,9 @@ public class HelloController {
 				ex.printStackTrace();
 				resultMessage = "There were an error: " + ex.getMessage();
 			} finally {
-				request.setAttribute("Message", resultMessage);
-			}   model.addObject("EmailSentMsg", "Email has been sucessfull sent.Kindly verify to activate the account.");
-				model.setViewName("registration");  
+				//request.setAttribute("message", resultMessage);
+			}   model.addObject("emailSentMsg", "Email has been sucessfull sent.Kindly verify to activate the account.");
+				model.setViewName("login");  
 				return model;
 	   }  
 	
@@ -131,9 +118,7 @@ public class HelloController {
 			
 		System.out.println("Email has been verified sucessfully "+ token);
 		ModelAndView model = new ModelAndView();
-		/*model.addObject("title", "Spring Security Custom Login Form");
-		model.addObject("message", "This is protected page!");
-		model.setViewName("admin");*/
+		model.addObject("verifyMsg", "Email has been sucessfully verified." );
 		model.setViewName("login");
 		return model;
 

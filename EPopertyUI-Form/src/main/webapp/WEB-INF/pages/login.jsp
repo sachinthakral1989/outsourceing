@@ -73,6 +73,17 @@
 						<c:if test="${not empty msg}">
 							<div class="msg">${msg}</div>
 						</c:if>
+						<c:if test="${not empty message}">
+							<div class="msg">${message}</div>
+						</c:if>
+						<c:if test="${not empty emailSentMsg}">
+							<div class="msg">${emailSentMsg}</div>
+						</c:if>
+						<c:if test="${not empty verifyMsg}">
+							<div class="msg">${verifyMsg}</div>
+						</c:if>
+						
+						
 						<form name='loginForm'
 							action="<c:url value='/j_spring_security_check' />" method='POST'>
 							<div class="form-group">

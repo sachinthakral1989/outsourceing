@@ -66,7 +66,7 @@ public class EpropertyUIDao {
 		try {
 			
 			Response response = new Response();
-			String url = propertyServiceUrl + "api/login/" + username;
+			String url = propertyServiceUrl + "api/login/" + username+"/";
 			System.out.println("Url " + url);
 			String tokenJson = restTemplate.getForObject(url, String.class);
 
