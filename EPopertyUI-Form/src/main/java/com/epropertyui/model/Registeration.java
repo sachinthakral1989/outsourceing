@@ -5,12 +5,19 @@ public class Registeration {
 	    private String type;
 		private String fullName;
 		private String enKey;
-		private String email;
+		private String userName;
 		private String active;
 		private String vTokenString;
 		private String createdDate;
 		private String createdUser;
+		private String role;
 		
+		public String getRole() {
+			return role;
+		}
+		public void setRole(String role) {
+			this.role = role;
+		}
 		public String getActive() {
 			return active;
 		}
@@ -59,11 +66,13 @@ public class Registeration {
 		public void setFullName(String fullName) {
 			this.fullName = fullName;
 		}
-		public String getEmail() {
-			return email;
+		
+		public String getUserName() {
+			return userName;
 		}
-		public void setEmail(String email) {
-			this.email = email;
+		public void setUserName(String userName) {
+			this.userName = userName;
 		}
+		
 
 }

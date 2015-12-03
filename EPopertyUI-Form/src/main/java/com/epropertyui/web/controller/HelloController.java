@@ -20,6 +20,7 @@ import com.epropertyui.constants.ApplicationConstants;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.service.EpropertyUIService;
 import com.epropertyui.util.EmailUtility;
+import com.epropertyui.util.EncryptionUtil;
 import com.epropertyui.util.PropertiesReader;
 @Controller
 public class HelloController {
@@ -35,7 +36,7 @@ public class HelloController {
 		model.addObject("title", "Spring Security Custom Login Form");
 		model.addObject("message", "This is welcome page! "+ url);
 		
-		model.setViewName("admin");
+		model.setViewName("userProperty");
 		return model;
 
 	}
@@ -79,10 +80,10 @@ public class HelloController {
 	@RequestMapping(value = "/sendEmailToRecipient.html", method = RequestMethod.POST)  
 	  public ModelAndView sendEmailToRecipient( @ModelAttribute Registeration register,HttpServletRequest request) throws Exception {  
 		ModelAndView model = new ModelAndView();
-		System.out.println("email id is "+register.getEmail() );
+		System.out.println("email id is "+register.getUserName() );
 		String fullName= register.getFullName();  
-	    String password = register.getEnKey();
-	    String recipient= register.getEmail(); 
+	    String enkey = EncryptionUtil.Encode(register.getEnKey());
+	    String recipient= register.getUserName(); 
 	    String host = PropertiesReader.getPropertyValue(ApplicationConstants.EMAIL_SEND_HOST).trim();
 	    String port = PropertiesReader.getPropertyValue(ApplicationConstants.EMAIL_SEND_PORT).trim();
 	    String user = PropertiesReader.getPropertyValue(ApplicationConstants.EMAIL_SEND_USER).trim();
@@ -94,11 +95,13 @@ public class HelloController {
 			int randomPIN = (int)(Math.random()*900000)+100000;
 			//Store integer in a string
 			content= String.valueOf(randomPIN);
+			register.setEnKey(enkey);
 			register.setType("User");
 			register.setActive("N");
 			register.setvTokenString(content);
 			register.setCreatedDate(new Date().toString());
 			register.setCreatedUser("appUser");
+			register.setRole("ROLE_USER");
 			ePropertyUIService.addUser(register);
 			
 			content=request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath()+"/"+"verifyEmail/"+content;

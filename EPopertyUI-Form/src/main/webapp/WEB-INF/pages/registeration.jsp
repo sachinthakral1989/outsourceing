@@ -42,7 +42,7 @@
     							<label for="exampleInputEmail1">Email</label>
     							<div class="input-group">
   									<span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
-  										<input type="text" class="form-control" placeholder="Email" id="exampleInputEmail1"  name="email">
+  										<input type="text" class="form-control" placeholder="Email" id="exampleInputEmail1"  name="userName">
 								</div>
   							</div>
   							<div class="form-group">

@@ -27,6 +27,7 @@ import com.epropertyui.model.Token;
 import com.epropertyui.model.User;
 import com.epropertyui.model.UserDTO;
 import com.epropertyui.util.CouchbaseConnectionManager;
+import com.epropertyui.util.EncryptionUtil;
 import com.epropertyui.util.ServiceUrl;
 import com.google.gson.Gson;
 
@@ -79,7 +80,7 @@ public class EpropertyUIDao {
 			user.setFirstName("a");
 			user.setLastName("a");
 			user.setUsername(response.getUsername());
-			user.setPassword(response.getEnKey().trim());
+			user.setPassword(EncryptionUtil.Decode(response.getEnKey().trim()));
 			Role role = new Role();
 			System.out.println("Role name is " + response.getRole().trim());
 			role.setName(response.getRole().trim());
