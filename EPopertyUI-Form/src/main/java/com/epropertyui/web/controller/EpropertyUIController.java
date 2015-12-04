@@ -78,7 +78,7 @@ public class EpropertyUIController {
 		
 		if (hasRole(EpropertyConstants.ROLE_USER)) {
 			System.out.println("userRole");
-		model.setViewName("userProperty");
+		model.setViewName("userPropertyRegistration");
 		} if (hasRole(EpropertyConstants.ROLE_ADMIN)) {
 			System.out.println("adminRole");
 			model.setViewName("adminProperty");
@@ -94,7 +94,7 @@ public class EpropertyUIController {
 		return model;
 
 	}
-	@Secured(value = { "ROLE_USER"})
+	/*@Secured(value = { "ROLE_USER"})
 	@RequestMapping(value = {  "/userProperty" }, method = RequestMethod.GET)
 	public ModelAndView userProperty(@ModelAttribute UserProperty UserProperty) {
 		System.out.println("user can access it");
@@ -102,6 +102,18 @@ public class EpropertyUIController {
 		
 		return model;
 
+	}*/
+	
+	@Secured(value = { "ROLE_USER"})
+	@RequestMapping(value="/userPropertyRegistration.html", method=RequestMethod.POST)
+	 public void propertyRegistration(@ModelAttribute UserProperty userProperty){
+	  System.out.println(userProperty.getPropertyForEx()+" "+userProperty.getPropertyTypeEx()+" "+userProperty.getBhk()+" "+userProperty.getPrice()+" "+userProperty.getContractPeriod()+" "+userProperty.getSecurityAmount()+" "+userProperty.getAddress()+" "+userProperty.getPropertyDescription());
+	  ModelAndView model = new ModelAndView(); 
+	  ePropertyUIService.sendUserProperty(userProperty);
+	  model.addObject("successMsg", "Property Detail has been sucessfully Sumitted.");
+	  model.setViewName("userPropertyRegistration");
+	
+	
 	}
 	
 	@Secured(value = { "ROLE_BROKER" })

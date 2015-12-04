@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.Token;
 import com.epropertyui.model.User;
+import com.epropertyui.model.UserProperty;
  
 
  
@@ -33,8 +34,8 @@ public class EpropertyUIService implements UserDetailsService {
 		
 	}
 	
-	public String sendUserProperty(String property) {
-		return epropertyUIDao.sendUserProperty(property);
+	public String sendUserProperty(UserProperty userProperty) {
+		return epropertyUIDao.sendUserProperty(userProperty);
 	}
 	
 	public Token getAuthenticatedToken() {

@@ -13,6 +13,7 @@ import com.epropertyui.model.Response;
 import com.epropertyui.model.Role;
 import com.epropertyui.model.Token;
 import com.epropertyui.model.User;
+import com.epropertyui.model.UserProperty;
 import com.epropertyui.util.EncryptionUtil;
 import com.epropertyui.util.ServiceUrl;
 
@@ -106,14 +107,14 @@ public class EpropertyUIDao {
 		return true;
 	}
 
-	public String sendUserProperty(String property) {
+	public String sendUserProperty(UserProperty userProperty) {
 		session = getSession();
 		String accessToken = (String) session.getAttribute("accessToken");
-		String url = propertyServiceUrl + "secure/" + "sendUserProperty?"
+		String url = propertyServiceUrl + "secure/" + "sendUserProperty"
 				+ "?access_token=" + accessToken;
 		System.out.println("Url with token is " + url);
-		return url;
-		/* restTemplate.postForEntity(url, request, responseType) */
+		 restTemplate.postForEntity(url, userProperty, String.class);
+		 return "true";
 	}
 	
 	public String verifyToken(String token) {
