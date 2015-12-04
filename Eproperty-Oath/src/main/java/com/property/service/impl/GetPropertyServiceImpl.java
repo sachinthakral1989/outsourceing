@@ -1,5 +1,9 @@
 package com.property.service.impl;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -10,14 +14,15 @@ import org.springframework.web.client.RestTemplate;
 import com.epropertyui.model.BrokerRequest;
 import com.epropertyui.model.Token;
 import com.epropertyui.model.UserRequest;
-import com.property.constants.EntityTypeConstants;
 import com.property.dao.GetPropertyDataDao;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.Response;
 import com.property.entity.UserDTO;
-import com.property.entity.UserRequestDto;
+import com.property.entity.UserProperty;
+import com.property.entity.UserPropertyDTO;
 import com.property.service.BaseService;
+import com.property.util.AsyncExecutor;
 import com.property.util.BeanUtil;
 import com.property.util.ServiceUrl;
 import com.epropertyui.model.Registeration;
@@ -27,23 +32,26 @@ public class GetPropertyServiceImpl implements BaseService {
 	private final String retailServiceUrl;
 	private final RestTemplate restTemplate;
 
-	private static final Logger logger = Logger.getLogger(GetPropertyServiceImpl.class);
+	private static final Logger logger = Logger
+			.getLogger(GetPropertyServiceImpl.class);
 
 	@Autowired
 	GetPropertyDataDao getPropertyDao;
-	
+
 	public GetPropertyServiceImpl() throws Exception {
 
 		restTemplate = new RestTemplate();
 		retailServiceUrl = ServiceUrl.getInstance().getRetailServiceUrl();
 	}
 
-	
-
-	public Response login(String username, Response response) throws Exception {
+	public Response login(final String username, final Response response) throws Exception {
 		System.out.println("<<<<<<<<<<<Entered into authenticate()>>>>>>>>>>>");
-
-		Token token = new Token();
+		
+		Callable<Response> asyncTask = new Callable<Response>() {
+			
+			@Override
+			public Response call() throws Exception {
+			Token token = new Token();
 		ObjectMapper mapper1 = new ObjectMapper();
 
 		// Get data based on username
@@ -79,38 +87,39 @@ public class GetPropertyServiceImpl implements BaseService {
 
 		}
 		return response;
-
+	}
+			
+		};
+		Future<Response> asyncResult = AsyncExecutor.queueAndExecute(asyncTask);
+		return asyncResult.get();
 	}
 
-	public void sendUserProperty(UserRequest userRequest) {
-		System.out.println("Entered into sendUserProperty "+ userRequest);
-		UserRequestDto userRequestDto = new UserRequestDto();
-		populateUserRequestDto(userRequest, userRequestDto);
+	public void sendUserProperty(UserProperty userProperty) {
+		System.out.println("Entered into sendUserProperty " + userProperty);
+		UserPropertyDTO userPropertyDto = new UserPropertyDTO();
+		populateUserRequestDto(userProperty, userPropertyDto);
 		try {
-			getPropertyDao.sendUserProperty(userRequestDto);
+			getPropertyDao.sendUserProperty(userPropertyDto);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("sendUserProperty");
 	}
-	
-	/*public void createUser(Registeration register) {
-		System.out.println("Entered into sendUserProperty "+ register);
-		UserRequestDto userRequestDto = new UserRequestDto();
-		populateUserRequestDto(userRequest, userRequestDto);
-		try {
-			getPropertyDao.sendUserProperty(userRequestDto);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		System.out.println("sendUserProperty");
-	}*/
-	
-	
+
+	/*
+	 * public void createUser(Registeration register) {
+	 * System.out.println("Entered into sendUserProperty "+ register);
+	 * UserRequestDto userRequestDto = new UserRequestDto();
+	 * populateUserRequestDto(userRequest, userRequestDto); try {
+	 * getPropertyDao.sendUserProperty(userRequestDto); } catch (Exception e) {
+	 * e.printStackTrace(); }
+	 * 
+	 * System.out.println("sendUserProperty"); }
+	 */
+
 	public void sendBrokerProperty(BrokerRequest brokerRequest) {
-		System.out.println("Entered into sendUserProperty "+ brokerRequest);
+		System.out.println("Entered into sendUserProperty " + brokerRequest);
 		BrokerRequestDto brokerRequestDto = new BrokerRequestDto();
 		populateUserRequestDto(brokerRequest, brokerRequestDto);
 		try {
@@ -118,49 +127,57 @@ public class GetPropertyServiceImpl implements BaseService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		System.out.println("sendUserProperty");
-	}
-	
-	public void addUser(Registeration register) {
-		System.out.println("Entered into sendUserProperty "+ register);
-		RegisterationDTO registerationDto = new RegisterationDTO();
-		populateRegisterationDto(register, registerationDto);
-		try {
-			getPropertyDao.addUser(registerationDto);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		System.out.println("sendUserProperty");
-	}
-	
-	
 
-	private UserRequestDto populateUserRequestDto(UserRequest userRequest,
-			UserRequestDto userRequestDto) {
-		BeanUtil.copyProperties(userRequest,userRequestDto );
+		System.out.println("sendUserProperty");
+	}
+
+	public void addUser(final Registeration register) throws Exception {
+
+		Callable<String> asyncTask = new Callable<String>() {
+
+			@Override
+			public String call() throws Exception {
+				boolean success = false;
+				System.out.println("Entered into sendUserProperty " + register);
+				RegisterationDTO registerationDto = new RegisterationDTO();
+				populateRegisterationDto(register, registerationDto);
+				try {
+					success = getPropertyDao.addUser(registerationDto);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				System.out.println("sendUserProperty");
+				return Boolean.toString(success);
+			}
+		};
+		Future<String> asyncResult = AsyncExecutor.queueAndExecute(asyncTask);
+		asyncResult.get();
+	}
+
+	private UserPropertyDTO populateUserRequestDto(UserProperty userRequest,
+			UserPropertyDTO userRequestDto) {
+		BeanUtil.copyProperties(userRequest, userRequestDto);
 		return userRequestDto;
 
 	}
-	
+
 	private RegisterationDTO populateRegisterationDto(Registeration register,
 			RegisterationDTO registerationDTO) {
-		BeanUtil.copyProperties(register,registerationDTO );
+		BeanUtil.copyProperties(register, registerationDTO);
 		return registerationDTO;
 
 	}
-	
-	private BrokerRequestDto populateUserRequestDto(BrokerRequest brokerRequest,
-			BrokerRequestDto brokerRequestDto) {
-		BeanUtil.copyProperties(brokerRequest,brokerRequestDto );
+
+	private BrokerRequestDto populateUserRequestDto(
+			BrokerRequest brokerRequest, BrokerRequestDto brokerRequestDto) {
+		BeanUtil.copyProperties(brokerRequest, brokerRequestDto);
 		return brokerRequestDto;
 
 	}
-	
+
 	public String verifyToken(String token) throws Exception {
 		return getPropertyDao.verifyToken(token);
 	}
-
 
 }

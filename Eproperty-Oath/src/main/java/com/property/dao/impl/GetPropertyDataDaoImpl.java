@@ -17,7 +17,7 @@ import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.Response;
 import com.property.entity.UserDTO;
-import com.property.entity.UserRequestDto;
+import com.property.entity.UserPropertyDTO;
 import com.property.util.CouchbaseConnectionManager;
 import com.property.util.JsonUtil;
 
@@ -55,8 +55,8 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		return userDTO;
 	}
 
-	public void sendUserProperty(UserRequestDto userRequestDto) throws Exception {
-		System.out.println("Entered into sendUserProperty() "+userRequestDto.getSaleOrRent()+userRequestDto.getBerooms());
+	public void sendUserProperty(UserPropertyDTO userRequestDto) throws Exception {
+		System.out.println("Entered into sendUserProperty() "+userRequestDto.getPropertyForEx()+userRequestDto.getBhk());
 		userRequestDto.setId(UUID.randomUUID().toString());
 		String userRequestDoc = JsonUtil.marshal(userRequestDto);
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
@@ -77,13 +77,21 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 
 	}
 	
-	public void addUser(RegisterationDTO registerationDTO) throws Exception {
+	public boolean addUser(RegisterationDTO registerationDTO) throws Exception {
+		boolean success;
+		try {
+			
 		String registrationRequestDoc = JsonUtil.marshal(registerationDTO);
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		
 		couchbaseClient.add(registerationDTO.getUserName(), registrationRequestDoc);
 		createVerificationTokenKey(registerationDTO.getUserName(),registerationDTO.getvTokenString());
+		success=true;
+		} catch(Exception ex) {
+			throw new Exception("Couchbase Exception has occurred "+ ex);
+		}
+		return success;
 
 	}
 	

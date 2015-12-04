@@ -11,6 +11,7 @@ import com.epropertyui.model.BrokerRequest;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.UserRequest;
 import com.property.entity.Response;
+import com.property.entity.UserProperty;
 import com.property.service.impl.GetPropertyServiceImpl;
 
 @Controller
@@ -31,10 +32,10 @@ public class PropertyServiceApi {
 		}
 	
 	@RequestMapping(value = "/sendUserProperty", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public @ResponseBody Response sendUserProperty(@RequestBody UserRequest request) throws Exception {
+	public @ResponseBody Response sendUserProperty(@RequestBody UserProperty userProperty) throws Exception {
 
 		System.out.println("Inside userPrperty Controller");
-		getPropertyService.sendUserProperty(request);
+		getPropertyService.sendUserProperty(userProperty);
 			return null;
 		
 		}
