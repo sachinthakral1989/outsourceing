@@ -1,5 +1,6 @@
 package com.property.service.impl;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -8,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,6 +17,8 @@ import com.epropertyui.model.BrokerRequest;
 import com.epropertyui.model.Token;
 import com.epropertyui.model.UserRequest;
 import com.property.dao.GetPropertyDataDao;
+import com.property.entity.AdminDto;
+import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.Response;
@@ -23,7 +27,7 @@ import com.property.entity.UserProperty;
 import com.property.entity.UserPropertyDTO;
 import com.property.service.BaseService;
 import com.property.util.AsyncExecutor;
-import com.property.util.BeanUtil;
+import com.property.util.BeanUtil;	
 import com.property.util.ServiceUrl;
 import com.epropertyui.model.Registeration;
 
@@ -36,6 +40,10 @@ public class GetPropertyServiceImpl implements BaseService {
 
 	@Autowired
 	GetPropertyDataDao getPropertyDao;
+	
+	public enum Mode {
+		ENCRYPT_MODE, DECRYPT_MODE
+	}
 
 	public GetPropertyServiceImpl() throws Exception {
 
@@ -61,7 +69,7 @@ public class GetPropertyServiceImpl implements BaseService {
 				response.setUsername(userDTO.getUsername());
 				response.setEnKey(userDTO.getPassword());
 				response.setRole(userDTO.getRole());
-				logger.info("<<<<<<<<<<<Sevice call for getting token>>>>>>>>>>>");
+				/*logger.info("<<<<<<<<<<<Sevice call for getting token>>>>>>>>>>>");
 				String tokenJson = restTemplate.getForObject(retailServiceUrl,
 						String.class);
 
@@ -84,7 +92,7 @@ public class GetPropertyServiceImpl implements BaseService {
 				} catch (Exception e) {
 					logger.error("Exception has occured " + e);
 
-				}
+				}*/
 				return response;
 			}
 
@@ -152,6 +160,82 @@ public class GetPropertyServiceImpl implements BaseService {
 		Future<String> asyncResult = AsyncExecutor.queueAndExecute(asyncTask);
 		asyncResult.get();
 	}
+	
+	public boolean createAdmin(AdminDto adminDto) throws Exception {
+		try {
+			return getPropertyDao.createAdmin(adminDto);
+		} catch (Exception ex) {
+			throw ex;
+		}
+	}
+
+	public boolean createBroker(BrokerDto brokerDto) throws Exception {
+		// TODO Auto-generated method stub
+		try {
+			brokerDto
+					.setPwd(enDeCryption(brokerDto.getPwd(), Mode.ENCRYPT_MODE));
+			return getPropertyDao.createBroker(brokerDto);
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+			throw ex;
+		}
+	}
+
+	public static String enDeCryption(String str, Mode mode) throws Exception {
+
+		try {
+			/*
+			 * KeyPairGenerator keygenerator =
+			 * KeyPairGenerator.getInstance("RSA"); SecureRandom random =
+			 * SecureRandom.getInstance("SHA1PRNG", "SUN");
+			 * keygenerator.initialize(1024, random);s
+			 * 
+			 * KeyPair keypair = keygenerator.generateKeyPair(); PrivateKey
+			 * privateKey = keypair.getPrivate(); PublicKey publicKey =
+			 * keypair.getPublic(); Cipher cipher = Cipher.getInstance("RSA");
+			 */
+
+			switch (mode) {
+			case ENCRYPT_MODE:
+				byte[] encoded = Base64.encodeBase64(str.getBytes());
+				return new String(encoded);
+				/*
+				 * byte[] cleartext = null; cleartext = str.getBytes("UTF8");
+				 * cipher.init(Cipher.ENCRYPT_MODE, publicKey); byte[]
+				 * ciphertext = null; ciphertext = cipher.doFinal(cleartext);
+				 * System.out.println("the encrypted text is: " +
+				 * org.apache.commons
+				 * .codec.binary.Base64.decodeBase64(ciphertext));
+				 */
+			case DECRYPT_MODE:
+				/*
+				 * byte[] buffer =
+				 * org.apache.commons.codec.binary.Base64.decodeBase64
+				 * (str.getBytes()) ; cipher.init(Cipher.DECRYPT_MODE,
+				 * privateKey); byte[] cleartext1 = cipher.doFinal(buffer);
+				 * System.out.println("the decrypted cleartext is: " + new
+				 * String(cleartext1));
+				 */
+				byte[] decoded = Base64.decodeBase64(str);
+				return new String(decoded);
+			}
+
+		} catch (Exception ex) {
+			throw ex;
+		}
+		return str;
+
+	}
+
+	public List<BrokerDto> viewBrokers() throws Exception {
+		return getPropertyDao.viewBrokers();
+	}
+
+	public BrokerDto viewBroker(String brokerId) throws Exception {
+		return getPropertyDao.viewBroker(brokerId);
+	}
+
 
 	private UserPropertyDTO populateUserRequestDto(UserProperty userRequest,
 			UserPropertyDTO userRequestDto) {

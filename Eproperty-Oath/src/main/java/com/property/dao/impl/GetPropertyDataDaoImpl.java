@@ -1,20 +1,33 @@
 package com.property.dao.impl;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
 import com.couchbase.client.CouchbaseClient;
+import com.couchbase.client.java.Bucket;
+import com.couchbase.client.java.Cluster;
+import com.couchbase.client.java.CouchbaseCluster;
+import com.couchbase.client.java.document.JsonDocument;
+import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.protocol.views.ComplexKey;
-import com.couchbase.client.protocol.views.DesignDocument;
 import com.couchbase.client.protocol.views.Query;
 import com.couchbase.client.protocol.views.Stale;
 import com.couchbase.client.protocol.views.View;
 import com.couchbase.client.protocol.views.ViewResponse;
 import com.couchbase.client.protocol.views.ViewRow;
+import com.google.gson.Gson;
 import com.property.constants.EntityTypeConstants;
 import com.property.constants.ViewConstants;
 import com.property.dao.GetPropertyDataDao;
+import com.property.entity.AdminDto;
+import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.Response;
@@ -23,6 +36,8 @@ import com.property.entity.UserPropertyDTO;
 import com.property.service.impl.GetPropertyServiceImpl;
 import com.property.util.CouchbaseConnectionManager;
 import com.property.util.JsonUtil;
+
+
 
 public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 	
@@ -71,7 +86,7 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 	}
 
 
-	public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Exception {
+public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Exception {
 		
 		//brokerRequestDto.setId(UUID.randomUUID().toString());
 		String brokerRequestDoc = JsonUtil.marshal(brokerRequestDto);
@@ -156,6 +171,158 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		}
 		return success;
 
+	}
+	
+	public ViewResponse senPropertyCall(String request) throws Exception {
+		System.out.println("Request is " + request);
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
+		View view = couchbaseClient.getView(
+				ViewConstants.PROPERTY_DESIGN_DOCUMENT,
+				ViewConstants.PROPERTY_FILTER_CATEGORIES_VIEW);
+		Query query = new Query();
+		query.setIncludeDocs(true);
+		ViewResponse response = couchbaseClient.query(view, query);
+		System.out.println(response);
+		return response;
+	}
+
+	public static JsonObject setProperty(Object obj) throws Exception {
+		JsonObject userInObject = null;
+		try {
+			HashMap<String, Object> map = new HashMap<>();
+			for (Field field : obj.getClass().getDeclaredFields()) {
+
+				field.setAccessible(true);
+				Object value = field.get(obj);
+				if (!Collection.class.isInstance(value)
+						&& !Map.class.isInstance(value)) {
+					if (value != null && !field.getName().equalsIgnoreCase("serialVersionUID")) {
+						map.put(field.getName(), value);
+					}
+
+				}
+			}
+			userInObject = JsonObject.empty();
+			for (Map.Entry<String, Object> entry : map.entrySet()) {
+				userInObject.put(entry.getKey(), entry.getValue());
+			}
+		}
+
+		catch (Exception ex) {
+			ex.printStackTrace();
+			throw ex;
+		}
+		return userInObject;
+
+	}
+	
+	public static boolean createDbCalls(String indexKey, JsonObject jsonObj)
+			throws Exception {
+		Cluster cluster = CouchbaseCluster.create();
+		try {
+			Bucket bucket = cluster.openBucket();
+			JsonDocument doc = JsonDocument.create(indexKey, jsonObj);
+			JsonDocument response = bucket.upsert(doc);
+			if (response != null) {
+				if (!response.content().isEmpty())
+					System.out.println("response: " + response.toString());
+				return true;
+			}
+
+		} catch (Exception ex) {
+			throw ex;
+		} finally {
+			cluster.disconnect();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean createAdmin(AdminDto adminDto) throws Exception {
+
+		try {
+
+			JsonObject userInObject = setProperty(adminDto);
+			return createDbCalls(adminDto.getAdminId(), userInObject);
+
+		} catch (Exception ex) {
+			throw ex;
+		}
+
+	}
+
+
+
+	@Override
+	public boolean createBroker(BrokerDto brokerDto) throws Exception {
+		try {
+			JsonObject brokerObject = setProperty(brokerDto);
+			return createDbCalls(brokerDto.getBrokerId(), brokerObject);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+
+
+	@Override
+	public List<BrokerDto> viewBrokers() throws Exception {
+		 List<BrokerDto> brokerDtos =null;
+		try {
+			CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+					    .getConnection();
+					  View view = couchbaseClient.getView(
+					    ViewConstants.PROPERTY_DESIGN_DOCUMENT,
+					    ViewConstants.PROPERTY_FILTER_BROKERS_VIEW);
+					  Query query = new Query();
+					  query.setIncludeDocs(true);
+					  query.setStale(Stale.FALSE);
+					 // activeStatus="true";
+					String type="Broker";
+					query.setKey(ComplexKey.of(type.trim()));
+					  ViewResponse response = couchbaseClient.query(view, query);
+					  brokerDtos = new ArrayList<BrokerDto>();
+					  Gson gson = new Gson();
+					  for (ViewRow row : response) {
+						  brokerDtos.add(gson.fromJson((String) row.getDocument(), BrokerDto.class))	;		
+						  }
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return brokerDtos;
+	}
+
+
+
+	@Override
+	public BrokerDto viewBroker(String brokerId) throws Exception {
+		 BrokerDto brokerDto= null;
+		try {
+			CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+					    .getConnection();
+					  View view = couchbaseClient.getView(
+					    ViewConstants.PROPERTY_DESIGN_DOCUMENT,
+					    ViewConstants.PROPERTY_FILTER_BROKER_VIEW_BY_ID);
+					  Query query = new Query();
+					  query.setIncludeDocs(true);
+					  //query.setStale(Stale.FALSE);
+					 // activeStatus="true";
+				//String type="Broker";
+					query.setKey(ComplexKey.of(brokerId.trim()));
+					  ViewResponse response = couchbaseClient.query(view, query);
+					  Gson gson = new Gson();
+					  for (ViewRow row : response) {
+						  brokerDto= gson.fromJson((String) row.getDocument(), BrokerDto.class);		
+						  }
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return brokerDto;
 	}
 	
 	
