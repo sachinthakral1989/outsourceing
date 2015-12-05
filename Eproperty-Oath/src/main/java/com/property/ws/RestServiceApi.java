@@ -1,6 +1,7 @@
 package com.property.ws;
 
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,11 +18,16 @@ import com.property.service.impl.GetPropertyServiceImpl;
 @RequestMapping("/api")
 public class RestServiceApi {
 	
+	private static final Logger logger = Logger.getLogger(RestServiceApi.class);
+
+	
 	@Autowired
 	GetPropertyServiceImpl getPropertyService;
 
 	@RequestMapping(value = "/login/{username}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody Response login(@PathVariable String username) throws Exception {
+		
+		logger.info("+++++++RestServiceApi.login username "+ username+" ++++++++++++");
 		
 		Response response = new Response();
 		response =getPropertyService.login(username.trim(),response);
@@ -33,7 +39,7 @@ public class RestServiceApi {
 	@RequestMapping(value = "/addUser", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public @ResponseBody Response addUser(@RequestBody Registeration register) throws Exception {
 
-		System.out.println("Inside create user Controller");
+		logger.info("+++++++RestServiceApi.addUser register "+ register.getFullName()+" ++++++++++++");
 		getPropertyService.addUser(register);
 			return null;
 		
@@ -41,6 +47,8 @@ public class RestServiceApi {
 	
 	@RequestMapping(value = "/verifyToken/{token}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody String verifyToken(@PathVariable String token) throws Exception {
+		
+		logger.info("+++++++RestServiceApi.verifyToken token "+ token+" ++++++++++++");
 		
 		String response =getPropertyService.verifyToken(token.trim());
 		return response;

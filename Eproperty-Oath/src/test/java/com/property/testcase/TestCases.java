@@ -12,7 +12,7 @@ public class TestCases {
 		GetPropertyDataDaoImpl getRetailServiceImpl = new GetPropertyDataDaoImpl();
 
 		try {
-			getRetailServiceImpl.getUserByUserName("test@test.com");
+			getRetailServiceImpl.loadUserByUserName("sachinthakral1989@gmail.com");
 					
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -2,6 +2,8 @@ package com.property.dao.impl;
 
 import java.util.UUID;
 
+import org.apache.log4j.Logger;
+
 import com.couchbase.client.CouchbaseClient;
 import com.couchbase.client.protocol.views.ComplexKey;
 import com.couchbase.client.protocol.views.DesignDocument;
@@ -18,12 +20,18 @@ import com.property.entity.RegisterationDTO;
 import com.property.entity.Response;
 import com.property.entity.UserDTO;
 import com.property.entity.UserPropertyDTO;
+import com.property.service.impl.GetPropertyServiceImpl;
 import com.property.util.CouchbaseConnectionManager;
 import com.property.util.JsonUtil;
 
 public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
+	
+	private static final Logger logger = Logger.getLogger(GetPropertyDataDaoImpl.class);
 
 	public UserDTO loadUserByUserName(String userName) throws Exception {
+		
+		logger.info("GetPropertyDataDaoImpl.loadUserByUserName "+userName);
+		
 		String passwordDb = "";
 		String role = "";
 		UserDTO userDTO = new UserDTO();
@@ -37,7 +45,7 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		query.setStale(Stale.FALSE);
 		query.setKey(ComplexKey.of(userName.trim(), EntityTypeConstants.IS_ACTIVE_Y.trim()));
 		ViewResponse response = couchbaseClient.query(view, query);
-		System.out.println(response);
+		logger.info("response for loadUserByUser "+ response);
 		for (ViewRow row : response) {
 
 			String valueTemp[] = row.getValue().replaceAll("\\[|\\]|\"", "")
@@ -48,22 +56,18 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 			userDTO.setUsername(userName);
 			userDTO.setPassword(passwordDb);
 			userDTO.setRole(role);
-			System.out.println(userDTO.getUsername());
-			System.out.println(userDTO.getRole());
-			System.out.println("passwordDb " + passwordDb);
+			
 		}
 		return userDTO;
 	}
 
 	public void sendUserProperty(UserPropertyDTO userRequestDto) throws Exception {
-		System.out.println("Entered into sendUserProperty() "+userRequestDto.getPropertyForEx()+userRequestDto.getBhk());
+		logger.info("Entered into sendUserProperty() "+userRequestDto.getPropertyForEx()+userRequestDto.getBhk());
 		userRequestDto.setId(UUID.randomUUID().toString());
 		String userRequestDoc = JsonUtil.marshal(userRequestDto);
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		couchbaseClient.add(userRequestDto.getId(), userRequestDoc);
-
-		System.out.println("<<<<<<<<<<<<<<<<sendUserProperty()>>>>>>>>>>>>>>>>>>>>>>>>>>");
 	}
 
 
@@ -78,6 +82,9 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 	}
 	
 	public boolean addUser(RegisterationDTO registerationDTO) throws Exception {
+		
+		logger.info("Entered into addUser() "+registerationDTO.getUserName());
+		
 		boolean success;
 		try {
 			
@@ -96,6 +103,9 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 	}
 	
 	public String verifyToken(String  token) throws Exception {
+		
+		logger.info("Entered into verifyToken(),Token "+token);
+		
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		String code="";
@@ -106,11 +116,11 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 				//Load UserByUserName
 				String doc=getUserByUserName(code);
 				RegisterationDTO registerDto=jsonUtil.unmarshal(doc, RegisterationDTO.class);
-				System.out.println("Active "+ registerDto.getActive());
+				logger.info("Active "+ registerDto.getActive());
 				registerDto.setActive(EntityTypeConstants.IS_ACTIVE_Y);
 				String registerDtoDoc = JsonUtil.marshal(registerDto);
 				couchbaseClient.set(registerDto.getUserName(),registerDtoDoc);
-				System.out.println("deleting the token ");
+				logger.info("deleting the token ");
 				couchbaseClient.delete(token);
 			}
 		}
@@ -119,6 +129,9 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 	}
 	
 	public String getUserByUserName(String userName) {
+		
+		logger.info("Entered into getUserByUserName");
+		
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		String doc=(String)couchbaseClient.get(userName);
@@ -128,6 +141,8 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 	}
 	
 	private boolean createVerificationTokenKey(String email,String verificationToken) throws Exception {
+		
+		logger.info("Entered into createVerificationTokenKey");
 		
 		boolean success=true;
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
