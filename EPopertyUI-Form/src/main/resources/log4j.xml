@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+
+
+ <appender name="APP_LOG_FILE" class="org.apache.log4j.RollingFileAppender">
+<param name="File" value="${catalina.base}/logs/Eproperty/EpropertyUI.log"/>
+<param name = "MaxFileSize" value = "20MB"/>
+<param name = "MaxBackupIndex" value = "10"/>
+<param name="Threshold" value="debug"/>
+<layout class="org.apache.log4j.PatternLayout">
+<param name="ConversionPattern" value="%d{MM-dd HH:mm:ss,SSS} %-4r [%t] %-5p %c %x - %m%n" />
+</layout>
+</appender> 
+<appender name="stderr" class="org.apache.log4j.ConsoleAppender">
+		<param name="threshold" value="warn" />
+		<param name="target" value="System.err" />
+		<param name="File" value="${catalina.base}/logs/Eproperty/Server.log"/>
+		<param name="MaxFileSize" value="20MB" />
+		<param name="MaxBackupIndex" value="20" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{DATE} [%t] [%-5p] %x %c %L - %m%n" />
+		</layout>
+	</appender>
+	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+		<param name="File" value="${catalina.base}/logs/Eproperty/Server.log"/>
+		<param name="threshold" value="debug" />
+		<param name="target" value="System.out" />
+		<param name="MaxFileSize" value="20MB" />
+		<param name="MaxBackupIndex" value="20" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{DATE} [%t] [%-5p] %x %c %L - %m%n" />
+		</layout>
+	</appender>
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<param name="File" value="${catalina.base}/logs/Eproperty/Server.log"/>
+		<param name="Threshold" value="debug" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d{DATE} [%t] [%-5p] %x %c %L - %m%n" />
+		</layout>
+	</appender>
+
+<appender name="DEFAULT" class="org.apache.log4j.RollingFileAppender">
+<param name="File" value="${catalina.base}/logs/Eproperty/Server.log"/>
+<param name = "MaxFileSize" value = "20MB"/>
+<param name = "MaxBackupIndex" value = "10"/>
+<param name="Threshold" value="debug"/>
+<layout class="org.apache.log4j.PatternLayout">
+<param name="ConversionPattern" value="%d{MM-dd HH:mm:ss,SSS} %-4r [%t] %-5p %c %x - %m%n" />
+</layout>
+</appender>
+
+ <category name="com.epropertyui.service" additivity="false"> 
+<priority value="info" /> 
+<appender-ref ref="APP_LOG_FILE" />
+</category>
+
+<category name="com.epropertyui.web.controller" additivity="false"> 
+<priority value="info" /> 
+<appender-ref ref="APP_LOG_FILE" />
+</category> 
+
+  <category name="com.epropertyui.util" additivity="false"> 
+<priority value="debug" /> 
+<appender-ref ref="APP_LOG_FILE" />
+</category>
+ 
+
+
+<!-- <category name="com.paetec.ftparchive.util" additivity="false"> 
+<priority value="debug" /> 
+<appender-ref ref="SERVER_LOG_FILE" />
+</category> -->
+
+<root>
+<level value="info" />
+<appender-ref ref="DEFAULT" />
+
+</root>
+
+</log4j:configuration>

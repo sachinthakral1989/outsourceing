@@ -54,7 +54,7 @@
   							</div>
   							<hr/>
   							<button type="submit" class="btn btn-primary">Register</button>
-  							<button type="button" class="btn btn-success">Back to Login</button>
+  							<%-- <a href="<c:url value="/page/login"/>" class="btn btn-primary">Login</a> --%>
   							<p><br/></p>
 						</form>
 						

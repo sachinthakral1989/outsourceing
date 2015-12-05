@@ -223,8 +223,8 @@ function propertyLand(period) {
 		
          <div  class="col-sm-6">
 
-        <button type="reset" class="btn btn-default">&nbspReset&nbsp</button>
-        <button type="submit" class="btn btn-default">Submit</button>
+        <!-- <button type="reset" class="btn btn-default">&nbspReset&nbsp</button> -->
+        <button type="submit" class="btn btn-primary">Submit</button>
         </div>
         <div  class="col-sm-3"></div>
       </div>

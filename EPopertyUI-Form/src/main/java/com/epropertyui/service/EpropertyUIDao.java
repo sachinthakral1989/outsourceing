@@ -3,6 +3,8 @@ package com.epropertyui.service;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
@@ -24,22 +26,26 @@ public class EpropertyUIDao {
 	ObjectMapper mapper;
 	HttpSession session;
 	String propertyServiceUrl;
+	
+	private static final Logger logger = Logger.getLogger(EpropertyUIDao.class);
 
 	public EpropertyUIDao() throws Exception {
 
 		restTemplate = new RestTemplate();
 		mapper = new ObjectMapper();
 		propertyServiceUrl = ServiceUrl.getInstance().getPropertyServiceUrl();
+		logger.info("-----------Property Service Url is -"+ propertyServiceUrl+"-------------");
 		
 	}
 
 	public void init() throws Exception {
-		System.out.println("Init method after properties are set :");
+		logger.info("Init method after properties are set :");
 		
 
 	}
 
 	public HttpSession getSession() {
+		logger.info("Request for GetSession");
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder
 				.currentRequestAttributes();
 		session = attr.getRequest().getSession();
@@ -53,7 +59,7 @@ public class EpropertyUIDao {
 			
 			Response response = new Response();
 			String url = propertyServiceUrl + "api/login/" + username+"/";
-			System.out.println("Url " + url);
+			logger.info("-----------Sending Request with loadUserByUsername Url -" + url+"----------------");
 			String tokenJson = restTemplate.getForObject(url, String.class);
 
 			try {
@@ -63,12 +69,10 @@ public class EpropertyUIDao {
 			}
 
 			user = new User();
-			user.setFirstName("a");
-			user.setLastName("a");
 			user.setUsername(response.getUsername());
 			user.setPassword(EncryptionUtil.Decode(response.getEnKey().trim()));
 			Role role = new Role();
-			System.out.println("Role name is " + response.getRole().trim());
+			logger.info("Role name is " + response.getRole().trim());
 			role.setName(response.getRole().trim());
 			List<Role> roles = new ArrayList<Role>();
 			roles.add(role);
@@ -85,6 +89,7 @@ public class EpropertyUIDao {
 		String url = propertyServiceUrl
 				+ "oauth/token?grant_type=client_credentials&client_id=test&client_secret=test";
 		try {
+			logger.info("-----------Sending Request with getAuthenticatedToken Url -" + url+"----------------");
 			String tokenJson = restTemplate.getForObject(url, String.class);
 			token = mapper.readValue(tokenJson, Token.class);
 		} catch (Exception ex) {
@@ -96,10 +101,9 @@ public class EpropertyUIDao {
 	
 	public boolean addUser(Registeration register) {
 		System.out.println("Inside addUser ");
-		HttpSession session=getSession();
-		String accessToken = (String) session.getAttribute("accessToken");
 		String url = propertyServiceUrl+"api"+"/addUser";
 		try {
+			logger.info("-----------Sending Request with addUser Url -" + url+"----------------");
 			restTemplate.postForEntity(url, register,String.class);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -108,18 +112,20 @@ public class EpropertyUIDao {
 	}
 
 	public String sendUserProperty(UserProperty userProperty) {
+		logger.info("Inside sendUserProperty "+ userProperty);
 		session = getSession();
 		String accessToken = (String) session.getAttribute("accessToken");
 		String url = propertyServiceUrl + "secure/" + "sendUserProperty"
 				+ "?access_token=" + accessToken;
-		System.out.println("Url with token is " + url);
+		logger.info("-----------Sending Request with Url with token is -" + url+"----------------");
 		 restTemplate.postForEntity(url, userProperty, String.class);
 		 return "true";
 	}
 	
 	public String verifyToken(String token) {
+		logger.info("VerifyToken "+ token);
 		String url = propertyServiceUrl + "api/verifyToken/" + token;
-		System.out.println("Url " + url);
+		logger.info("-----------Sending Request with Verify Token Url -" + url+"----------------");
 		String response = restTemplate.getForObject(url, String.class);
 		System.out.println(response);
         return response;
