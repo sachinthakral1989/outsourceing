@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -24,6 +25,35 @@
 	.MyDisplayAll{
 	   display:;
 	   }
+	   .error {
+	padding: 15px;
+	margin-bottom: 20px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	color: #a94442;
+	background-color: #f2dede;
+	border-color: #ebccd1;
+}
+
+.msg {
+	padding: 15px;
+	margin-bottom: 20px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	color: #31708f;
+	background-color: #d9edf7;
+	border-color: #bce8f1;
+}
+
+#login-box {
+	width: 300px;
+	padding: 20px;
+	margin: 100px auto;
+	background: #fff;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border: 1px solid #000;
+}
 	</style>
 	<script>
 	
@@ -97,7 +127,6 @@ function propertyLand(period) {
 }
 } 
 
-
 </script>
   </head>
   <body style="Background:"#eeee>
@@ -111,10 +140,13 @@ function propertyLand(period) {
   					<div class="page-header">
   						<h1>Register Property</h1>
 					</div>
-					<c:if test="${not empty successMsg}">
-							<div class="msg">${successMsg}</div>
+					<c:if test="${not empty emailMsg}">
+							<div class="msg">${emailMsg}</div>
 						</c:if>
-    				 <form class="form-horizontal" role="form"  action="userPropertyRegistration.html" method="POST">
+						<c:if test="${not empty errMsg1}">
+							<div class="msg">${errMsg1}</div>
+						</c:if>
+    				 <form class="form-horizontal" role="form"  action="userPropertyRegistration.html?${_csrf.parameterName}=${_csrf.token}" method="POST"  modelAttribute="uploadForm" enctype="multipart/form-data">
 					 
 					 <div class="form-group">
       <label for="select" class="col-lg-4 control-label">Property For&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
@@ -199,22 +231,21 @@ function propertyLand(period) {
       </div>
     </div>
 	 
-	 
     
-     <!-- <div class="form-group MyDisplayNone" id="image">
+       <div class="form-group MyDisplayNone" id="image">
 	 <label for="inputEmail" class="col-lg-4 control-label">Image&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
      
 	 <div class="col-lg-8">
       <div style="position:relative;">
 		<a class='btn btn-default' href='javascript:;'>
-			Browse
-			<input type="file" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' name="image" size="40"  onchange='$("#upload-file-info").html($(this).val());'>
+			Browse Image
+			<input type="file" name='file' style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' name="image" size="40"  onchange='$("#upload-file-info").html($(this).val());'>
 		</a>
 		&nbsp;
 		<span class='label label-info' id="upload-file-info"></span>
 	</div>
 	 </div>
-      </div> --> 
+      </div>
     
 	
     <div class="form-group" >        
@@ -229,8 +260,8 @@ function propertyLand(period) {
         <div  class="col-sm-3"></div>
       </div>
     </div>
-    <input type="hidden" name="${_csrf.parameterName}"
-			value="${_csrf.token}" />
+   <%--  <input type="hidden" name="${_csrf.parameterName}"
+			value="${_csrf.token}" /> --%>
   </form>
   				</div>
   		</div>

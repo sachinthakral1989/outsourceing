@@ -38,11 +38,7 @@ public class EpropertyUIDao {
 		
 	}
 
-	public void init() throws Exception {
-		logger.info("Init method after properties are set :");
-		
-
-	}
+	
 
 	public HttpSession getSession() {
 		logger.info("Request for GetSession");
@@ -78,13 +74,13 @@ public class EpropertyUIDao {
 			roles.add(role);
 			user.setAuthorities(roles);
 		} catch (Exception e) {
-			e.printStackTrace();
+			user.setErrMsg(e.getMessage());
 		}
 		return user;
 
 	}
 
-	public Token getAuthenticatedToken() {
+	public Token getAuthenticatedToken() throws Exception  {
 		Token token = new Token();
 		String url = propertyServiceUrl
 				+ "oauth/token?grant_type=client_credentials&client_id=test&client_secret=test";
@@ -93,41 +89,59 @@ public class EpropertyUIDao {
 			String tokenJson = restTemplate.getForObject(url, String.class);
 			token = mapper.readValue(tokenJson, Token.class);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex);
+			String errorMsg="Rest Client Exception has occured";
+			throw new Exception(errorMsg);
 		}
 
 		return token;
 	}
 	
-	public boolean addUser(Registeration register) {
+	public boolean addUser(Registeration register) throws Exception {
 		System.out.println("Inside addUser ");
 		String url = propertyServiceUrl+"api"+"/addUser";
 		try {
 			logger.info("-----------Sending Request with addUser Url -" + url+"----------------");
 			restTemplate.postForEntity(url, register,String.class);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(ex);
+			String errorMsg="Rest Client Exception has occured";
+			throw new Exception(errorMsg);
 		}
 		return true;
 	}
 
-	public String sendUserProperty(UserProperty userProperty) {
+	public String sendUserProperty(UserProperty userProperty) throws Exception {
 		logger.info("Inside sendUserProperty "+ userProperty);
+		try {
 		session = getSession();
 		String accessToken = (String) session.getAttribute("accessToken");
 		String url = propertyServiceUrl + "secure/" + "sendUserProperty"
 				+ "?access_token=" + accessToken;
 		logger.info("-----------Sending Request with Url with token is -" + url+"----------------");
 		 restTemplate.postForEntity(url, userProperty, String.class);
+		} catch(Exception ex) {
+			logger.error(ex);
+			String errorMsg="Rest Client Exception has occured";
+			throw new Exception(errorMsg);
+		}
 		 return "true";
 	}
 	
-	public String verifyToken(String token) {
+	public String verifyToken(String token) throws Exception {
 		logger.info("VerifyToken "+ token);
-		String url = propertyServiceUrl + "api/verifyToken/" + token;
+		String url;
+		String response="";
+		try {
+		 url = propertyServiceUrl + "api/verifyToken/" + token;
 		logger.info("-----------Sending Request with Verify Token Url -" + url+"----------------");
-		String response = restTemplate.getForObject(url, String.class);
+		response = restTemplate.getForObject(url, String.class);
 		System.out.println(response);
+		} catch(Exception ex) {
+			logger.error(ex);
+			String errorMsg="Rest Client Exception has occured";
+			throw new Exception(errorMsg);
+		}
         return response;
 		
 		

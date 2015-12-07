@@ -31,24 +31,24 @@ public class EpropertyUIService implements UserDetailsService {
         return epropertyUIDao.loadUserByUsername(username);
     }
 	
-	public boolean addUser(Registeration register) {
+	public boolean addUser(Registeration register) throws Exception {
 		logger.info("Inside addUser "+ register.getFullName());
 		return epropertyUIDao.addUser(register);
 		
 	}
 	
-	public String sendUserProperty(UserProperty userProperty) {
+	public String sendUserProperty(UserProperty userProperty) throws Exception {
 		logger.info("Inside sendUserProperty "+userProperty.getPropertyForEx());
 		return epropertyUIDao.sendUserProperty(userProperty);
 	}
 	
-	public Token getAuthenticatedToken() {
+	public Token getAuthenticatedToken() throws Exception {
 		logger.info("Inside getAuthenticatedToken ");
 		 return epropertyUIDao.getAuthenticatedToken();
 		
 	}
 	
-	public String verifyToken(String token) {
+	public String verifyToken(String token) throws Exception {
 		logger.info("Inside verifyToken");
 		return epropertyUIDao.verifyToken(token);
 		

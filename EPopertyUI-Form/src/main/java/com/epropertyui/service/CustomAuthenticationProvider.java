@@ -33,6 +33,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		logger.info("<<<<<<<<<<<inside Authenticate>>>>>>>>>>>");
         String username = authentication.getName();
         String password = (String) authentication.getCredentials();
+        String accessToken="";
         
         User user = epropertyUIService.loadUserByUsername(username);
  
@@ -46,7 +47,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Wrong password.");
         }
         HttpSession session=epropertyUIService.getSession();
-        String accessToken=epropertyUIService.getAuthenticatedToken().getAccess_token();
+		try {
+			accessToken = epropertyUIService.getAuthenticatedToken().getAccess_token();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
         //Place the usernam eand access Token in session 
         session.setAttribute("username", user.getUsername());

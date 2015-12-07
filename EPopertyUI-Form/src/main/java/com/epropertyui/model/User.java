@@ -20,8 +20,17 @@ public class User implements UserDetails {
     private boolean accountNonLocked = true;
     private boolean credentialsNonExpired = true;
     private boolean enabled = true;
+    private String errMsg;
  
-    @Override
+    public String getErrMsg() {
+		return errMsg;
+	}
+
+	public void setErrMsg(String errMsg) {
+		this.errMsg = errMsg;
+	}
+
+	@Override
     public String getUsername() {
         return username;
     }

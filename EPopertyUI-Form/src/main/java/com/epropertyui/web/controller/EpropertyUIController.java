@@ -1,6 +1,11 @@
 package com.epropertyui.web.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,22 +17,29 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import com.epropertyui.constants.ApplicationConstants;
 import com.epropertyui.constants.EpropertyConstants;
 /*import com.epropertyui.model.FileUploadForm;*/
 import com.epropertyui.model.Registeration;
+import com.epropertyui.model.UploadForm;
 import com.epropertyui.model.UserProperty;
 import com.epropertyui.service.EpropertyUIService;
+import com.epropertyui.util.CloudinayUtil;
 import com.epropertyui.util.EmailUtility;
 import com.epropertyui.util.EncryptionUtil;
 import com.epropertyui.util.PropertiesReader;
 import org.apache.log4j.Logger;
+
+import com.cloudinary.Cloudinary;
+import com.cloudinary.Singleton;
 
 @Controller
 public class EpropertyUIController {
@@ -42,7 +54,7 @@ public class EpropertyUIController {
 	public ModelAndView login(
 			@RequestParam(value = "error", required = false) String error,
 			@RequestParam(value = "logout", required = false) String logout) {
-		logger.info("<<<<<<<<<Login()>>>>>>>>>>");
+		logger.info("###################Login()###############################");
 
 		ModelAndView model = new ModelAndView();
 		if (error != null) {
@@ -78,6 +90,9 @@ public class EpropertyUIController {
 
 	@RequestMapping(value = { "/userOrAdmin" }, method = RequestMethod.GET)
 	public ModelAndView userOrAdmin(Authentication authenticate) {
+		
+		logger.info("###################userOrAdmin()###############################");
+		
 		ModelAndView model = new ModelAndView();
 
 		// String url=ePropertyUIService.sendUserProperty("hello");
@@ -97,6 +112,9 @@ public class EpropertyUIController {
 	@RequestMapping(value = { "/adminProperty" }, method = RequestMethod.GET)
 	public ModelAndView adminProperty(
 			@ModelAttribute Authentication authentication) {
+		
+		logger.info("###################adminProperty()###############################");
+		
 		ModelAndView model = new ModelAndView();
 
 		return model;
@@ -118,37 +136,52 @@ public class EpropertyUIController {
 
 	@Secured(value = { "ROLE_USER" })
 	@RequestMapping(value = "/userPropertyRegistration.html", method = RequestMethod.POST)
-	public void propertyRegistration(@ModelAttribute UserProperty userProperty/*
-																			 * ,@
-																			 * ModelAttribute
-																			 * (
-																			 * "uploadForm"
-																			 * )
-																			 * FileUploadForm
-																			 * uploadForm
-																			 * ,
-																			 * Model
-																			 * map
-																			 */) {
-		System.out.println(userProperty.getPropertyForEx() + " "
+	public ModelAndView propertyRegistration(@ModelAttribute UserProperty userProperty,@ ModelAttribute UploadForm uploadForm, Model map ) {
+		
+		ModelAndView model = new ModelAndView();
+		
+		logger.info("###################propertyRegistration()###############################");
+		
+		logger.info("Property Registration "+userProperty.getPropertyForEx() + " "
 				+ userProperty.getPropertyTypeEx() + " "
 				+ userProperty.getBhk() + " " + userProperty.getPrice() + " "
 				+ userProperty.getContractPeriod() + " "
 				+ userProperty.getSecurityAmount() + " "
 				+ userProperty.getAddress() + " "
 				+ userProperty.getPropertyDescription());
-		ModelAndView model = new ModelAndView();
-		ePropertyUIService.sendUserProperty(userProperty);
-		model.addObject("successMsg",
-				"Property Detail has been sucessfully Sumitted.");
+		
+		try {
+			MultipartFile file = uploadForm.getFile();
+			if(null != file ) {
+	            String fileName = file.getOriginalFilename();
+	            logger.info("FIle name is "+fileName);
+			}
+			
+			ePropertyUIService.sendUserProperty(userProperty);
+		
+			// Upload image to cloudinary 
+		
+			CloudinayUtil.uploadImage(uploadForm);
+		} catch (Exception e) {
+			logger.error(e);
+			model.addObject("errMsg1",
+					"Internal Server error has occured>please contact Administrator.");
+			model.setViewName("userPropertyRegistration");
+			return model;
+		}
+		model.addObject("emailMsg",
+				"Property Details has been Sumitted successfully.Thank You.");
 		model.setViewName("userPropertyRegistration");
-
+		return model;
 	}
 
 	@Secured(value = { "ROLE_BROKER" })
 	@RequestMapping(value = { "/userProperty" }, method = RequestMethod.GET)
 	public ModelAndView brokerProperty(
 			@ModelAttribute Authentication authenticate) {
+		
+		logger.info("###################brokerProperty()###############################");
+		
 		ModelAndView model = new ModelAndView();
 
 		return model;
@@ -166,9 +199,12 @@ public class EpropertyUIController {
 	public ModelAndView sendEmailToRecipient(
 			@ModelAttribute Registeration register, HttpServletRequest request)
 			throws Exception {
+		
 		ModelAndView model = new ModelAndView();
-		logger.info("email id is " + register.getUserName());
-		String enkey = EncryptionUtil.Encode(register.getEnKey());
+		
+		logger.info("Adding User " + register.getFullName());
+		ePropertyUIService.addUser(register);
+		
 		String recipient = register.getUserName();
 		String host = PropertiesReader.getPropertyValue(
 				ApplicationConstants.EMAIL_SEND_HOST).trim();
@@ -180,26 +216,16 @@ public class EpropertyUIController {
 				ApplicationConstants.EMAIL_SEND_PASS).trim();
 
 		String subject = "EProperty Email Verification mail";
-		String content;
-		// generate a 6 digit integer 1000 <10000
-		int randomPIN = (int) (Math.random() * 900000) + 100000;
-		// Store integer in a string
-		content = String.valueOf(randomPIN);
-		register.setEnKey(enkey);
-		register.setType("User");
-		register.setActive("N");
-		register.setvTokenString(content);
-		register.setCreatedDate(new Date().toString());
-		register.setCreatedUser("appUser");
-		register.setRole(EpropertyConstants.ROLE_USER);
-		logger.info("Adding User " + register.getFullName());
-		ePropertyUIService.addUser(register);
+		
+		
+		register=polpulateRegisteration(register);
 
-		content = request.getScheme() + "://" + request.getServerName() + ":"
+		String content = request.getScheme() + "://" + request.getServerName() + ":"
 				+ request.getServerPort() + request.getContextPath() + "/"
-				+ "verifyEmail/" + content;
+				+ "verifyEmail/" + register.getvTokenString();
 
-		logger.info("Content for Email Addres " + content);
+		logger.info("Content for Email Address " + content);
+		@SuppressWarnings("unused")
 		String resultMessage = "";
 		try {
 			request.setCharacterEncoding("UTF-8");
@@ -208,26 +234,55 @@ public class EpropertyUIController {
 			resultMessage = "The e-mail was sent successfully";
 			logger.info("The e-mail was sent successfully");
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			resultMessage = "There were an error: " + ex.getMessage();
-		} finally {
-			// request.setAttribute("message", resultMessage);
-		}
+			model.addObject("error", "Internal Error has occured.Please contact Administrator.");
+			model.setViewName("login");
+			return model;
+		} 
 		logger.info("Email has been sucessfull sent.Kindly verify to activate the account.");
 		model.addObject("emailSentMsg",
 				"Email has been sucessfull sent.Kindly verify to activate the account.");
 		model.setViewName("login");
 		return model;
 	}
+	
+	private Registeration polpulateRegisteration(Registeration register ) {
+		
+		
+		logger.info("Inside polpulateRegisteration() email id is " + register.getUserName());
+		String enkey = EncryptionUtil.Encode(register.getEnKey());
+		
+		String verifyToken;
+		// generate a 6 digit integer 1000 <10000
+		int randomPIN = (int) (Math.random() * 900000) + 100000;
+		// Store integer in a string
+		verifyToken = String.valueOf(randomPIN);
+		register.setEnKey(enkey);
+		register.setType("User");
+		register.setActive("N");
+		register.setvTokenString(verifyToken);
+		register.setCreatedDate(new Date().toString());
+		register.setCreatedUser("appUser");
+		register.setRole(EpropertyConstants.ROLE_USER);
+		
+		return register;
+	}
+	
 
 	@RequestMapping(value = "/verifyEmail/{token}", method = RequestMethod.GET)
 	public ModelAndView verifyEmail(@PathVariable("token") String token) {
 		logger.info("Inside Verify Email for Token " + token);
-		ePropertyUIService.verifyToken(token);
+		ModelAndView model = new ModelAndView();
+		try {
+			ePropertyUIService.verifyToken(token);
+		} catch (Exception e) {
+			logger.error(e);
+			model.addObject("error", "Internal Error has occured.Please contact Administrator.");
+			model.setViewName("login");
+			return model;
+		}
 
 		logger.info("Email has been verified sucessfully " + token);
-		ModelAndView model = new ModelAndView();
-		model.addObject("verifyMsg", "Email has been sucessfully verified.");
+		model.addObject("", "Email has been sucessfully verified.");
 		model.setViewName("login");
 		return model;
 
