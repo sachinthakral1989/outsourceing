@@ -12,8 +12,6 @@ import com.epropertyui.model.Token;
 import com.epropertyui.model.User;
 import com.epropertyui.model.UserProperty;
  
-
- 
 @Service
 public class EpropertyUIService implements UserDetailsService {
  
@@ -41,6 +39,9 @@ public class EpropertyUIService implements UserDetailsService {
 	
 	public String sendUserProperty(UserProperty userProperty) throws Exception {
 		logger.info("Inside sendUserProperty "+userProperty.getPropertyForEx());
+		if(userProperty.getPropertyForEx().equals("Rent")) {
+			userProperty.setPropertyTypeEx("House");
+		}
 		return epropertyClient.sendUserProperty(userProperty);
 	}
 	
