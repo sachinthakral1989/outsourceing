@@ -82,6 +82,10 @@
 						<c:if test="${not empty verifyMsg}">
 							<div class="msg">${verifyMsg}</div>
 						</c:if>
+						<c:if test="${not empty accessDenied}">
+							<div class="error">${accessDenied}</div>
+						</c:if>
+						
 						
 						
 						<form name='loginForm'
@@ -91,7 +95,7 @@
 								<div class="input-group">
 									<span class="input-group-addon"><span
 										class="glyphicon glyphicon-user"></span></span> <input type="text"
-										class="form-control" placeholder="Username" name="username">
+										class="form-control" placeholder="Username" name="username" required>
 								</div>
 							</div>
 							<div class="form-group">
@@ -100,7 +104,7 @@
 									<span class="input-group-addon"><span
 										class="glyphicon glyphicon-star"></span></span> <input
 										type="password" class="form-control" placeholder="Password"
-										name="password">
+										name="password" required>
 								</div>
 							</div>
 							<hr />

@@ -17,6 +17,7 @@
 			authentication-failure-url="/login?error" 
 			username-parameter="username"
 			password-parameter="password" />
+			<access-denied-handler error-page="/accessdenied"/>
 		<logout logout-success-url="/login?logout"  />
 		<!-- enable csrf protection -->
 		<csrf/>
@@ -33,9 +34,9 @@
 		 </beans:bean>
 	
     <beans:bean name="epropertyUIService" class="com.epropertyui.service.EpropertyUIService">
-		 <beans:property name="epropertyUIDao" ref ="epropertyUIDao"/> 
+		 <beans:property name="epropertyClient" ref ="epropertyClient"/> 
 		 </beans:bean>
     
     
-    <beans:bean name="epropertyUIDao" class="com.epropertyui.service.EpropertyUIDao" />  
+    <beans:bean name="epropertyClient" class="com.epropertyui.client.EpropertyClient" />  
 	</beans:beans>

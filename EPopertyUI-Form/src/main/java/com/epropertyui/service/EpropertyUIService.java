@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.epropertyui.client.EpropertyClient;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.Token;
 import com.epropertyui.model.User;
@@ -18,42 +19,43 @@ public class EpropertyUIService implements UserDetailsService {
  
 	private static final Logger logger = Logger.getLogger(EpropertyUIService.class);
    
-    private EpropertyUIDao epropertyUIDao;
+    private EpropertyClient epropertyClient;
  
-    public void setEpropertyUIDao(EpropertyUIDao epropertyUIDao) {
-		this.epropertyUIDao = epropertyUIDao;
-	}
 
+
+	public void setEpropertyClient(EpropertyClient epropertyClient) {
+		this.epropertyClient = epropertyClient;
+	}
 
 	@Override
     public User loadUserByUsername(final String username) throws UsernameNotFoundException {
 		logger.info("Inside loadUserByUsername "+username);
-        return epropertyUIDao.loadUserByUsername(username);
+        return epropertyClient.loadUserByUsername(username);
     }
 	
 	public boolean addUser(Registeration register) throws Exception {
 		logger.info("Inside addUser "+ register.getFullName());
-		return epropertyUIDao.addUser(register);
+		return epropertyClient.addUser(register);
 		
 	}
 	
 	public String sendUserProperty(UserProperty userProperty) throws Exception {
 		logger.info("Inside sendUserProperty "+userProperty.getPropertyForEx());
-		return epropertyUIDao.sendUserProperty(userProperty);
+		return epropertyClient.sendUserProperty(userProperty);
 	}
 	
 	public Token getAuthenticatedToken() throws Exception {
 		logger.info("Inside getAuthenticatedToken ");
-		 return epropertyUIDao.getAuthenticatedToken();
+		 return epropertyClient.getAuthenticatedToken();
 		
 	}
 	
 	public String verifyToken(String token) throws Exception {
 		logger.info("Inside verifyToken");
-		return epropertyUIDao.verifyToken(token);
+		return epropertyClient.verifyToken(token);
 		
 	}
 	public HttpSession getSession() {
-		return epropertyUIDao.getSession();
+		return epropertyClient.getSession();
 	}
 }

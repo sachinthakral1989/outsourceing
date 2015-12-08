@@ -16,6 +16,18 @@
       <script src="http://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <![endif]-->
+	<script>
+function match() {
+    var InputPassword1 = document.getElementById("InputPassword1");
+	var InputConfirm = document.getElementById("InputConfirm");
+	if(InputPassword1.value!=InputConfirm.value)
+	{
+	     alert("Password Should Match");
+	}
+   
+}
+</script>
+	
   </head>
   <body style="Background:"#eeee>
     <div class="container">
@@ -35,21 +47,28 @@
     							<label for="inputfn3">Full Name</label>
     							<div class="input-group">
   									<span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-  										<input type="text" class="form-control" placeholder="Full Name" id="inputfn3" name="fullName">
+  										<input type="text" class="form-control" placeholder="Full Name" id="inputfn3" name="fullName" required>
 								</div>
   							</div>
   							<div class="form-group">
     							<label for="exampleInputEmail1">Email</label>
     							<div class="input-group">
   									<span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
-  										<input type="text" class="form-control" placeholder="Email" id="exampleInputEmail1"  name="userName">
+  										<input type="email" class="form-control" placeholder="Email" id="exampleInputEmail1"  name="userName" required>
 								</div>
   							</div>
   							<div class="form-group">
     							<label for="exampleInputPassword1">Password</label>
     							<div class="input-group">
   									<span class="input-group-addon"><span class="glyphicon glyphicon-star"></span></span>
-  										<input type="password" class="form-control" placeholder="Password" id="exampleInputPassword1" name="enKey">
+  										<input type="password" class="form-control" placeholder="Password" id="InputPassword1" name="enKey" required>
+								</div>
+  							</div>
+							<div class="form-group">
+    							<label for="exampleInputPassword1">Confirm Password</label>
+    							<div class="input-group">
+  									<span class="input-group-addon"><span class="glyphicon glyphicon-star"></span></span>
+  										<input type="password" class="form-control" placeholder="Confirm Password" id="InputConfirm" name="confirm" required onblur="match()">
 								</div>
   							</div>
   							<hr/>

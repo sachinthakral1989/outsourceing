@@ -57,6 +57,49 @@
 	</style>
 	<script>
 	
+	function blurPrice()
+{
+   var v=document.getElementById("inputPrice");
+   
+   if(v.value<0)
+   {
+   alert("Price should not be negative");
+   v.value="";
+   }
+}
+function focusContractPeriod()
+{
+   document.getElementById("inputContractPeriod").value="";
+   
+}
+function blurContractPeriod()
+{
+   var v=document.getElementById("inputContractPeriod");
+   if(v.value=="")
+   v.value=0;
+   if(v.value<0)
+   {
+   alert("SecurityAmount should not be negative");
+   v.value=0;
+   }
+}
+
+function focusSecurityAmount()
+{
+   document.getElementById("inputSecurityAmount").value="";
+   
+}
+function blurSecurityAmount()
+{
+   var v=document.getElementById("inputSecurityAmount");
+   if(v.value=="")
+   v.value=0;
+   if(v.value<0)
+   {
+   alert("SecurityAmount should not be negative");
+   v.value=0;
+   }
+}
 	
 function propertyType(period) {
 
@@ -70,6 +113,10 @@ function propertyType(period) {
      $("#address").addClass("MyDisplayNone"); 
           $("#propertyDescription").addClass("MyDisplayNone"); 
           $("#image").addClass("MyDisplayNone"); 
+		  $("#houseNumber").addClass("MyDisplayNone"); 
+          		  $("#locality").addClass("MyDisplayNone"); 
+				  
+	$("#submitButton").addClass("MyDisplayNone");	  
 }
    if (period=="Rent"){
    
@@ -81,8 +128,9 @@ function propertyType(period) {
      $("#address").removeClass("MyDisplayNone"); 
           $("#propertyDescription").removeClass("MyDisplayNone"); 
           $("#image").removeClass("MyDisplayNone"); 
-
- 
+          $("#houseNumber").removeClass("MyDisplayNone"); 
+          $("#locality").removeClass("MyDisplayNone"); 
+$("#submitButton").removeClass("MyDisplayNone");
     
  
 }
@@ -95,6 +143,8 @@ function propertyType(period) {
      $("#address").addClass("MyDisplayNone"); 
           $("#propertyDescription").addClass("MyDisplayNone"); 
           $("#image").addClass("MyDisplayNone"); 
+          $("#houseNumber").addClass("MyDisplayNone");
+		   $("#locality").addClass("MyDisplayNone"); 
 
 }
 } 
@@ -107,6 +157,9 @@ function propertyLand(period) {
     $("#address").addClass("MyDisplayNone"); 
     $("#propertyDescription").addClass("MyDisplayNone"); 
     $("#image").addClass("MyDisplayNone"); 
+	$("#houseNumber").addClass("MyDisplayNone");
+	          		  $("#locality").addClass("MyDisplayNone"); 
+     $("#submitButton").addClass("MyDisplayNone");
 }
    if (period=="House"){
   
@@ -116,6 +169,9 @@ function propertyLand(period) {
     $("#address").removeClass("MyDisplayNone"); 
     $("#propertyDescription").removeClass("MyDisplayNone"); 
     $("#image").removeClass("MyDisplayNone"); 
+	$("#houseNumber").removeClass("MyDisplayNone");
+	          		  $("#locality").removeClass("MyDisplayNone"); 
+     $("#submitButton").removeClass("MyDisplayNone");
 }
    if (period=="Land"){
   $("#price").removeClass("MyDisplayNone"); 
@@ -123,7 +179,9 @@ function propertyLand(period) {
       $("#propertyDescription").removeClass("MyDisplayNone"); 
        $("#bhk").addClass("MyDisplayNone"); 
 	             $("#image").removeClass("MyDisplayNone"); 
-
+                 $("#houseNumber").removeClass("MyDisplayNone");
+				           		  $("#locality").removeClass("MyDisplayNone"); 
+    $("#submitButton").removeClass("MyDisplayNone");
 }
 } 
 
@@ -198,28 +256,41 @@ function propertyLand(period) {
 	<div class="form-group MyDisplayNone" id="price">
       <label for="inputEmail" class="col-lg-4 control-label">Price&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" id="inputEmail" placeholder="Price" name="price">
+        <input type="number" class="form-control" id="inputPrice" placeholder="Price" name="price" onblur="blurPrice()" required>
       </div>
     </div>
 	
 	<div class="form-group MyDisplayNone" id="contractPeriod">
       <label for="inputEmail" class="col-lg-4 control-label">Contract Period&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" id="inputEmail" placeholder="Contract Period"  name="contractPeriod" value="0">
-      </div>"
+        <input type="number" class="form-control" id="inputContractPeriod" placeholder="Contract Period"  name="contractPeriod" value="0" onfocus="focusContractPeriod()" onblur="blurContractPeriod()">
+      </div>
     </div>
 	
 	<div class="form-group MyDisplayNone"  id="securityAmount">
       <label for="inputEmail" class="col-lg-4 control-label">Security Amount&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" id="inputEmail" placeholder="Security Amount" name="securityAmount" value="0">
+        <input type="number" class="form-control" id="inputSecurityAmount" placeholder="Security Amount" name="securityAmount" value="0" onfocus="focusSecurityAmount()" onblur="blurSecurityAmount()">
+      </div>
+    </div>
+	<div class="form-group MyDisplayNone" id="houseNumber">
+      <label for="inputEmail" class="col-lg-4 control-label">House/Plot Number&nbsp&nbsp&nbsp</label>
+      <div class="col-lg-8">
+        <input type="text" class="form-control" id="inputhouseNumber" placeholder="House/Plot Number" name="houseNumber" required>
+      </div>
+    </div>
+	
+	<div class="form-group MyDisplayNone" id="locality">
+      <label for="inputEmail" class="col-lg-4 control-label">Locality&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+      <div class="col-lg-8">
+        <input type="text" class="form-control" id="inputLocality" placeholder="Locality" name="locality" required>
       </div>
     </div>
 	
 	<div class="form-group MyDisplayNone" id="address">
       <label for="inputEmail" class="col-lg-4 control-label">Address&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
       <div class="col-lg-8">
-        <input type="text" class="form-control" id="inputEmail" placeholder="Address" name="address">
+        <input type="text" class="form-control" id="inputAddress" placeholder="Address" name="address" required>
       </div>
     </div>
 	
@@ -248,7 +319,7 @@ function propertyLand(period) {
       </div>
     
 	
-    <div class="form-group" >        
+    <div class="form-group MyDisplayNone" id="submitButton" >        
       <div class="col-sm-offset-2 col-sm-10">
          <div  class="col-sm-3"></div>
 		

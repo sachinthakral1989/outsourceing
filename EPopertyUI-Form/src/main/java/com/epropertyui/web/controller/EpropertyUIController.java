@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,6 +70,15 @@ public class EpropertyUIController {
 		return model;
 
 	}
+	
+	@RequestMapping(value = "/accessdenied", method = RequestMethod.POST)
+    public String accessDenied(Locale locale, Model model) 
+    {
+
+        model.addAttribute("accessDenied", "CSRF Token is expired.Permission denied - please login");
+
+        return "login";
+    }
 
 	protected boolean hasRole(String role) {
 		// get security context from thread local
@@ -165,7 +175,7 @@ public class EpropertyUIController {
 		} catch (Exception e) {
 			logger.error(e);
 			model.addObject("errMsg1",
-					"Internal Server error has occured>please contact Administrator.");
+					"Internal Server error has occured.Please contact Administrator.");
 			model.setViewName("userPropertyRegistration");
 			return model;
 		}

@@ -11,6 +11,22 @@ public class UserProperty {
  private double securityAmount;
  private String address;
  private String propertyDescription;
+ private String locality;
+ private String houseNumber;
+ 
+ public String getLocality() {
+	return locality;
+}
+public void setLocality(String locality) {
+	this.locality = locality;
+}
+public String getHouseNumber() {
+	return houseNumber;
+}
+public void setHouseNumber(String houseNumber) {
+	this.houseNumber = houseNumber;
+}
+
  //private MultipartFile image;
  public String getPropertyForEx() {
   return propertyForEx;

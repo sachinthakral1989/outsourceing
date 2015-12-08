@@ -1,4 +1,4 @@
-package com.epropertyui.service;
+package com.epropertyui.client;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,16 +20,16 @@ import com.epropertyui.util.EncryptionUtil;
 import com.epropertyui.util.ServiceUrl;
 
 @Repository
-public class EpropertyUIDao {
+public class EpropertyClient {
 
 	RestTemplate restTemplate;
 	ObjectMapper mapper;
 	HttpSession session;
 	String propertyServiceUrl;
 	
-	private static final Logger logger = Logger.getLogger(EpropertyUIDao.class);
+	private static final Logger logger = Logger.getLogger(EpropertyClient.class);
 
-	public EpropertyUIDao() throws Exception {
+	public EpropertyClient() throws Exception {
 
 		restTemplate = new RestTemplate();
 		mapper = new ObjectMapper();
