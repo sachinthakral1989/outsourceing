@@ -104,6 +104,7 @@ public class GetPropertyServiceImpl implements BaseService {
 	public void sendUserProperty(UserProperty userProperty) {
 		logger.info("Entered into sendUserProperty "
 				+ userProperty.getPropertyForEx());
+		userProperty.setType("UserProperty");
 		UserPropertyDTO userPropertyDto = new UserPropertyDTO();
 		populateUserRequestDto(userProperty, userPropertyDto);
 		try {

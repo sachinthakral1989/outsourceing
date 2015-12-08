@@ -78,7 +78,24 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 
 	public void sendUserProperty(UserPropertyDTO userRequestDto) throws Exception {
 		logger.info("Entered into sendUserProperty() "+userRequestDto.getPropertyForEx()+userRequestDto.getBhk());
-		userRequestDto.setId(UUID.randomUUID().toString());
+		String key="";
+		
+		if(userRequestDto.getPropertyForEx().equals("Sale")) {
+			if(userRequestDto.getPropertyTypeEx().equals("House")) {
+				key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getBhk()+"_"+userRequestDto.getHouseNumber();
+			} else if(userRequestDto.getPropertyTypeEx().equals("Land")) {
+				key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getHouseNumber();
+			} else {
+				if(userRequestDto.getPropertyTypeEx().equals("House")) {
+					key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getBhk()+"_"+userRequestDto.getHouseNumber();
+				} else if(userRequestDto.getPropertyTypeEx().equals("Land")) {
+					key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getHouseNumber();
+				}
+			}
+		}
+		
+		userRequestDto.setId(key);
+		logger.info("Send User Property Key is"+key);
 		String userRequestDoc = JsonUtil.marshal(userRequestDto);
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();

@@ -11,6 +11,7 @@ public class UserPropertyDTO implements Serializable  {
 	private static final long serialVersionUID = 1L;
 	
 	 private String id;
+	 private String type;
 	 private String propertyForEx;
 	 private String propertyTypeEx;
 	 private String bhk;
@@ -19,6 +20,29 @@ public class UserPropertyDTO implements Serializable  {
 	 private double securityAmount;
 	 private String address;
 	 private String propertyDescription;
+	 private String locality;
+	 private String houseNumber;
+	 
+	 public String getType() {
+			return type;
+		}
+		public void setType(String type) {
+			this.type = type;
+		}
+	 
+	 
+	 public String getLocality() {
+		return locality;
+	}
+	public void setLocality(String locality) {
+		this.locality = locality;
+	}
+	public String getHouseNumber() {
+		return houseNumber;
+	}
+	public void setHouseNumber(String houseNumber) {
+		this.houseNumber = houseNumber;
+	}
 	 //private MultipartFile image;
 	 
 	 public String getId() {
