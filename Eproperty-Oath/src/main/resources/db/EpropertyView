@@ -1,0 +1,64 @@
+
+
+------------filterUserByUser------------------
+
+
+function(doc,meta){
+if(meta.type=="json" && doc.type){
+emit([doc.userName,doc.active],[doc.enKey,doc.role]);
+}}
+
+------------Token View---------------------
+
+function(doc, meta) {
+	if(doc._class == "com.tce.spring.oauth2.domain.CouchbaseOAuth2AccessToken" && doc.clientId) {
+		emit(doc.clientId, null);
+	}
+}
+
+function(doc, meta) {
+	if(doc._class == "com.tce.spring.oauth2.domain.CouchbaseOAuth2AccessToken" && doc.clientId && doc.userName) {
+		emit([doc.clientId, doc.userName], null);
+	}
+}
+
+function (doc, meta) {
+  if(doc._class == "com.tce.spring.oauth2.domain.CouchbaseOAuth2AccessToken" && doc.userName) {
+    emit(doc.userName, null);
+  }
+}
+
+---------filterBroker---------------------
+
+function(doc,meta){
+if(meta.type=="json" && doc.type){
+     emit(doc.brokerId,null);
+  }
+}
+
+--------filterBrokers-------------
+
+function(doc,meta){
+if(meta.type=="json" && doc.type){
+     emit(doc.type,null);
+  }
+}
+
+-----------------filterPropertyByHouse-----------------
+
+function (doc, meta) {
+if(meta.type=="json" && doc.type){
+  emit(doc.locality+"_"+doc.propertyForEx+"_"+doc.propertyTypeEx+"_"+doc.bhk, null);
+}
+}
+
+----------filterPropertyByLand--------------
+
+function (doc, meta) {
+if(meta.type=="json" && doc.type){
+  emit(doc.locality+"_"+doc.propertyForEx+"_"+doc.propertyTypeEx, null);
+}
+}
+
+
+

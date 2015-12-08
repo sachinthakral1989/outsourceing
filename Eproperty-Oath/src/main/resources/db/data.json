@@ -50,28 +50,23 @@
 "contractPeriod": "1 month"
 }
 
+----------------Broker Document---------------------
 
-
-function(doc,meta){
-if(meta.type=="json" && doc.type){
-emit(doc.userName);
-}}
-function(doc, meta) {
-	if(doc._class == "com.tce.spring.oauth2.domain.CouchbaseOAuth2AccessToken" && doc.clientId) {
-		emit(doc.clientId, null);
-	}
+{
+   "firstName": "Amit",
+   "lastName": "Garg",
+   "branchId": "Sec62",
+   "brokerId": "Ami123B",
+   "createdTym": 1448953807394,
+   "ChannelName": "Hindustan",
+   "networkId": "EP12",
+   "userType": "Broker",
+   "isActive": true,
+   "age": 27,
+   "channelId": "P1"
 }
 
-function(doc, meta) {
-	if(doc._class == "com.tce.spring.oauth2.domain.CouchbaseOAuth2AccessToken" && doc.clientId && doc.userName) {
-		emit([doc.clientId, doc.userName], null);
-	}
-}
 
-function (doc, meta) {
-  if(doc._class == "com.tce.spring.oauth2.domain.CouchbaseOAuth2AccessToken" && doc.userName) {
-    emit(doc.userName, null);
-  }
-}
+
 
 
