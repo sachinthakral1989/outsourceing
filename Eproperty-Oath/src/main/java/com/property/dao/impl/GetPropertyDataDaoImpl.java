@@ -78,21 +78,25 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 
 	public void sendUserProperty(UserPropertyDTO userRequestDto) throws Exception {
 		logger.info("Entered into sendUserProperty() "+userRequestDto.getPropertyForEx()+userRequestDto.getBhk());
+		try {
 		String key="";
 		
 		if(userRequestDto.getPropertyForEx().equals("Sale")) {
+			logger.info("Enter into Property for "+ userRequestDto.getPropertyForEx());
 			if(userRequestDto.getPropertyTypeEx().equals("House")) {
 				key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getBhk()+"_"+userRequestDto.getHouseNumber();
 			} else if(userRequestDto.getPropertyTypeEx().equals("Land")) {
 				key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getHouseNumber();
-			} else {
+			}
+		} else  {
+			logger.info("Enter into Property for "+ userRequestDto.getPropertyForEx());
 				if(userRequestDto.getPropertyTypeEx().equals("House")) {
 					key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getBhk()+"_"+userRequestDto.getHouseNumber();
 				} else if(userRequestDto.getPropertyTypeEx().equals("Land")) {
 					key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getHouseNumber();
 				}
 			}
-		}
+		
 		
 		userRequestDto.setId(key);
 		logger.info("Send User Property Key is"+key);
@@ -100,9 +104,12 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		couchbaseClient.add(userRequestDto.getId(), userRequestDoc);
+	} catch(Exception ex) {
+		logger.error("Exception has occured "+ ex);
+		throw ex;
+	} 
+
 	}
-
-
 public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Exception {
 		
 		//brokerRequestDto.setId(UUID.randomUUID().toString());

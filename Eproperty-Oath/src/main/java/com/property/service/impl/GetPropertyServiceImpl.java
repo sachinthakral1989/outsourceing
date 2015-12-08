@@ -101,7 +101,7 @@ public class GetPropertyServiceImpl implements BaseService {
 		return asyncResult.get();
 	}
 
-	public void sendUserProperty(UserProperty userProperty) {
+	public void sendUserProperty(UserProperty userProperty) throws Exception {
 		logger.info("Entered into sendUserProperty "
 				+ userProperty.getPropertyForEx());
 		userProperty.setType("UserProperty");
@@ -110,7 +110,7 @@ public class GetPropertyServiceImpl implements BaseService {
 		try {
 			getPropertyDao.sendUserProperty(userPropertyDto);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		}
 
 	}
@@ -152,7 +152,7 @@ public class GetPropertyServiceImpl implements BaseService {
 				try {
 					success = getPropertyDao.addUser(registerationDto);
 				} catch (Exception e) {
-					e.printStackTrace();
+					throw e;
 				}
 
 				return Boolean.toString(success);

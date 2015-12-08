@@ -39,6 +39,7 @@ public class PropertyServiceApi {
 	public @ResponseBody Response sendUserProperty(@RequestBody UserProperty userProperty) throws Exception {
 
 		System.out.println("Inside userPrperty Controller");
+		
 		getPropertyService.sendUserProperty(userProperty);
 			return null;
 		
