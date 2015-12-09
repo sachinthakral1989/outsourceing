@@ -22,6 +22,8 @@ import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.Response;
+import com.property.entity.SearchProperty;
+import com.property.entity.SearchPropertyDTO;
 import com.property.entity.UserDTO;
 import com.property.entity.UserProperty;
 import com.property.entity.UserPropertyDTO;
@@ -183,6 +185,17 @@ public class GetPropertyServiceImpl implements BaseService {
 		}
 	}
 
+	public List<UserPropertyDTO> searchProperty(SearchProperty searchRequest) throws Exception {
+		logger.info("Entered into searchProperty " + searchRequest);
+		SearchPropertyDTO searchRequestDto = new SearchPropertyDTO();
+		populateSearchRequestDto(searchRequest, searchRequestDto);
+		try {
+			return getPropertyDao.searchProperty(searchRequestDto);
+		} catch (Exception e) {
+			throw e;
+		} 
+	}
+	
 	public static String enDeCryption(String str, Mode mode) throws Exception {
 
 		try {
@@ -261,6 +274,13 @@ public class GetPropertyServiceImpl implements BaseService {
 
 	public String verifyToken(String token) throws Exception {
 		return getPropertyDao.verifyToken(token);
+	}
+
+	private SearchPropertyDTO populateSearchRequestDto(
+			SearchProperty searchRequest, SearchPropertyDTO searchRequestDTO) {
+		BeanUtil.copyProperties(searchRequest, searchRequestDTO);
+		return searchRequestDTO;
+
 	}
 
 }

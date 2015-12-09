@@ -7,6 +7,7 @@ import com.property.entity.AdminDto;
 import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
+import com.property.entity.SearchPropertyDTO;
 import com.property.entity.UserDTO;
 import com.property.entity.UserPropertyDTO;
 
@@ -30,4 +31,8 @@ public interface GetPropertyDataDao {
 	public boolean createAdmin(AdminDto adminDto) throws Exception;
 
 	public boolean createBroker(BrokerDto brokerDto) throws Exception;
+
+	public List<UserPropertyDTO> searchProperty(SearchPropertyDTO searchRequestDto)throws Exception;
+	
+	
 }

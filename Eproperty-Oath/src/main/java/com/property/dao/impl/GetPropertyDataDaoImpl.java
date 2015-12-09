@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -31,6 +32,7 @@ import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.Response;
+import com.property.entity.SearchPropertyDTO;
 import com.property.entity.UserDTO;
 import com.property.entity.UserPropertyDTO;
 import com.property.service.impl.GetPropertyServiceImpl;
@@ -311,7 +313,7 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 					  brokerDtos = new ArrayList<BrokerDto>();
 					  Gson gson = new Gson();
 					  for (ViewRow row : response) {
-						  brokerDtos.add(gson.fromJson((String) row.getDocument(), BrokerDto.class))	;		
+						  brokerDtos.add(gson.fromJson((String) row.getDocument(), BrokerDto.class));		
 						  }
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -347,6 +349,60 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 			e.printStackTrace();
 		}
 		return brokerDto;
+	}
+
+	@Override
+	public List<UserPropertyDTO> searchProperty(SearchPropertyDTO searchRequestDto)throws Exception{
+		
+        String key="";
+        List<UserPropertyDTO> userPropertyDtos =null;
+		try {
+		if(searchRequestDto.getPropertySearchFor().equals("Sale")) {
+			logger.info("Enter into Property for "+ searchRequestDto.getPropertySearchFor());
+			if(searchRequestDto.getPropertySearchType().equals("House")) {
+				key=key+searchRequestDto.getLocality()+"_"+searchRequestDto.getPropertySearchFor()+"_"+searchRequestDto.getPropertySearchType()+"_"+searchRequestDto.getBhk();
+			} else if(searchRequestDto.getPropertySearchType().equals("Land")) {
+				key=key+searchRequestDto.getLocality()+"_"+searchRequestDto.getPropertySearchFor()+"_"+searchRequestDto.getPropertySearchType();
+			}
+		} else  {
+			logger.info("Enter into Property for "+ searchRequestDto.getPropertySearchFor());
+				if(searchRequestDto.getPropertySearchType().equals("House")) {
+					key=key+searchRequestDto.getLocality()+"_"+searchRequestDto.getPropertySearchFor()+"_"+searchRequestDto.getPropertySearchType()+"_"+searchRequestDto.getBhk();
+				} 
+			}
+		System.out.println("Key : "+key );
+			CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+					    .getConnection();
+					  View view = couchbaseClient.getView(
+					    ViewConstants.PROPERTY_DESIGN_DOCUMENT,
+					    ViewConstants.PROPERTY_FILTER_SEARCH_VIEW);
+					  Query query = new Query();
+					  query.setIncludeDocs(true);
+					  query.setStale(Stale.FALSE);
+					 // activeStatus="true";
+				//String type="Broker";
+					ComplexKey startKey = ComplexKey.of(key.trim(), searchRequestDto.getMinPrice());
+					ComplexKey endKey = ComplexKey.of(key.trim(),  searchRequestDto.getMaxPrice());
+					query.setRange(startKey, endKey);
+					  //query.setKey(ComplexKey.of(key.trim()));
+					ViewResponse result = couchbaseClient.query(view, query);
+					Iterator<ViewRow> iter = result.iterator();
+					Gson gson = new Gson();
+					userPropertyDtos = new ArrayList<>();
+					while(iter.hasNext()) {
+					    ViewRow row = iter.next();   
+					    userPropertyDtos.add(gson.fromJson((String) row.getDocument(), UserPropertyDTO.class));
+					    /*System.out.println(row.getId()); // ID of the document
+					    System.out.println(row.getKey()); // Key of the view row
+					    System.out.println(row.getValue()); // Value of the view row
+					    System.out.println(row.getDocument()); // Full document if included
+*/					    
+					    }
+		} catch (Exception e) {
+			logger.error("Exception has occured "+e);
+			throw e;
+		}
+		return userPropertyDtos;
 	}
 	
 	

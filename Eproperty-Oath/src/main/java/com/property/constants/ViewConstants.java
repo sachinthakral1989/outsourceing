@@ -8,6 +8,6 @@ public class ViewConstants {
 	public static final String PROPERTY_FILTER_USER_BY_ID = "filterUserById";
 	public static final String PROPERTY_FILTER_BROKER_VIEW_BY_ID = "filterBroker";
 	public static final String PROPERTY_FILTER_BROKERS_VIEW = "filterBrokers";
-
+    public static final String PROPERTY_FILTER_SEARCH_VIEW = "filterPropertyBySearch";
 
 }
