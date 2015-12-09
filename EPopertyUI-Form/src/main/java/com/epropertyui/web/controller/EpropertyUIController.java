@@ -3,6 +3,7 @@ package com.epropertyui.web.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -30,6 +31,7 @@ import com.epropertyui.constants.ApplicationConstants;
 import com.epropertyui.constants.EpropertyConstants;
 /*import com.epropertyui.model.FileUploadForm;*/
 import com.epropertyui.model.Registeration;
+import com.epropertyui.model.SearchProperty;
 import com.epropertyui.model.UploadForm;
 import com.epropertyui.model.UserProperty;
 import com.epropertyui.service.EpropertyUIService;
@@ -50,8 +52,15 @@ public class EpropertyUIController {
 
 	private static final Logger logger = Logger
 			.getLogger(EpropertyUIController.class);
+	
+	@RequestMapping(value="/", method = RequestMethod.GET)
+	public ModelAndView search(){
+		ModelAndView model = new ModelAndView();
+		model.setViewName("searchProperty");
+		return model;
+	}
 
-	@RequestMapping(value = { "/", "/login" }, method = RequestMethod.GET)
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
 	public ModelAndView login(
 			@RequestParam(value = "error", required = false) String error,
 			@RequestParam(value = "logout", required = false) String logout) {
@@ -157,6 +166,8 @@ public class EpropertyUIController {
 				+ userProperty.getBhk() + " " + userProperty.getPrice() + " "
 				+ userProperty.getContractPeriod() + " "
 				+ userProperty.getSecurityAmount() + " "
+				+ userProperty.getHouseNumber() + " "
+				+ userProperty.getLocality() + " "
 				+ userProperty.getAddress() + " "
 				+ userProperty.getPropertyDescription());
 		
@@ -195,6 +206,29 @@ public class EpropertyUIController {
 		ModelAndView model = new ModelAndView();
 
 		return model;
+
+	}
+	
+	@RequestMapping(value="/searchProperty.html", method=RequestMethod.POST)
+	public ModelAndView searchProperty(
+			@ModelAttribute SearchProperty searchProperty) {
+	        
+		logger.info("###################searchProperty()###############################");
+		
+		ModelAndView model = new ModelAndView();
+		
+		try {
+			List<UserProperty> userPropertyList = ePropertyUIService.searchProperty(searchProperty);
+			for(UserProperty userProperty:userPropertyList) {
+				logger.info(userProperty.getPropertyForEx()+" "+userProperty.getPropertyTypeEx()+" "+userProperty.getHouseNumber());
+			}
+			model.setViewName("searchProperty");
+			return model;
+		} catch (Exception e) {
+			model.addObject("error", "Internal Error has occured.Please contact Administrator.");
+			model.setViewName("searchProperty");
+			return model;	
+		}
 
 	}
 

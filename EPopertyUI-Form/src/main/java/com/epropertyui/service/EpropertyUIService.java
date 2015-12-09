@@ -1,4 +1,6 @@
 package com.epropertyui.service;
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.epropertyui.client.EpropertyClient;
 import com.epropertyui.model.Registeration;
+import com.epropertyui.model.SearchProperty;
 import com.epropertyui.model.Token;
 import com.epropertyui.model.User;
 import com.epropertyui.model.UserProperty;
@@ -58,5 +61,13 @@ public class EpropertyUIService implements UserDetailsService {
 	}
 	public HttpSession getSession() {
 		return epropertyClient.getSession();
+	}
+
+	public List<UserProperty> searchProperty(SearchProperty searchProperty) throws Exception {
+		logger.info("Inside searchProperty "+searchProperty.getPropertySearchFor());
+		if(searchProperty.getPropertySearchFor().equals("Rent")) {
+			searchProperty.setPropertySearchType("House");
+		}
+		return epropertyClient.searchProperty(searchProperty);
 	}
 }

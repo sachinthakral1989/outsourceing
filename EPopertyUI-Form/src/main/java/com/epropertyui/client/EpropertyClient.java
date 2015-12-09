@@ -1,11 +1,13 @@
 package com.epropertyui.client;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -13,6 +15,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.Response;
 import com.epropertyui.model.Role;
+import com.epropertyui.model.SearchProperty;
 import com.epropertyui.model.Token;
 import com.epropertyui.model.User;
 import com.epropertyui.model.UserProperty;
@@ -146,5 +149,25 @@ public class EpropertyClient {
 		
 		
 		
+	}
+
+
+
+	public List<UserProperty> searchProperty(SearchProperty searchProperty) throws Exception {
+		logger.info("Inside searchProperty ");
+		logger.info(searchProperty.getPropertySearchFor()+" "+searchProperty.getPropertySearchType()+" "+searchProperty.getBhk()+" "+searchProperty.getLocality()+" "+searchProperty.getMinPrice()+" "+searchProperty.getMaxPrice());
+		String url = propertyServiceUrl+"api"+"/searchProperty";
+		UserProperty[] userPropertyArr = null;
+		try {
+			logger.info("-----------Sending Request with searchProperty Url -" + url+"----------------");
+			//String response = restTemplate.postForObject(url, searchProperty, String.class);
+			Object[] responseEntity = restTemplate.postForObject(url, SearchProperty.class, Object[].class);
+			userPropertyArr = (UserProperty[])responseEntity;
+		} catch (Exception ex) {
+			logger.error(ex);
+			String errorMsg="Rest Client Exception has occured";
+			throw new Exception(errorMsg);
+		}
+		return Arrays.asList(userPropertyArr);
 	}
 }
