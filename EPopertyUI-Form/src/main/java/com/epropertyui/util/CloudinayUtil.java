@@ -16,7 +16,7 @@ public class CloudinayUtil {
 	public static boolean uploadImage(UploadForm uploadForm) throws Exception {
 		
 		boolean isUploaded;
-		Map uploadResult=null;
+		Map uploadResult = null;
 		
         try {
 			uploadResult = Singleton.getCloudinary().uploader().upload(uploadForm.getFile().getBytes(),

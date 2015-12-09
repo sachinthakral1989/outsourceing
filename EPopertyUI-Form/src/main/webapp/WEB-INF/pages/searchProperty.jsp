@@ -8,12 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-<style>
-/*!
- * Start Bootstrap - Grayscale Bootstrap Theme (http://startbootstrap.com)
- * Code licensed under the Apache License v2.0.
- * For details, see http://www.apache.org/licenses/LICENSE-2.0.
- */
+  <style>
+
 
 body {
     width: 100%;
@@ -30,9 +26,7 @@ html {
 .MyDisplayNone{
 	   display:none;
 	   }
-	   .MyDisplayAll{
-	   display:;
-	   }
+	   
 
 .formElement {
     float:left;
@@ -62,15 +56,7 @@ a {
     -moz-transition: all .2s ease-in-out;
     transition: all .2s ease-in-out;
 }
-button {
-    color: #42dca3;
-    -webkit-transition: all .2s ease-in-out;
-    -moz-transition: all .2s ease-in-out;
-    transition: all .2s ease-in-out;
-	outline: 0;
-    color: rgba(255,255,255,.8);
-    background-color: transparent;
-}
+
 
 
 
@@ -148,7 +134,7 @@ button {
     padding: 100px 0;
     text-align: center;
     color: #fff;
-    background: url(intro-bg.jpg) no-repeat bottom center scroll;
+    background: url(/img/intro-bg.jpg) no-repeat bottom center scroll;
     background-color: #000;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -193,11 +179,34 @@ button {
 
 
 
-</style>
-     <title>Sale&Rent</title>
 
-   
- 
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+	   
+	   .place{
+	   color: #999;opacity: 1;
+	   }
+  </style>
+     <title>Sale&Rent</title>
+	     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
+
+   </script>
 
 <script>
 function sale() {
@@ -214,13 +223,11 @@ function propertyLand(period) {
 
  
    if (period=="House"){
-  alert(period);
-    $("#inputmy").removeClass("MyDisplayNone"); 
+    $("#inputmine").show(); 
     
 }
    if (period=="Land"){
-  $("#inputmy").addClass("MyDisplayNone"); 
-   alert(period);
+  $("#inputmine").hide(); 
 }
 } 
 </script>
@@ -228,8 +235,8 @@ function propertyLand(period) {
     <!-- Bootstrap Core CSS -->
 
 
-    <!-- Custom CSS -->
     
+
     <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
 
@@ -298,7 +305,7 @@ function propertyLand(period) {
   <div class="form-group">
     <div class="input-group formElement">
       <input type="hidden" value="Sale" name="propertySearchFor">
-	  <select class="form-control inputBox" style="color: #999;opacity: 1;"  name="propertySearchType"   onchange="propertyLand(this.value)">
+	  <select class="form-control inputBox place"   name="propertySearchType"   onchange="propertyLand(this.value)">
           
          
           <option value="House">House</option>
@@ -310,9 +317,9 @@ function propertyLand(period) {
       
     </div>
 	
-	<div class="MyDisplayNone  input-group formElement " id="inputmy">
+	<div class="MyDisplayNone  input-group formElement " id="inputmine">
       
-	  <select class="form-control inputBox" style="color: #999;opacity: 1;"  name="bhk"   >
+	  <select class="form-control inputBox place"  name="bhk"   >
           
           
           <option value="1BHK">1BHK</option>
@@ -325,20 +332,20 @@ function propertyLand(period) {
     </div>
     <div class="input-group formElement">
       
-      <input type="text" class="form-control inputBox" id="InputAmount" name="locality" placeholder="Locality"  >
+      <input type="text" class="form-control inputBox place" id="InputAmount" name="locality" placeholder="Locality"  >
 	  
       
     </div>
 	
 	<div class="input-group formElement">
       
-      <input type="number" class="form-control inputBox" id="InputMinPrice" name="minPrice" placeholder="min price" style="color: #999;opacity: 1;">
+      <input type="number" class="form-control inputBox place" id="InputMinPrice" name="minPrice" placeholder="min price" >
 	  
       
     </div>
 	<div class="input-group formElement">
       
-      <input type="number" class="form-control inputBox" id="InputMaxPrice" name="maxPrice" placeholder="max price" style="color: #999;opacity: 1;" >
+      <input type="number" class="form-control inputBox place" id="InputMaxPrice" name="maxPrice" placeholder="max price"  >
 	  
       
     </div>
@@ -363,13 +370,13 @@ function propertyLand(period) {
    
     <div class="input-group formElement">
       
-      <input type="text" class="form-control inputBox" id="InputAmount" name="locality" placeholder="Locality" style="color: #999;opacity: 1;" >
+      <input type="text" class="form-control inputBox place" id="InputAmount" name="locality" placeholder="Locality"  >
 	  
       
     </div>
 	<div class="input-group formElement">
       
-	  <select class="form-control inputBox" style="color: #999;opacity: 1;"  name="bhk"   >
+	  <select class="form-control inputBox place"   name="bhk"   >
           
           
           <option value="1BHK">1BHK</option>
@@ -382,13 +389,13 @@ function propertyLand(period) {
     </div>
 	<div class="input-group formElement">
       
-      <input type="number" class="form-control inputBox" id="InputMinPrice" placeholder="min price" style="color: #999;opacity: 1;">
+      <input type="number" class="form-control inputBox place"  id="InputMinPrice" placeholder="min price" >
 	  
       
     </div>
 	<div class="input-group formElement">
       
-      <input type="number" class="form-control inputBox" id="InputMaxPrice" placeholder="max price" style="color: #999;opacity: 1;" >
+      <input type="number" class="form-control inputBox place" id="InputMaxPrice" placeholder="max price"  >
 	  
       
     </div>

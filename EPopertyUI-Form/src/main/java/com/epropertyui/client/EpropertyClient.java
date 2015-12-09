@@ -161,13 +161,14 @@ public class EpropertyClient {
 		try {
 			logger.info("-----------Sending Request with searchProperty Url -" + url+"----------------");
 			//String response = restTemplate.postForObject(url, searchProperty, String.class);
-			Object[] responseEntity = restTemplate.postForObject(url, SearchProperty.class, Object[].class);
-			userPropertyArr = (UserProperty[])responseEntity;
+			ResponseEntity<UserProperty[]> responseEntity = restTemplate.postForEntity(url, searchProperty, UserProperty[].class);
+            userPropertyArr = responseEntity.getBody();
 		} catch (Exception ex) {
 			logger.error(ex);
 			String errorMsg="Rest Client Exception has occured";
 			throw new Exception(errorMsg);
 		}
+		logger.info(userPropertyArr[0].getPropertyForEx()+" "+userPropertyArr[0].getPropertyTypeEx()+" "+userPropertyArr[0].getHouseNumber()+" "+userPropertyArr[1].getHouseNumber());
 		return Arrays.asList(userPropertyArr);
 	}
 }

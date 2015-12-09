@@ -178,11 +178,12 @@ public class EpropertyUIController {
 	            logger.info("FIle name is "+fileName);
 			}
 			
-			ePropertyUIService.sendUserProperty(userProperty);
-		
 			// Upload image to cloudinary 
 		
 			CloudinayUtil.uploadImage(uploadForm);
+			userProperty.setImagePublicId(uploadForm.getPublicId());
+			logger.info("Image Public Id "+ userProperty.getImagePublicId());
+			ePropertyUIService.sendUserProperty(userProperty);
 		} catch (Exception e) {
 			logger.error(e);
 			model.addObject("errMsg1",
@@ -220,9 +221,10 @@ public class EpropertyUIController {
 		try {
 			List<UserProperty> userPropertyList = ePropertyUIService.searchProperty(searchProperty);
 			for(UserProperty userProperty:userPropertyList) {
-				logger.info(userProperty.getPropertyForEx()+" "+userProperty.getPropertyTypeEx()+" "+userProperty.getHouseNumber());
+				logger.info(userProperty.getId()+" "+userProperty.getHouseNumber()+" "+userProperty.getImagePublicId());
 			}
-			model.setViewName("searchProperty");
+			model.addObject("userPropertyList", userPropertyList);
+			model.setViewName("searchPropertyResult");
 			return model;
 		} catch (Exception e) {
 			model.addObject("error", "Internal Error has occured.Please contact Administrator.");
