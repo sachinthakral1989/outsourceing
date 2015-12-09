@@ -1,5 +1,6 @@
 package com.property.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -106,6 +107,7 @@ public class GetPropertyServiceImpl implements BaseService {
 	public void sendUserProperty(UserProperty userProperty) throws Exception {
 		logger.info("Entered into sendUserProperty "
 				+ userProperty.getPropertyForEx());
+		logger.info("Image Public Id "+ userProperty.getImagePublicId());
 		userProperty.setType("UserProperty");
 		UserPropertyDTO userPropertyDto = new UserPropertyDTO();
 		populateUserRequestDto(userProperty, userPropertyDto);
@@ -185,15 +187,34 @@ public class GetPropertyServiceImpl implements BaseService {
 		}
 	}
 
-	public List<UserPropertyDTO> searchProperty(SearchProperty searchRequest) throws Exception {
+	public List<UserProperty> searchProperty(SearchProperty searchRequest) throws Exception {
+		List<UserProperty> userPropertyList = new ArrayList<UserProperty>();
 		logger.info("Entered into searchProperty " + searchRequest);
 		SearchPropertyDTO searchRequestDto = new SearchPropertyDTO();
 		populateSearchRequestDto(searchRequest, searchRequestDto);
 		try {
-			return getPropertyDao.searchProperty(searchRequestDto);
+			List<UserPropertyDTO> userPropertyDtoList = getPropertyDao.searchProperty(searchRequestDto);
+			for(UserPropertyDTO userPropertyDto : userPropertyDtoList){
+				UserProperty userProperty = new UserProperty();
+				userProperty.setId(userPropertyDto.getId());
+				userProperty.setPropertyForEx(userPropertyDto.getPropertyForEx());
+				userProperty.setPropertyTypeEx(userPropertyDto.getPropertyTypeEx());
+				userProperty.setBhk(userPropertyDto.getBhk());
+				userProperty.setLocality(userPropertyDto.getLocality());
+				userProperty.setContractPeriod(userPropertyDto.getContractPeriod());
+				userProperty.setHouseNumber(userPropertyDto.getHouseNumber());
+				userProperty.setSecurityAmount(userPropertyDto.getSecurityAmount());
+				userProperty.setAddress(userPropertyDto.getAddress());
+				userProperty.setPrice(userPropertyDto.getPrice());
+				userProperty.setPropertyDescription(userPropertyDto.getPropertyDescription());
+				userProperty.setType(userPropertyDto.getType());
+				userProperty.setImagePublicId(userPropertyDto.getImagePublicId());
+				userPropertyList.add(userProperty);
+			}
 		} catch (Exception e) {
 			throw e;
 		} 
+		return userPropertyList;
 	}
 	
 	public static String enDeCryption(String str, Mode mode) throws Exception {

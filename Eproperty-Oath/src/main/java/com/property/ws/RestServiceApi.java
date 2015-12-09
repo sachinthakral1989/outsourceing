@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.epropertyui.model.Registeration;
 import com.property.entity.Response;
 import com.property.entity.SearchProperty;
+import com.property.entity.UserProperty;
 import com.property.entity.UserPropertyDTO;
 import com.property.service.impl.GetPropertyServiceImpl;
 
@@ -50,7 +51,7 @@ public class RestServiceApi {
 		}
 	
 	@RequestMapping(value = "/searchProperty", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
-	public @ResponseBody List<UserPropertyDTO> searchProperty(@RequestBody SearchProperty searchProperty) throws Exception {
+	public @ResponseBody List<UserProperty> searchProperty(@RequestBody SearchProperty searchProperty) throws Exception {
 
 		logger.info("+++++++RestServiceApi.searchProperty searchProperty "+ searchProperty.getPropertySearchFor()+" ++++++++++++");
 		return getPropertyService.searchProperty(searchProperty);
