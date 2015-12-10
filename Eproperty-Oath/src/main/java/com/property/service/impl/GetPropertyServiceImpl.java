@@ -156,6 +156,7 @@ public class GetPropertyServiceImpl implements BaseService {
 				try {
 					success = getPropertyDao.addUser(registerationDto);
 				} catch (Exception e) {
+					logger.error(e);
 					throw e;
 				}
 

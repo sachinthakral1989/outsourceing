@@ -130,6 +130,7 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 		try {
 			
 		String registrationRequestDoc = JsonUtil.marshal(registerationDTO);
+		logger.info(registrationRequestDoc);
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		
@@ -137,6 +138,7 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 		createVerificationTokenKey(registerationDTO.getUserName(),registerationDTO.getvTokenString());
 		success=true;
 		} catch(Exception ex) {
+			logger.error(ex);
 			throw new Exception("Couchbase Exception has occurred "+ ex);
 		}
 		return success;
