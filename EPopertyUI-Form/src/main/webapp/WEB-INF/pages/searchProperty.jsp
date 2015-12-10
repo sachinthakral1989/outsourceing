@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html lang="en">
 
 <head>
@@ -256,12 +257,12 @@ function propertyLand(period) {
                 <ul class="nav navbar-nav">
                     
                     
-                    
+     
                     <li>
-                        <a  href="">Login</a>
+                        <a href="<c:url value="/login"/>">Login</a>
                     </li>
                     <li>
-                        <a href="">Register</a>
+                        <a href="<c:url value="/page/registeration"/>">Register</a>
                     </li>
                 </ul>
             </div>

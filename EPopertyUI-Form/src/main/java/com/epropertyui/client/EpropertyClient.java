@@ -64,7 +64,7 @@ public class EpropertyClient {
 			try {
 				response = mapper.readValue(tokenJson, Response.class);
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				logger.info("Exception has occured "+ex);
 			}
 
 			user = new User();
@@ -77,6 +77,7 @@ public class EpropertyClient {
 			roles.add(role);
 			user.setAuthorities(roles);
 		} catch (Exception e) {
+			logger.info("Exception has occured "+e);
 			user.setErrMsg(e.getMessage());
 		}
 		return user;
@@ -92,7 +93,7 @@ public class EpropertyClient {
 			String tokenJson = restTemplate.getForObject(url, String.class);
 			token = mapper.readValue(tokenJson, Token.class);
 		} catch (Exception ex) {
-			logger.error(ex);
+			logger.info("Exception has occured "+ex);
 			String errorMsg="Rest Client Exception has occured";
 			throw new Exception(errorMsg);
 		}
@@ -105,9 +106,14 @@ public class EpropertyClient {
 		String url = propertyServiceUrl+"api"+"/addUser";
 		try {
 			logger.info("-----------Sending Request with addUser Url -" + url+"----------------");
+			logger.info("------Sending data as-------");
+			logger.info("Name :"+register.getFullName());
+			logger.info("Password :"+register.getEnKey());
+			logger.info("UserName :"+register.getUserName());
+			logger.info(register.getActive()+" "+register.getCreatedDate()+" "+register.getCreatedUser()+" "+register.getRole()+" "+register.getType()+" "+register.getvTokenString());
 			restTemplate.postForEntity(url, register,String.class);
 		} catch (Exception ex) {
-			logger.error(ex);
+			logger.info("Exception has occured "+ex);
 			String errorMsg="Rest Client Exception has occured";
 			throw new Exception(errorMsg);
 		}
@@ -124,7 +130,7 @@ public class EpropertyClient {
 		logger.info("-----------Sending Request with Url with token is -" + url+"----------------");
 		 restTemplate.postForEntity(url, userProperty, String.class);
 		} catch(Exception ex) {
-			logger.error(ex);
+			logger.info("Exception has occured "+ex);
 			String errorMsg="Rest Client Exception has occured";
 			throw new Exception(errorMsg);
 		}
@@ -141,7 +147,7 @@ public class EpropertyClient {
 		response = restTemplate.getForObject(url, String.class);
 		System.out.println(response);
 		} catch(Exception ex) {
-			logger.error(ex);
+			logger.info("Exception has occured "+ex);
 			String errorMsg="Rest Client Exception has occured";
 			throw new Exception(errorMsg);
 		}
@@ -164,7 +170,7 @@ public class EpropertyClient {
 			ResponseEntity<UserProperty[]> responseEntity = restTemplate.postForEntity(url, searchProperty, UserProperty[].class);
             userPropertyArr = responseEntity.getBody();
 		} catch (Exception ex) {
-			logger.error(ex);
+			logger.info("Exception has occured "+ex);
 			String errorMsg="Rest Client Exception has occured";
 			throw new Exception(errorMsg);
 		}

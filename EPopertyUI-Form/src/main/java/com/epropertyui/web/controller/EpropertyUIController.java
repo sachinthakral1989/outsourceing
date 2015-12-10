@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.mail.AuthenticationFailedException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -185,7 +186,7 @@ public class EpropertyUIController {
 			logger.info("Image Public Id "+ userProperty.getImagePublicId());
 			ePropertyUIService.sendUserProperty(userProperty);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception has occured "+e);
 			model.addObject("errMsg1",
 					"Internal Server error has occured.Please contact Administrator.");
 			model.setViewName("userPropertyRegistration");
@@ -227,6 +228,7 @@ public class EpropertyUIController {
 			model.setViewName("searchPropertyResult");
 			return model;
 		} catch (Exception e) {
+			logger.error("Exception has occured "+e);
 			model.addObject("error", "Internal Error has occured.Please contact Administrator.");
 			model.setViewName("searchProperty");
 			return model;	
@@ -249,6 +251,7 @@ public class EpropertyUIController {
 		ModelAndView model = new ModelAndView();
 		
 		logger.info("Adding User " + register.getFullName());
+		register=polpulateRegisteration(register);
 		ePropertyUIService.addUser(register);
 		
 		String recipient = register.getUserName();
@@ -262,9 +265,6 @@ public class EpropertyUIController {
 				ApplicationConstants.EMAIL_SEND_PASS).trim();
 
 		String subject = "EProperty Email Verification mail";
-		
-		
-		register=polpulateRegisteration(register);
 
 		String content = request.getScheme() + "://" + request.getServerName() + ":"
 				+ request.getServerPort() + request.getContextPath() + "/"
@@ -279,7 +279,13 @@ public class EpropertyUIController {
 					content);
 			resultMessage = "The e-mail was sent successfully";
 			logger.info("The e-mail was sent successfully");
-		} catch (Exception ex) {
+		} catch(AuthenticationFailedException ex){
+			logger.error("Exception has occured "+ex);
+			model.addObject("error", "Unable to send email. Please contact Administrator");
+			model.setViewName("login");
+			return model;
+		}catch (Exception ex) {
+			logger.error("Exception has occured "+ex);
 			model.addObject("error", "Internal Error has occured.Please contact Administrator.");
 			model.setViewName("login");
 			return model;
@@ -321,7 +327,7 @@ public class EpropertyUIController {
 		try {
 			ePropertyUIService.verifyToken(token);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Exception has occured "+e);
 			model.addObject("error", "Internal Error has occured.Please contact Administrator.");
 			model.setViewName("login");
 			return model;
