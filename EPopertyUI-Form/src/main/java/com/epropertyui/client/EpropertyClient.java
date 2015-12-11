@@ -1,17 +1,22 @@
 package com.epropertyui.client;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import com.epropertyui.model.BrokerDto;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.Response;
 import com.epropertyui.model.Role;
@@ -21,6 +26,7 @@ import com.epropertyui.model.User;
 import com.epropertyui.model.UserProperty;
 import com.epropertyui.util.EncryptionUtil;
 import com.epropertyui.util.ServiceUrl;
+
 
 @Repository
 public class EpropertyClient {
@@ -177,4 +183,91 @@ public class EpropertyClient {
 		logger.info(userPropertyArr[0].getPropertyForEx()+" "+userPropertyArr[0].getPropertyTypeEx()+" "+userPropertyArr[0].getHouseNumber()+" "+userPropertyArr[1].getHouseNumber());
 		return Arrays.asList(userPropertyArr);
 	}
+	
+	
+	public boolean createBroker(BrokerDto brokerDto) throws Exception {
+		try {
+			session = getSession();
+			String accessToken = (String) session.getAttribute("accessToken");
+			String url = propertyServiceUrl + "secure/" + "createbroker"
+					+ "?access_token=" + accessToken;
+			System.out.println("Url with token is " + url);
+			restTemplate.postForEntity(url, brokerDto, BrokerDto.class);
+			return true;
+		} catch (RestClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw e;
+		}
+		 
+	}
+	public BrokerDto viewBroker(String brokerId) {
+		BrokerDto brokerDto = new BrokerDto();
+		
+		String accessToken = (String) session.getAttribute("accessToken");
+		String url = propertyServiceUrl + "secure/" + "viewbroker"
+				+ "?access_token=" + accessToken+"/"+brokerId+"/";
+		System.out.println("Url with token is " + url);
+		String brokerDtoJson= restTemplate.getForObject(url, String.class);
+		try {
+			brokerDto= mapper.readValue(brokerDtoJson, BrokerDto.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 return brokerDto;
+	}
+	
+	public List<BrokerDto> viewBrokers(){
+		logger.info("Inside viewBroker()");
+		 List<BrokerDto> brokerDtos = new ArrayList<>();
+		 BrokerDto[] brokerDto=null;
+		 session = getSession();
+		logger.info("Get session object "+ session );
+		String accessToken = (String) session.getAttribute("accessToken");
+		String url = propertyServiceUrl + "secure/" + "viewbrokers"
+				+ "?access_token=" + accessToken;
+		logger.info("Url with token is " + url);
+		ResponseEntity<BrokerDto[]> responseEntity = restTemplate.getForEntity(url, BrokerDto[].class);
+		brokerDto = responseEntity.getBody();
+		
+		 return Arrays.asList(brokerDto);
+	}
+	
+	public List<UserProperty> viewUsersProperties(){
+		 List<UserProperty> userProperties = new ArrayList<>();
+		String accessToken = (String) session.getAttribute("accessToken");
+		String url = propertyServiceUrl + "secure/" + "viewUserProperties"
+				+ "?access_token=" + accessToken;
+		System.out.println("Url with token is " + url);
+		String UserPropertyJsons= restTemplate.getForObject(url, String.class);
+		try {
+			userProperties= (List<UserProperty>) mapper.readValue(UserPropertyJsons, UserProperty.class);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 return userProperties;
+	}
+	
+	
+	public boolean viewUserProperty(UserProperty userProperty){
+		
+		String accessToken = (String) session.getAttribute("accessToken");
+		String url = propertyServiceUrl + "secure/" + "updateUserProperty"
+				+ "?access_token=" + accessToken;
+		System.out.println("Url with token is " + url);
+		
+		try {
+			restTemplate.postForEntity(url, userProperty, UserProperty.class);
+			return true;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 return false;
+	}
+	
+	
+	
 }

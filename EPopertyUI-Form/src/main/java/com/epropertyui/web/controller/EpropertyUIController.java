@@ -1,16 +1,13 @@
 package com.epropertyui.web.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.mail.AuthenticationFailedException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
@@ -20,16 +17,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import com.cloudinary.utils.ObjectUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.epropertyui.constants.ApplicationConstants;
 import com.epropertyui.constants.EpropertyConstants;
+import com.epropertyui.model.BrokerDto;
 /*import com.epropertyui.model.FileUploadForm;*/
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.SearchProperty;
@@ -40,10 +39,6 @@ import com.epropertyui.util.CloudinayUtil;
 import com.epropertyui.util.EmailUtility;
 import com.epropertyui.util.EncryptionUtil;
 import com.epropertyui.util.PropertiesReader;
-import org.apache.log4j.Logger;
-
-import com.cloudinary.Cloudinary;
-import com.cloudinary.Singleton;
 
 @Controller
 public class EpropertyUIController {
@@ -118,11 +113,12 @@ public class EpropertyUIController {
 		// String url=ePropertyUIService.sendUserProperty("hello");
 
 		if (hasRole(EpropertyConstants.ROLE_USER)) {
-			System.out.println("userRole");
+			logger.info("userRole");
 			model.setViewName("userPropertyRegistration");
 		}
 		if (hasRole(EpropertyConstants.ROLE_ADMIN)) {
-			System.out.println("adminRole");
+			logger.info("adminRole");
+			model.setViewName("adminPage");
 		}
 		return model;
 
@@ -339,5 +335,79 @@ public class EpropertyUIController {
 		return model;
 
 	}
+		@RequestMapping(value = "/createbroker.html", method = RequestMethod.POST)
+	public ModelAndView createBroker(@ModelAttribute BrokerDto brokerDto,
+			HttpServletRequest request) throws Exception {
+		ModelAndView model = new ModelAndView();
+		System.out.println("email id is " + brokerDto.getUserName());
+		String enkey = EncryptionUtil.Encode(brokerDto.getEnKey());
+
+		brokerDto.setEnKey(enkey);
+		brokerDto.setType("User");
+		brokerDto.setActiveStatus(true);
+		brokerDto.setCreatedTym(System.currentTimeMillis());
+		brokerDto.setRole(EpropertyConstants.ROLE_BROKER);
+		ePropertyUIService.createBroker(brokerDto);
+		model.addObject("successMsg",
+				"Broker has been sucessfully Registered !");
+		model.setViewName("createbroker");
+		return model;
+	}
+		
+		/*@RequestMapping(value = "/viewbrokers", method = RequestMethod.GET, produces = "application/json")
+		public @ResponseBody List<BrokerDto> viewBrokers() throws Exception {
+
+			return ePropertyUIService.viewBrokers();
+		}*/
+
+		
+		
+		@RequestMapping(value="/viewBrokers.html", method=RequestMethod.GET)
+		public ModelAndView viewBrokers() {
+		        
+			logger.info("###################viewBroker()###############################");
+			
+			ModelAndView model = new ModelAndView();
+			
+			try {
+				List<BrokerDto> brokerDtos =ePropertyUIService.viewBrokers();
+				for(BrokerDto brokerDto:brokerDtos) {
+					logger.info(brokerDto.getUserName()+" "+brokerDto.getBrokerId());
+				}
+				model.addObject("brokerDtos", brokerDtos);
+				model.setViewName("ShowBrokerResult");
+				return model;
+			} catch (Exception e) {
+				logger.error("Exception has occured "+ e);
+				model.addObject("error", "Internal Error has occured.Please contact Administrator.");
+				model.setViewName("adminLandingPage");
+				return model;	
+			}
+
+		}
+		
+		@RequestMapping(value="/viewUsers.html", method=RequestMethod.POST)
+		public ModelAndView viewUsers() {
+		        
+			logger.info("###################viewUsers()###############################");
+			
+			ModelAndView model = new ModelAndView();
+			
+			try {
+				List<UserProperty> userProperties =ePropertyUIService.viewUsers();
+				for(UserProperty userProperty:userProperties) {
+					logger.info(userProperty.getId()+" "+userProperty.getAddress());
+				}
+				model.addObject("userProperties", userProperties);
+				model.setViewName("adminLandingPage");
+				return model;
+			} catch (Exception e) {
+				logger.error("Exception has occured "+e);
+				model.addObject("error", "Internal Error has occured.Please contact Administrator.");
+				model.setViewName("adminLandingPage");
+				return model;	
+			}
+
+		}
 
 }

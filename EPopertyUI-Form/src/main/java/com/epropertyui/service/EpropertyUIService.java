@@ -9,11 +9,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.epropertyui.client.EpropertyClient;
+import com.epropertyui.model.BrokerDto;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.SearchProperty;
 import com.epropertyui.model.Token;
 import com.epropertyui.model.User;
 import com.epropertyui.model.UserProperty;
+
  
 @Service
 public class EpropertyUIService implements UserDetailsService {
@@ -69,5 +71,21 @@ public class EpropertyUIService implements UserDetailsService {
 			searchProperty.setPropertySearchType("House");
 		}
 		return epropertyClient.searchProperty(searchProperty);
+	}
+
+	public boolean createBroker(BrokerDto brokerDto) throws Exception {
+		return epropertyClient.createBroker(brokerDto);
+		// TODO Auto-generated method stub
+		
+	}
+
+	public List<BrokerDto> viewBrokers() {
+		logger.info("Inside viewBroker()...");
+		return epropertyClient.viewBrokers();
+	}
+	
+	public List<UserProperty> viewUsers() {
+		// TODO Auto-generated method stub
+		return epropertyClient.viewUsersProperties();
 	}
 }
