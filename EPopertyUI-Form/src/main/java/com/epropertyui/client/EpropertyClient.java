@@ -220,7 +220,6 @@ public class EpropertyClient {
 	
 	public List<BrokerDto> viewBrokers(){
 		logger.info("Inside viewBroker()");
-		 List<BrokerDto> brokerDtos = new ArrayList<>();
 		 BrokerDto[] brokerDto=null;
 		 session = getSession();
 		logger.info("Get session object "+ session );
@@ -235,19 +234,23 @@ public class EpropertyClient {
 	}
 	
 	public List<UserProperty> viewUsersProperties(){
-		 List<UserProperty> userProperties = new ArrayList<>();
+		 UserProperty[] userProperty=null;
+		 	session = getSession();
+			logger.info("Get session object "+ session );
 		String accessToken = (String) session.getAttribute("accessToken");
 		String url = propertyServiceUrl + "secure/" + "viewUserProperties"
 				+ "?access_token=" + accessToken;
 		System.out.println("Url with token is " + url);
-		String UserPropertyJsons= restTemplate.getForObject(url, String.class);
-		try {
+		/*String UserPropertyJsons= restTemplate.getForObject(url, String.class);*/
+		ResponseEntity<UserProperty[]> responseEntity = restTemplate.getForEntity(url, UserProperty[].class);
+		userProperty = responseEntity.getBody();
+		/*try {
 			userProperties= (List<UserProperty>) mapper.readValue(UserPropertyJsons, UserProperty.class);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		 return userProperties;
+		}*/
+		 return Arrays.asList(userProperty);
 	}
 	
 	

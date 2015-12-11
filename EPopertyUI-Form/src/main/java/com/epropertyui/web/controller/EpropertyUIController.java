@@ -399,7 +399,7 @@ public class EpropertyUIController {
 					logger.info(userProperty.getId()+" "+userProperty.getAddress());
 				}
 				model.addObject("userProperties", userProperties);
-				model.setViewName("adminLandingPage");
+				model.setViewName("showUserResult");
 				return model;
 			} catch (Exception e) {
 				logger.error("Exception has occured "+e);

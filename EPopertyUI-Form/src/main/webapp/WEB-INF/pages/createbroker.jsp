@@ -35,7 +35,7 @@
 						<c:url var="addUrl" value="/createbroker" />
 						<%-- <form action='${addUrl}' modelAttribute="register" method="post"> --%>
 						<form name='createBrokerForm'
-							action='/EPopertyUI-Form/createBroker.html' method='POST'>
+							action='/EPopertyUI-Form/createBroker.html?${_csrf.parameterName}=${_csrf.token}' method='POST'>
 							<div class="form-group">
 								<label for="inputfn3">FirstName</label>
 								<div class="input-group">
