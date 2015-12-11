@@ -47,6 +47,7 @@ public class EpropertyUIService implements UserDetailsService {
 		if(userProperty.getPropertyForEx().equals("Rent")) {
 			userProperty.setPropertyTypeEx("House");
 		}
+		userProperty.setApprovedStatus("N");
 		return epropertyClient.sendUserProperty(userProperty);
 	}
 	

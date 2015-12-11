@@ -386,7 +386,7 @@ public class EpropertyUIController {
 
 		}
 		
-		@RequestMapping(value="/viewUsers.html", method=RequestMethod.POST)
+		@RequestMapping(value="/viewUsers.html", method=RequestMethod.GET)
 		public ModelAndView viewUsers() {
 		        
 			logger.info("###################viewUsers()###############################");
