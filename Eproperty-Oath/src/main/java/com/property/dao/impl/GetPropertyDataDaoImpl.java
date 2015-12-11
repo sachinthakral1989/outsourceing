@@ -239,6 +239,8 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 	}
 	public static boolean createDbCalls(String indexKey, JsonObject jsonObj)
 			throws Exception {
+		logger.info("******* Inside createDbCalls ******");
+		
 		Cluster cluster = CouchbaseCluster.create();
 		try {
 			Bucket bucket = cluster.openBucket();
@@ -276,6 +278,7 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 
 	@Override
 	public boolean createBroker(BrokerDto brokerDto) throws Exception {
+		logger.info("******* Inside createBroker ******");
 		try {
 			JsonObject brokerObject = setProperty(brokerDto);
 			return createDbCalls(brokerDto.getBrokerId(), brokerObject);
@@ -413,6 +416,8 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 
 	@Override
 	public List<UserPropertyDTO> viewUserProperties() throws Exception {
+		
+		logger.info("*** Inside viewUserProperties ******");
 		List<UserPropertyDTO> userPropertyDTOs = null;
 		try {
 			CouchbaseClient couchbaseClient = CouchbaseConnectionManager
@@ -445,7 +450,7 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 
 	@Override
 	public boolean updateUser(UserPropertyDTO propertyDTO) throws Exception {
-
+		logger.info("**** Inside updateUserProperty ******");
 		return updatedUser(propertyDTO);
 	}
 

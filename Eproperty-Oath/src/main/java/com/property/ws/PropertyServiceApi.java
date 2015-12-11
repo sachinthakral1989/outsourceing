@@ -49,7 +49,7 @@ public class PropertyServiceApi {
 		
 	}*/
 
-	@RequestMapping(value ="/createBroker", method= RequestMethod.POST, produces="application/json", consumes="application/json")
+	@RequestMapping(value ="/createbroker", method= RequestMethod.POST, produces="application/json", consumes="application/json")
 		public @ResponseBody boolean createBroker(@RequestBody BrokerDto brokerDto) throws Exception{
 			
 			return getPropertyService.createBroker(brokerDto);

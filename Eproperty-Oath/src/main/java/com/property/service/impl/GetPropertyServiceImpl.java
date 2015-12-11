@@ -316,13 +316,13 @@ public class GetPropertyServiceImpl implements BaseService {
 
 	@Override
 	public boolean updateUserProperty(UserPropertyDTO propertyDTO) throws Exception {
-		// TODO Auto-generated method stub
+	
 		return getPropertyDao.updateUser(propertyDTO);
 	}
 
 	@Override
 	public List<UserPropertyDTO> viewUserProperties() throws Exception {
-		// TODO Auto-generated method stub
+		
 		return getPropertyDao.viewUserProperties();
 	}
 }
