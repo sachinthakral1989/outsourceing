@@ -1,29 +1,38 @@
-/*package com.property.testcase;
+package com.property.testcase;
 
 import org.junit.Test;
 
+import com.gl.poc.couchbase.dto.AdminDto;
+import com.gl.poc.couchbase.dto.BrokerDto;
+import com.google.gson.Gson;
 import com.property.dao.impl.GetPropertyDataDaoImpl;
-import com.property.entity.SearchPropertyDTO;
-import com.property.service.impl.GetPropertyServiceImpl;
 
 public class TestCases {
-
+	GetPropertyDataDaoImpl getPropertyService = new GetPropertyDataDaoImpl();
 	@Test
-	public void authenticateUser() {
-		GetPropertyDataDaoImpl getRetailServiceImpl = new GetPropertyDataDaoImpl();
-        SearchPropertyDTO searchRequestDto = new SearchPropertyDTO();
-        searchRequestDto.setPropertySearchFor("Sale");
-        searchRequestDto.setPropertySearchType("House");
-        searchRequestDto.setLocality("Shipra Suncity");
-        searchRequestDto.setMinPrice(10000);
-        searchRequestDto.setMaxPrice(50000);
-        searchRequestDto.setBhk("2BHK");
-		try {
-			getRetailServiceImpl.searchProperty(searchRequestDto);			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+	public void authenticateUser() throws Exception {
+		
+		AdminDto adminDto = new AdminDto();
+		adminDto.setActiveStatus(true);
+		adminDto.setCreatedTym(System.currentTimeMillis());
+		adminDto.setAge(50);
+		adminDto.setFullName("Deepak Giri");
+		adminDto.setRole("ROLE_ADMIN");
+		adminDto.setType("User");
+		adminDto.setUserName("deep@xyz.com");
+		Gson gson = new Gson();
+		System.out.println("Json : "+gson.toJson(adminDto).toString());
+		getPropertyService.createAdmin(adminDto);
 	}
+	@Test
 	
-}*/
+	public void testCreateB() throws Exception{
+		BrokerDto brokerDto = new BrokerDto();
+		brokerDto.setActiveStatus(true);
+		brokerDto.setAge(25);
+		brokerDto.setBranchId("Sec_62");
+		brokerDto.setBrokerId("Deep21");
+		brokerDto.setChannelId("TV_12");
+		getPropertyService.createBroker(brokerDto);
+	}
+}

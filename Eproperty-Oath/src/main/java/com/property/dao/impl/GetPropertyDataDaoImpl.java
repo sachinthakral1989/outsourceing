@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
@@ -23,29 +22,23 @@ import com.couchbase.client.protocol.views.Stale;
 import com.couchbase.client.protocol.views.View;
 import com.couchbase.client.protocol.views.ViewResponse;
 import com.couchbase.client.protocol.views.ViewRow;
+import com.gl.poc.couchbase.dto.AdminDto;
+import com.gl.poc.couchbase.dto.BrokerDto;
 import com.google.gson.Gson;
 import com.property.constants.EntityTypeConstants;
 import com.property.constants.ViewConstants;
 import com.property.dao.GetPropertyDataDao;
-import com.property.entity.AdminDto;
-import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
-import com.property.entity.Response;
 import com.property.entity.SearchPropertyDTO;
 import com.property.entity.UserDTO;
 import com.property.entity.UserPropertyDTO;
-import com.property.service.impl.GetPropertyServiceImpl;
 import com.property.util.CouchbaseConnectionManager;
 import com.property.util.JsonUtil;
 
-
-
 public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
-	
 	private static final Logger logger = Logger.getLogger(GetPropertyDataDaoImpl.class);
-
-	public UserDTO loadUserByUserName(String userName) throws Exception {
+public UserDTO loadUserByUserName(String userName) throws Exception {
 		
 		logger.info("GetPropertyDataDaoImpl.loadUserByUserName "+userName);
 		
@@ -200,7 +193,7 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 		return success;
 
 	}
-	
+
 	public ViewResponse senPropertyCall(String request) throws Exception {
 		System.out.println("Request is " + request);
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
@@ -244,7 +237,6 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 		return userInObject;
 
 	}
-	
 	public static boolean createDbCalls(String indexKey, JsonObject jsonObj)
 			throws Exception {
 		Cluster cluster = CouchbaseCluster.create();
@@ -272,7 +264,7 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 		try {
 
 			JsonObject userInObject = setProperty(adminDto);
-			return createDbCalls(adminDto.getAdminId(), userInObject);
+			return createDbCalls(adminDto.getUserName(), userInObject);
 
 		} catch (Exception ex) {
 			throw ex;
@@ -299,6 +291,7 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 	@Override
 	public List<BrokerDto> viewBrokers() throws Exception {
 		 List<BrokerDto> brokerDtos =null;
+		 logger.info("************viewBrokers******************");
 		try {
 			CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 					    .getConnection();
@@ -315,11 +308,14 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 					  brokerDtos = new ArrayList<BrokerDto>();
 					  Gson gson = new Gson();
 					  for (ViewRow row : response) {
-						  brokerDtos.add(gson.fromJson((String) row.getDocument(), BrokerDto.class));		
+						  
+						  logger.info("************viewBrokers*******Json**"+gson.fromJson((String) row.getDocument(), BrokerDto.class).toString());
+						  brokerDtos.add(gson.fromJson((String) row.getDocument(), BrokerDto.class))	;		
 						  }
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw e;
 		}
 		return brokerDtos;
 	}
@@ -406,8 +402,64 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 		}
 		return userPropertyDtos;
 	}
-	
-	
+	@Override
+	public boolean updateBroker(BrokerDto brokerDto) throws Exception {
+		try{
+			return createBroker(brokerDto);
+		}catch(Exception ex){
+			throw ex;
+		}
+	}
+
+	@Override
+	public List<UserPropertyDTO> viewUserProperties() throws Exception {
+		List<UserPropertyDTO> userPropertyDTOs = null;
+		try {
+			CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+					.getConnection();
+			View view = couchbaseClient.getView(
+					ViewConstants.PROPERTY_DESIGN_DOCUMENT,
+					ViewConstants.PROPERTY_FILTER_USERS_PROPERTY_VIEW);
+			Query query = new Query();
+			query.setIncludeDocs(true);
+			// query.setStale(Stale.FALSE);
+			// activeStatus="true";
+			String type="UserProperty";
+			 query.setKey(ComplexKey.of(type.trim()));
+			ViewResponse response = couchbaseClient.query(view, query);
+			Gson gson = new Gson();
+			userPropertyDTOs = new ArrayList<UserPropertyDTO>();
+			for (ViewRow row : response) {
+				UserPropertyDTO userPropertyDTO = null;
+				userPropertyDTO = gson.fromJson((String) row.getDocument(),
+						UserPropertyDTO.class);
+				userPropertyDTOs.add(userPropertyDTO);
+			}
+		} catch (Exception ex) {
+			throw ex;
+		}
+		return userPropertyDTOs;
+	}
+
+
+
+	@Override
+	public boolean updateUser(UserPropertyDTO propertyDTO) throws Exception {
+
+		return updatedUser(propertyDTO);
+	}
+
+	public static boolean updatedUser(UserPropertyDTO propertyDTO) throws Exception {
+		try {
+			JsonObject userInObject = setProperty(propertyDTO);
+			return createDbCalls(propertyDTO.getId(), userInObject);
+
+		} catch (Exception ex) {
+			throw ex;
+		}
+
+	}
+
 		
 
 }

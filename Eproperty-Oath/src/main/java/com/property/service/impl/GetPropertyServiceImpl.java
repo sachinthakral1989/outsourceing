@@ -3,23 +3,20 @@ package com.property.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
 import com.epropertyui.model.BrokerRequest;
+import com.epropertyui.model.Registeration;
 import com.epropertyui.model.Token;
-import com.epropertyui.model.UserRequest;
+import com.gl.poc.couchbase.dto.AdminDto;
+import com.gl.poc.couchbase.dto.BrokerDto;
 import com.property.dao.GetPropertyDataDao;
-import com.property.entity.AdminDto;
-import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.Response;
@@ -30,20 +27,20 @@ import com.property.entity.UserProperty;
 import com.property.entity.UserPropertyDTO;
 import com.property.service.BaseService;
 import com.property.util.AsyncExecutor;
-import com.property.util.BeanUtil;	
+import com.property.util.BeanUtil;
 import com.property.util.ServiceUrl;
-import com.epropertyui.model.Registeration;
 
 public class GetPropertyServiceImpl implements BaseService {
 
 	private final String retailServiceUrl;
 	private final RestTemplate restTemplate;
 
-	private static final Logger logger = Logger.getLogger(GetPropertyServiceImpl.class);
+	private static final Logger logger = Logger
+			.getLogger(GetPropertyServiceImpl.class);
 
 	@Autowired
 	GetPropertyDataDao getPropertyDao;
-	
+
 	public enum Mode {
 		ENCRYPT_MODE, DECRYPT_MODE
 	}
@@ -188,36 +185,44 @@ public class GetPropertyServiceImpl implements BaseService {
 		}
 	}
 
-	public List<UserProperty> searchProperty(SearchProperty searchRequest) throws Exception {
+	public List<UserProperty> searchProperty(SearchProperty searchRequest)
+			throws Exception {
 		List<UserProperty> userPropertyList = new ArrayList<UserProperty>();
 		logger.info("Entered into searchProperty " + searchRequest);
 		SearchPropertyDTO searchRequestDto = new SearchPropertyDTO();
 		populateSearchRequestDto(searchRequest, searchRequestDto);
 		try {
-			List<UserPropertyDTO> userPropertyDtoList = getPropertyDao.searchProperty(searchRequestDto);
-			for(UserPropertyDTO userPropertyDto : userPropertyDtoList){
+			List<UserPropertyDTO> userPropertyDtoList = getPropertyDao
+					.searchProperty(searchRequestDto);
+			for (UserPropertyDTO userPropertyDto : userPropertyDtoList) {
 				UserProperty userProperty = new UserProperty();
 				userProperty.setId(userPropertyDto.getId());
-				userProperty.setPropertyForEx(userPropertyDto.getPropertyForEx());
-				userProperty.setPropertyTypeEx(userPropertyDto.getPropertyTypeEx());
+				userProperty.setPropertyForEx(userPropertyDto
+						.getPropertyForEx());
+				userProperty.setPropertyTypeEx(userPropertyDto
+						.getPropertyTypeEx());
 				userProperty.setBhk(userPropertyDto.getBhk());
 				userProperty.setLocality(userPropertyDto.getLocality());
-				userProperty.setContractPeriod(userPropertyDto.getContractPeriod());
+				userProperty.setContractPeriod(userPropertyDto
+						.getContractPeriod());
 				userProperty.setHouseNumber(userPropertyDto.getHouseNumber());
-				userProperty.setSecurityAmount(userPropertyDto.getSecurityAmount());
+				userProperty.setSecurityAmount(userPropertyDto
+						.getSecurityAmount());
 				userProperty.setAddress(userPropertyDto.getAddress());
 				userProperty.setPrice(userPropertyDto.getPrice());
-				userProperty.setPropertyDescription(userPropertyDto.getPropertyDescription());
+				userProperty.setPropertyDescription(userPropertyDto
+						.getPropertyDescription());
 				userProperty.setType(userPropertyDto.getType());
-				userProperty.setImagePublicId(userPropertyDto.getImagePublicId());
+				userProperty.setImagePublicId(userPropertyDto
+						.getImagePublicId());
 				userPropertyList.add(userProperty);
 			}
 		} catch (Exception e) {
 			throw e;
-		} 
+		}
 		return userPropertyList;
 	}
-	
+
 	public static String enDeCryption(String str, Mode mode) throws Exception {
 
 		try {
@@ -272,7 +277,6 @@ public class GetPropertyServiceImpl implements BaseService {
 		return getPropertyDao.viewBroker(brokerId);
 	}
 
-
 	private UserPropertyDTO populateUserRequestDto(UserProperty userRequest,
 			UserPropertyDTO userRequestDto) {
 		BeanUtil.copyProperties(userRequest, userRequestDto);
@@ -305,4 +309,20 @@ public class GetPropertyServiceImpl implements BaseService {
 
 	}
 
+	public boolean updateBroker(BrokerDto brokerDto) throws Exception {
+		return getPropertyDao.updateBroker(brokerDto);
+
+	}
+
+	@Override
+	public boolean updateUserProperty(UserPropertyDTO propertyDTO) throws Exception {
+		// TODO Auto-generated method stub
+		return getPropertyDao.updateUser(propertyDTO);
+	}
+
+	@Override
+	public List<UserPropertyDTO> viewUserProperties() throws Exception {
+		// TODO Auto-generated method stub
+		return getPropertyDao.viewUserProperties();
+	}
 }

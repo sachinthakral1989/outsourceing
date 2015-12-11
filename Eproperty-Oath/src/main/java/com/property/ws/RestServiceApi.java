@@ -18,6 +18,8 @@ import com.property.entity.SearchProperty;
 import com.property.entity.UserProperty;
 import com.property.entity.UserPropertyDTO;
 import com.property.service.impl.GetPropertyServiceImpl;
+import com.gl.poc.couchbase.dto.AdminDto;
+import com.gl.poc.couchbase.dto.BrokerDto;
 
 @Controller
 @RequestMapping("/api")
@@ -65,7 +67,43 @@ public class RestServiceApi {
 		
 		String response =getPropertyService.verifyToken(token.trim());
 		return response;
+		}
+
+@RequestMapping(value = "/createadmin", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public @ResponseBody boolean createAdmin(@RequestBody AdminDto adminDto)
+			throws Exception {
+		return getPropertyService.createAdmin(adminDto);
 
 	}
 
+	@RequestMapping(value = "/createbroker", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public @ResponseBody boolean createBroker(@RequestBody BrokerDto brokerDto)
+			throws Exception {
+
+		return getPropertyService.createBroker(brokerDto);
+
+	}
+
+	@RequestMapping(value = "/viewbrokers", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody List<BrokerDto> viewBrokers() throws Exception {
+
+		return getPropertyService.viewBrokers();
+	}
+
+	@RequestMapping(value = "/viewbroker/{brokerId}", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody BrokerDto viewBroker(@PathVariable String brokerId)
+			throws Exception {
+
+		return getPropertyService.viewBroker(brokerId.trim());
+
+	}
+
+	@RequestMapping(value = "/updatebroker", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public @ResponseBody boolean updateBroker(@RequestBody BrokerDto brokerDto)
+			throws Exception {
+
+		return getPropertyService.updateBroker(brokerDto);
+
+	}
+	
 }

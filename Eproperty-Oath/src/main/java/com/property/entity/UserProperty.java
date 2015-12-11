@@ -1,5 +1,4 @@
 package com.property.entity;
-import org.springframework.web.multipart.MultipartFile;
 
 public class UserProperty {
 
@@ -16,6 +15,7 @@ public class UserProperty {
 	private String locality;
 	private String houseNumber;
 	private String imagePublicId;
+	 private String approvedStatus;
 
 	public String getId() {
 		return id;
@@ -96,6 +96,12 @@ public class UserProperty {
 	}
 	public void setImagePublicId(String imagePublicId) {
 		this.imagePublicId = imagePublicId;
+	}
+	public String getApprovedStatus() {
+		return approvedStatus;
+	}
+	public void setApprovedStatus(String approvedStatus) {
+		this.approvedStatus = approvedStatus;
 	}
 
 }

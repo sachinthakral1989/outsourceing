@@ -12,7 +12,8 @@ public class ApplicationConstants {
 	public static final String DB_BUCKET_PASSWORD="service.bucket.password";
 	public static final String DATE_FORMAT = "yyyy-MM-dd";
 	public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
-	
+	public static final String USER_POST_APPROVED="Approved";
+	public static final String USER_POST_REJECTED="Rejected";
 	public static final String CORE_THREAD_POOL_SIZE  = "core.thread.pool.size";
 	public static final String MAX_THREAD_POOL_SIZE = "max.thread.pool.size";
 	public static final String THREAD_KEEP_ALIVE_MINUTE = "thread.keep.alive.minute";

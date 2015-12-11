@@ -11,17 +11,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.epropertyui.model.BrokerRequest;
-import com.epropertyui.model.Registeration;
-import com.epropertyui.model.UserRequest;
-import com.property.entity.BrokerDto;
+import com.gl.poc.couchbase.dto.BrokerDto;
 import com.property.entity.Response;
 import com.property.entity.UserProperty;
+import com.property.entity.UserPropertyDTO;
 import com.property.service.impl.GetPropertyServiceImpl;
 
 @Controller
 @RequestMapping("/secure")
 public class PropertyServiceApi {
-	
 	@Autowired
 	GetPropertyServiceImpl getPropertyService;
 
@@ -70,8 +68,25 @@ public class PropertyServiceApi {
 
 			return getPropertyService.viewBroker(brokerId.trim());
 
-		}
-
+	}
+@RequestMapping(value ="/updateBroker", method= RequestMethod.POST, produces="application/json", consumes="application/json")
+public @ResponseBody boolean updateBroker(@RequestBody BrokerDto brokerDto) throws Exception{
 	
+	return getPropertyService.updateBroker(brokerDto);
+
+}
+
+@RequestMapping(value ="/updateUserProperty", method= RequestMethod.POST, produces="application/json", consumes="application/json")
+public @ResponseBody boolean updateUserProperty(@RequestBody UserPropertyDTO userPropertyDTO) throws Exception{
+	
+	return getPropertyService.updateUserProperty(userPropertyDTO);
+
+}
+
+@RequestMapping(value = "/viewUserProperties", method = RequestMethod.GET, produces = "application/json")
+public @ResponseBody List<UserPropertyDTO> viewUsers() throws Exception {
+
+	return getPropertyService.viewUserProperties();
+}
 
 }
