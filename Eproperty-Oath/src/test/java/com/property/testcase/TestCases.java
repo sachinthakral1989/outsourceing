@@ -8,6 +8,9 @@ import com.google.gson.Gson;
 import com.property.dao.impl.GetPropertyDataDaoImpl;
 import com.property.entity.AdminDto;
 import com.property.entity.BrokerDto;
+import com.property.entity.UserProperty;
+import com.property.entity.UserPropertyDTO;
+import com.property.util.Status;
 
 public class TestCases {
 	GetPropertyDataDaoImpl getPropertyService = new GetPropertyDataDaoImpl();
@@ -27,8 +30,8 @@ public class TestCases {
 		System.out.println("Json : "+gson.toJson(adminDto).toString());
 		getPropertyService.createAdmin(adminDto);
 	}
+	@Ignore
 	@Test
-	
 	public void testCreateB() throws Exception{
 		/*BrokerDto brokerDto = new BrokerDto();
 		brokerDto.setActiveStatus(true);
@@ -39,4 +42,24 @@ public class TestCases {
 		getPropertyService.viewBrokers();
 		/*getPropertyService.createBroker(brokerDto);*/
 	}
+	
+@Test
+@Ignore
+public void testFilterPropertyByStatus() throws Exception{
+		getPropertyService.getUserPropertyDocByStaus(Status.NONE);
+		
+	}
+@Test
+public void viewUserPropertyByDocId() throws Exception {
+	UserPropertyDTO userProperty= getPropertyService.viewUserPropertyByDocId("Noida_Sale_House_3BHK_20247");
+	System.out.println(userProperty.getHouseNumber());
+	System.out.println(userProperty.getId());
+}
+
+
+
+
+
+
+
 }

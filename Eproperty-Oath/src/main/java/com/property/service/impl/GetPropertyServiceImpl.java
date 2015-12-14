@@ -31,6 +31,7 @@ import com.property.service.BaseService;
 import com.property.util.AsyncExecutor;
 import com.property.util.BeanUtil;
 import com.property.util.ServiceUrl;
+import com.property.util.Status;
 
 public class GetPropertyServiceImpl implements BaseService {
 
@@ -333,7 +334,13 @@ public class GetPropertyServiceImpl implements BaseService {
 	@Override
 	public List<UserPropertyDTO> viewUserProperties() throws Exception {
 		
-		return getPropertyDao.viewUserProperties();
+		List<UserPropertyDTO> userPropertyDtoList=new ArrayList<UserPropertyDTO>();
+		List<String> propertyDocList= getPropertyDao.getUserPropertyDocByStaus(Status.NONE);
+		for(String propertyDocId :propertyDocList) {
+			UserPropertyDTO userPropertyDto= getPropertyDao.viewUserPropertyByDocId(propertyDocId);
+			 userPropertyDtoList.add(userPropertyDto);
+		}
+		return userPropertyDtoList;
 	}
 	@Override
 	public boolean updatePropertyStatus(UpdateStatus updateStatus) throws Exception {

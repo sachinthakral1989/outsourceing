@@ -119,7 +119,7 @@ public UserDTO loadUserByUserName(String userName) throws Exception {
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		String statusDoc = JsonUtil.marshal(status);
-		couchbaseClient.add(status.getDocumentId()+"_Status", statusDoc);
+		couchbaseClient.set(status.getDocumentId()+"_Status", statusDoc);
 		} catch (Exception ex) {
 			logger.error(ex);
 			throw ex;
@@ -127,7 +127,6 @@ public UserDTO loadUserByUserName(String userName) throws Exception {
 		return true;
 		
 	}
-	
 	
 public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Exception {
 		
@@ -436,10 +435,11 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 	}
 
 	@Override
-	public List<UserPropertyDTO> viewUserProperties() throws Exception {
+	public UserPropertyDTO viewUserPropertyByDocId(String docId) throws Exception {
 		
 		logger.info("*** Inside viewUserProperties ******");
 		List<UserPropertyDTO> userPropertyDTOs = null;
+		UserPropertyDTO userPropertyDTO = null;
 		try {
 			CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 					.getConnection();
@@ -451,20 +451,37 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 			// query.setStale(Stale.FALSE);
 			// activeStatus="true";
 			String type="UserProperty";
-			 query.setKey(ComplexKey.of(type.trim()));
+			 query.setKey(ComplexKey.of(docId.trim()));
 			ViewResponse response = couchbaseClient.query(view, query);
 			Gson gson = new Gson();
 			userPropertyDTOs = new ArrayList<UserPropertyDTO>();
+			
 			for (ViewRow row : response) {
-				UserPropertyDTO userPropertyDTO = null;
 				userPropertyDTO = gson.fromJson((String) row.getDocument(),
 						UserPropertyDTO.class);
-				userPropertyDTOs.add(userPropertyDTO);
 			}
 		} catch (Exception ex) {
 			throw ex;
 		}
-		return userPropertyDTOs;
+		return userPropertyDTO;
+	}
+	
+	public List<String>  getUserPropertyDocByStaus(Status status) {
+		List<String> propertyDocList=new ArrayList<String>();
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
+		View view = couchbaseClient.getView(
+				ViewConstants.PROPERTY_DESIGN_DOCUMENT,
+				ViewConstants.PROPERTY_FILTER_BY_STATUS);
+		Query query = new Query();
+		query.setKey(ComplexKey.of(status.toString().trim()));
+		ViewResponse response = couchbaseClient.query(view, query);
+		for (ViewRow row : response) {
+			System.out.println(row.getValue());
+			propertyDocList.add(row.getValue());
+		}
+		return propertyDocList;
+		
 	}
 
 
