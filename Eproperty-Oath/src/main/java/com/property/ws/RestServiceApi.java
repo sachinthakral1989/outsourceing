@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.epropertyui.model.Registeration;
+import com.property.entity.AdminDto;
+import com.property.entity.BrokerDto;
 import com.property.entity.Response;
 import com.property.entity.SearchProperty;
 import com.property.entity.UserProperty;
 import com.property.entity.UserPropertyDTO;
 import com.property.service.impl.GetPropertyServiceImpl;
-import com.gl.poc.couchbase.dto.AdminDto;
-import com.gl.poc.couchbase.dto.BrokerDto;
+
 
 @Controller
 @RequestMapping("/api")

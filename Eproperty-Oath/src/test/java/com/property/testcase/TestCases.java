@@ -1,14 +1,17 @@
 package com.property.testcase;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-import com.gl.poc.couchbase.dto.AdminDto;
-import com.gl.poc.couchbase.dto.BrokerDto;
+
 import com.google.gson.Gson;
 import com.property.dao.impl.GetPropertyDataDaoImpl;
+import com.property.entity.AdminDto;
+import com.property.entity.BrokerDto;
 
 public class TestCases {
 	GetPropertyDataDaoImpl getPropertyService = new GetPropertyDataDaoImpl();
+	@Ignore
 	@Test
 	public void authenticateUser() throws Exception {
 		
@@ -27,12 +30,13 @@ public class TestCases {
 	@Test
 	
 	public void testCreateB() throws Exception{
-		BrokerDto brokerDto = new BrokerDto();
+		/*BrokerDto brokerDto = new BrokerDto();
 		brokerDto.setActiveStatus(true);
 		brokerDto.setAge(25);
 		brokerDto.setBranchId("Sec_62");
 		brokerDto.setBrokerId("Deep21");
-		brokerDto.setChannelId("TV_12");
-		getPropertyService.createBroker(brokerDto);
+		brokerDto.setChannelId("TV_12");*/
+		getPropertyService.viewBrokers();
+		/*getPropertyService.createBroker(brokerDto);*/
 	}
 }

@@ -1,70 +1,92 @@
+/**
+ * 
+ */
 package com.property.entity;
+
 import java.io.Serializable;
 
-public class AdminDto
-implements Serializable {
-    private static final long serialVersionUID = -402208782495210053L;
-    private String firstName;
-    private String lastName;
-    private String adminId;
-    private String type;
-    private int age;
-    private long createdTym;
-    private boolean activeStatus;
+/**
+ * @author DevD
+ *
+ */
+public class AdminDto implements Serializable {
 
-    public String getFirstName() {
-        return this.firstName;
-    }
+	/**
+	 * 
+	 */
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	private static final long serialVersionUID = -402208782495210053L;
+	private String fullName;
+	private String userName;
+	private String type;
+	private int age;
+	private long createdTym;
+	private String enKey;
+	private boolean activeStatus;
+	private String role;
 
-    public String getLastName() {
-        return this.lastName;
-    }
+	public int getAge() {
+		return age;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public void setAge(int age) {
+		this.age = age;
+	}
 
-    public String getAdminId() {
-        return this.adminId;
-    }
+	public long getCreatedTym() {
+		return createdTym;
+	}
 
-    public void setAdminId(String adminId) {
-        this.adminId = adminId;
-    }
+	public void setCreatedTym(long createdTym) {
+		this.createdTym = createdTym;
+	}
 
-    public int getAge() {
-        return this.age;
-    }
+	public String getType() {
+		return type;
+	}
 
-    public void setAge(int age) {
-        this.age = age;
-    }
+	public void setType(String type) {
+		this.type = type;
+	}
 
-    public long getCreatedTym() {
-        return this.createdTym;
-    }
+	public boolean isActiveStatus() {
+		return activeStatus;
+	}
 
-    public void setCreatedTym(long createdTym) {
-        this.createdTym = createdTym;
-    }
+	public void setActiveStatus(boolean activeStatus) {
+		this.activeStatus = activeStatus;
+	}
 
-    public String getType() {
-        return this.type;
-    }
+	public String getFullName() {
+		return fullName;
+	}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
 
-    public boolean isActiveStatus() {
-        return this.activeStatus;
-    }
+	public String getUserName() {
+		return userName;
+	}
 
-    public void setActiveStatus(boolean activeStatus) {
-        this.activeStatus = activeStatus;
-    }
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getEnKey() {
+		return enKey;
+	}
+
+	public void setEnKey(String enKey) {
+		this.enKey = enKey;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
 }

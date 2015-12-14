@@ -22,19 +22,21 @@ import com.couchbase.client.protocol.views.Stale;
 import com.couchbase.client.protocol.views.View;
 import com.couchbase.client.protocol.views.ViewResponse;
 import com.couchbase.client.protocol.views.ViewRow;
-import com.gl.poc.couchbase.dto.AdminDto;
-import com.gl.poc.couchbase.dto.BrokerDto;
 import com.google.gson.Gson;
 import com.property.constants.EntityTypeConstants;
 import com.property.constants.ViewConstants;
 import com.property.dao.GetPropertyDataDao;
+import com.property.entity.AdminDto;
+import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.SearchPropertyDTO;
+import com.property.entity.StatusDto;
 import com.property.entity.UserDTO;
 import com.property.entity.UserPropertyDTO;
 import com.property.util.CouchbaseConnectionManager;
 import com.property.util.JsonUtil;
+import com.property.util.Status;
 
 public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 	private static final Logger logger = Logger.getLogger(GetPropertyDataDaoImpl.class);
@@ -73,6 +75,7 @@ public UserDTO loadUserByUserName(String userName) throws Exception {
 
 	public void sendUserProperty(UserPropertyDTO userRequestDto) throws Exception {
 		logger.info("Entered into sendUserProperty() "+userRequestDto.getPropertyForEx()+userRequestDto.getBhk());
+		StatusDto statusDto=new StatusDto();
 		try {
 		String key="";
 		
@@ -99,12 +102,33 @@ public UserDTO loadUserByUserName(String userName) throws Exception {
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		couchbaseClient.add(userRequestDto.getId(), userRequestDoc);
+		statusDto.setDocumentId(userRequestDto.getId());
+		statusDto.setStatus(Status.NONE.toString());
+		statusDto.setReason("Not Approved Yet");
+		updatePropertyStatus(statusDto);
 	} catch(Exception ex) {
 		logger.error("Exception has occured "+ ex);
 		throw ex;
 	} 
 
 	}
+	
+	public boolean updatePropertyStatus(StatusDto status) throws Exception {
+		logger.info("update status for docId " +status.getDocumentId()+"to "+status.getStatus());
+		try {
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
+		String statusDoc = JsonUtil.marshal(status);
+		couchbaseClient.add(status.getDocumentId()+"_Status", statusDoc);
+		} catch (Exception ex) {
+			logger.error(ex);
+			throw ex;
+		}
+		return true;
+		
+	}
+	
+	
 public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Exception {
 		
 		//brokerRequestDto.setId(UUID.randomUUID().toString());
@@ -294,7 +318,7 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 	@Override
 	public List<BrokerDto> viewBrokers() throws Exception {
 		 List<BrokerDto> brokerDtos =null;
-		 logger.info("************viewBrokers******************");
+		 System.out.println("************viewBrokers******************");
 		try {
 			CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 					    .getConnection();
@@ -312,12 +336,11 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 					  Gson gson = new Gson();
 					  for (ViewRow row : response) {
 						  
-						  logger.info("************viewBrokers*******Json**"+gson.fromJson((String) row.getDocument(), BrokerDto.class).toString());
+						  System.out.println("************viewBrokers*******Json**"+gson.fromJson((String) row.getDocument(), BrokerDto.class).toString());
 						  brokerDtos.add(gson.fromJson((String) row.getDocument(), BrokerDto.class))	;		
 						  }
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e);
 			throw e;
 		}
 		return brokerDtos;
@@ -380,8 +403,6 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 					  Query query = new Query();
 					  query.setIncludeDocs(true);
 					  query.setStale(Stale.FALSE);
-					 // activeStatus="true";
-				//String type="Broker";
 					ComplexKey startKey = ComplexKey.of(key.trim(), searchRequestDto.getMinPrice());
 					ComplexKey endKey = ComplexKey.of(key.trim(),  searchRequestDto.getMaxPrice());
 					query.setRange(startKey, endKey);

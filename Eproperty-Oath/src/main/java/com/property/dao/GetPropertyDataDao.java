@@ -2,11 +2,14 @@ package com.property.dao;
 
 import java.util.List;
 
-import com.gl.poc.couchbase.dto.AdminDto;
-import com.gl.poc.couchbase.dto.BrokerDto;
+
+import com.property.entity.AdminDto;
+import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.SearchPropertyDTO;
+import com.property.entity.StatusDto;
+import com.property.entity.UpdateStatus;
 import com.property.entity.UserDTO;
 import com.property.entity.UserPropertyDTO;
 
@@ -40,4 +43,6 @@ public interface GetPropertyDataDao {
 	public List<UserPropertyDTO> viewUserProperties() throws Exception;
 
 	public boolean updateUser(UserPropertyDTO propertyDTO) throws Exception;
+
+	public boolean updatePropertyStatus(StatusDto statusDto) throws Exception;
 }

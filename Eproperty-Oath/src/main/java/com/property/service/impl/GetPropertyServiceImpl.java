@@ -14,14 +14,16 @@ import org.springframework.web.client.RestTemplate;
 import com.epropertyui.model.BrokerRequest;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.Token;
-import com.gl.poc.couchbase.dto.AdminDto;
-import com.gl.poc.couchbase.dto.BrokerDto;
 import com.property.dao.GetPropertyDataDao;
+import com.property.entity.AdminDto;
+import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.Response;
 import com.property.entity.SearchProperty;
 import com.property.entity.SearchPropertyDTO;
+import com.property.entity.StatusDto;
+import com.property.entity.UpdateStatus;
 import com.property.entity.UserDTO;
 import com.property.entity.UserProperty;
 import com.property.entity.UserPropertyDTO;
@@ -270,6 +272,7 @@ public class GetPropertyServiceImpl implements BaseService {
 	}
 
 	public List<BrokerDto> viewBrokers() throws Exception {
+		logger.info("+++++++PropertyServiceApi.viewBrokers");
 		return getPropertyDao.viewBrokers();
 	}
 
@@ -308,6 +311,13 @@ public class GetPropertyServiceImpl implements BaseService {
 		return searchRequestDTO;
 
 	}
+	
+	private StatusDto populateStatusDto(
+			UpdateStatus updateStatus, StatusDto statusDto) {
+		BeanUtil.copyProperties(updateStatus, statusDto);
+		return statusDto;
+
+	}
 
 	public boolean updateBroker(BrokerDto brokerDto) throws Exception {
 		return getPropertyDao.updateBroker(brokerDto);
@@ -324,5 +334,14 @@ public class GetPropertyServiceImpl implements BaseService {
 	public List<UserPropertyDTO> viewUserProperties() throws Exception {
 		
 		return getPropertyDao.viewUserProperties();
+	}
+	@Override
+	public boolean updatePropertyStatus(UpdateStatus updateStatus) throws Exception {
+		logger.info("Service "+updateStatus.getDocumentId()+updateStatus.getStatus()+updateStatus.getReason());
+		StatusDto statusDto=new StatusDto();
+		populateStatusDto(updateStatus, statusDto);
+		logger.info("Service "+statusDto.getDocumentId()+statusDto.getStatus()+statusDto.getReason());
+		
+		return getPropertyDao.updatePropertyStatus(statusDto);
 	}
 }

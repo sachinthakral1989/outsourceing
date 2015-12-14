@@ -32,11 +32,7 @@
 			<artifactId>java-client</artifactId>
 			<version>2.0.3</version>
 		</dependency>
-		<dependency>
-			<groupId>com.gl.poc.couchbase</groupId>
-			<artifactId>EPropertyDTOs</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
