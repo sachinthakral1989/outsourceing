@@ -74,9 +74,9 @@ footer {
                 </a>
             </div>
             <div class="col-md-5">
-                <h3>Mast Ghar</h3>
+                <h3>House no. ${listValue.houseNumber}</h3>
                 <p>
-                <li>House no. ${listValue.houseNumber}</li>
+<%--                 <li>House no. ${listValue.houseNumber}</li> --%>
                 <li>Address ${listValue.address}</li>
                 
         <li>Price   ${listValue.price}</li>

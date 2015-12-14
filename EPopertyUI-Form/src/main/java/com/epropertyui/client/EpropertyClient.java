@@ -22,6 +22,7 @@ import com.epropertyui.model.Response;
 import com.epropertyui.model.Role;
 import com.epropertyui.model.SearchProperty;
 import com.epropertyui.model.Token;
+import com.epropertyui.model.UpdateStatus;
 import com.epropertyui.model.User;
 import com.epropertyui.model.UserProperty;
 import com.epropertyui.util.EncryptionUtil;
@@ -163,8 +164,6 @@ public class EpropertyClient {
 		
 	}
 
-
-
 	public List<UserProperty> searchProperty(SearchProperty searchProperty) throws Exception {
 		logger.info("Inside searchProperty ");
 		logger.info(searchProperty.getPropertySearchFor()+" "+searchProperty.getPropertySearchType()+" "+searchProperty.getBhk()+" "+searchProperty.getLocality()+" "+searchProperty.getMinPrice()+" "+searchProperty.getMaxPrice());
@@ -175,12 +174,12 @@ public class EpropertyClient {
 			//String response = restTemplate.postForObject(url, searchProperty, String.class);
 			ResponseEntity<UserProperty[]> responseEntity = restTemplate.postForEntity(url, searchProperty, UserProperty[].class);
             userPropertyArr = responseEntity.getBody();
+            logger.info("UserProperty Length "+userPropertyArr.length);
 		} catch (Exception ex) {
 			logger.info("Exception has occured "+ex);
 			String errorMsg="Rest Client Exception has occured";
 			throw new Exception(errorMsg);
 		}
-		logger.info(userPropertyArr[0].getPropertyForEx()+" "+userPropertyArr[0].getPropertyTypeEx()+" "+userPropertyArr[0].getHouseNumber()+" "+userPropertyArr[1].getHouseNumber());
 		return Arrays.asList(userPropertyArr);
 	}
 	
@@ -240,7 +239,7 @@ public class EpropertyClient {
 		String accessToken = (String) session.getAttribute("accessToken");
 		String url = propertyServiceUrl + "secure/" + "viewUserProperties"
 				+ "?access_token=" + accessToken;
-		System.out.println("Url with token is " + url);
+		logger.info("Url with token is " + url);
 		/*String UserPropertyJsons= restTemplate.getForObject(url, String.class);*/
 		ResponseEntity<UserProperty[]> responseEntity = restTemplate.getForEntity(url, UserProperty[].class);
 		userProperty = responseEntity.getBody();
@@ -259,7 +258,7 @@ public class EpropertyClient {
 		String accessToken = (String) session.getAttribute("accessToken");
 		String url = propertyServiceUrl + "secure/" + "updateUserProperty"
 				+ "?access_token=" + accessToken;
-		System.out.println("Url with token is " + url);
+		logger.info("Url with token is " + url);
 		
 		try {
 			restTemplate.postForEntity(url, userProperty, UserProperty.class);
@@ -269,6 +268,26 @@ public class EpropertyClient {
 			e.printStackTrace();
 		}
 		 return false;
+	}
+	
+	public boolean updatePropertyStatus(UpdateStatus updateStatus) {
+		
+		logger.info(updateStatus.getDocumentId()+updateStatus.getStatus()+updateStatus.getReason());
+		String accessToken = (String) session.getAttribute("accessToken");
+		String url = propertyServiceUrl + "secure/" + "updatePropertyStatus"
+				+ "?access_token=" + accessToken;
+		
+		logger.info("Url with token is " + url);
+		
+		try {
+			restTemplate.postForEntity(url, updateStatus, UpdateStatus.class);
+			return true;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 return false;
+		
 	}
 	
 	

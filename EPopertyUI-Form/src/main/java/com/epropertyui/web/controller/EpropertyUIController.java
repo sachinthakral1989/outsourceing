@@ -39,6 +39,7 @@ import com.epropertyui.util.CloudinayUtil;
 import com.epropertyui.util.EmailUtility;
 import com.epropertyui.util.EncryptionUtil;
 import com.epropertyui.util.PropertiesReader;
+import com.epropertyui.util.Status;
 
 @Controller
 public class EpropertyUIController {
@@ -409,5 +410,43 @@ public class EpropertyUIController {
 			}
 
 		}
+		
+		@RequestMapping(value="/approvePost.html/{id}", method=RequestMethod.GET, produces="text/plain")
+		public @ResponseBody String approvePost(@PathVariable("id")String id) {
+			logger.info("Inside Approve post");
+			logger.info("Id to Approve Post is "+id);
+			try {
+				ePropertyUIService.updatePropertyStatus(id,Status.APPROVED);
+				/*userProperty.setApprovedStatus("Y");
+				ePropertyUIService.sendUserProperty(userProperty);*/
+				//model.setViewName("showUserResult");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return "Approved";
+			
+		}
+		
+		@RequestMapping(value="/rejectPost.html/{id}", method=RequestMethod.GET, produces="text/plain")
+		public @ResponseBody String rejectPost(@PathVariable("id")String id) {
+			logger.info("Inside Approve post");
+			logger.info("Id to Approve Post is "+id);
+			try {
+				ePropertyUIService.updatePropertyStatus(id,Status.REJECTED);
+				/*userProperty.setApprovedStatus("Y");
+				ePropertyUIService.sendUserProperty(userProperty);*/
+				//model.setViewName("showUserResult");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return "Rejected";
+			
+		}
+	
+		
+		
+		
 
 }

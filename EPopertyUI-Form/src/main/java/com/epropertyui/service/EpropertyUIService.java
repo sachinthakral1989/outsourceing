@@ -13,8 +13,10 @@ import com.epropertyui.model.BrokerDto;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.SearchProperty;
 import com.epropertyui.model.Token;
+import com.epropertyui.model.UpdateStatus;
 import com.epropertyui.model.User;
 import com.epropertyui.model.UserProperty;
+import com.epropertyui.util.Status;
 
  
 @Service
@@ -89,4 +91,13 @@ public class EpropertyUIService implements UserDetailsService {
 		// TODO Auto-generated method stub
 		return epropertyClient.viewUsersProperties();
 	}
+	
+    public boolean updatePropertyStatus(String id,Status status) throws Exception {
+		logger.info("Inside updatePropertyStatus "+ id);
+		UpdateStatus updateStatus =new UpdateStatus();
+		updateStatus.setDocumentId(id);
+		updateStatus.setStatus(status.toString());
+		//updateStatus.setReason("REJECTED By Admin");
+        return epropertyClient.updatePropertyStatus(updateStatus);
+    }
 }
