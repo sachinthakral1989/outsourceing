@@ -11,5 +11,6 @@ public class ViewConstants {
 	public static final String PROPERTY_FILTER_USER_BY_ID = "filterUserById";
 	public static final String PROPERTY_FILTER_SEARCH_VIEW = "filterPropertyBySearch";
 	public static final String PROPERTY_FILTER_BY_STATUS = "filterPropertyByStatus";
-
+	public static final String PROPERTY_FILTER_BY_USERNAME = "filterPropertyByUserName";
+	
 }

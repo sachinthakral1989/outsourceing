@@ -25,84 +25,90 @@ import com.property.service.impl.GetPropertyServiceImpl;
 public class PropertyServiceApi {
 	@Autowired
 	GetPropertyServiceImpl getPropertyService;
-	
+
 	private static final Logger logger = Logger.getLogger(PropertyServiceApi.class);
-	
-	
+
+
 	@RequestMapping(value ="/updatePropertyStatus", method= RequestMethod.POST, produces="application/json", consumes="application/json")
 	public @ResponseBody boolean updatePropertyStatus(@RequestBody UpdateStatus updateStatus) throws Exception {
 		logger.info(updateStatus.getDocumentId()+updateStatus.getStatus()+updateStatus.getReason());
 		return getPropertyService.updatePropertyStatus(updateStatus);
-		
+
 	}
 
 	@RequestMapping(value = "/sendBrokerProperty", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public @ResponseBody Response sendBrokerProperty(@RequestBody BrokerRequest request) throws Exception {
-		
+
 		System.out.println("Inside Broker");
 		getPropertyService.sendBrokerProperty(request);
-			
-			return null;
-		
-		}
-	
+
+		return null;
+
+	}
+
 	@RequestMapping(value = "/sendUserProperty", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
 	public @ResponseBody Response sendUserProperty(@RequestBody UserProperty userProperty) throws Exception {
 
 		System.out.println("Inside userPrperty Controller");
-		
+
 		getPropertyService.sendUserProperty(userProperty);
-			return null;
-		
-		}
-	
+		return null;
+
+	}
+
 	/*@RequestMapping(value ="/viewBrokerDetails",method = RequestMethod.POST,produces = "application/json", consumes = "application/json")
 	public @ResponseBody boolean viewBrokerDetails (@RequestBody Request request) throws Exception{
 		return false;
-		
+
 	}*/
 
 	@RequestMapping(value ="/createbroker", method= RequestMethod.POST, produces="application/json", consumes="application/json")
-		public @ResponseBody boolean createBroker(@RequestBody BrokerDto brokerDto) throws Exception{
-			
-			return getPropertyService.createBroker(brokerDto);
-		
+	public @ResponseBody boolean createBroker(@RequestBody BrokerDto brokerDto) throws Exception{
+
+		return getPropertyService.createBroker(brokerDto);
+
 	}
 
 	@RequestMapping(value = "/viewbrokers", method = RequestMethod.GET, produces = "application/json")
-		public @ResponseBody List<BrokerDto> viewBrokers() throws Exception {
-		
+	public @ResponseBody List<BrokerDto> viewBrokers() throws Exception {
+
 		logger.info("+++++++PropertyServiceApi.viewBrokers");
 
-			return getPropertyService.viewBrokers();
-		}
+		return getPropertyService.viewBrokers();
+	}
 
 	@RequestMapping(value = "/viewbroker/{brokerId}", method = RequestMethod.GET, produces = "application/json")
-		public @ResponseBody BrokerDto viewBroker(@PathVariable String brokerId)
-				throws Exception {
+	public @ResponseBody BrokerDto viewBroker(@PathVariable String brokerId)
+			throws Exception {
 
-			return getPropertyService.viewBroker(brokerId.trim());
+		return getPropertyService.viewBroker(brokerId.trim());
 
 	}
-@RequestMapping(value ="/updateBroker", method= RequestMethod.POST, produces="application/json", consumes="application/json")
-public @ResponseBody boolean updateBroker(@RequestBody BrokerDto brokerDto) throws Exception{
 	
-	return getPropertyService.updateBroker(brokerDto);
+	@RequestMapping(value ="/updateBroker", method= RequestMethod.POST, produces="application/json", consumes="application/json")
+	public @ResponseBody boolean updateBroker(@RequestBody BrokerDto brokerDto) throws Exception{
 
-}
+		return getPropertyService.updateBroker(brokerDto);
 
-@RequestMapping(value ="/updateUserProperty", method= RequestMethod.POST, produces="application/json", consumes="application/json")
-public @ResponseBody boolean updateUserProperty(@RequestBody UserPropertyDTO userPropertyDTO) throws Exception{
-	
-	return getPropertyService.updateUserProperty(userPropertyDTO);
+	}
 
-}
+	@RequestMapping(value ="/updateUserProperty", method= RequestMethod.POST, produces="application/json", consumes="application/json")
+	public @ResponseBody boolean updateUserProperty(@RequestBody UserPropertyDTO userPropertyDTO) throws Exception{
 
-@RequestMapping(value = "/viewUserProperties", method = RequestMethod.GET, produces = "application/json")
-public @ResponseBody List<UserPropertyDTO> viewUsers() throws Exception {
+		return getPropertyService.updateUserProperty(userPropertyDTO);
 
-	return getPropertyService.viewUserProperties();
-}
+	}
 
+	@RequestMapping(value = "/viewUserProperties", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody List<UserPropertyDTO> viewUsers() throws Exception {
+
+		return getPropertyService.viewUserProperties();
+	}
+    
+	@RequestMapping(value = "/viewPropertyByUser/{username}", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody List<UserPropertyDTO> viewPropertyByUser(@PathVariable String username) throws Exception {
+
+		return getPropertyService.propertyByUser(username.trim());
+	}
 
 }

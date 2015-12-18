@@ -15,6 +15,7 @@ import com.epropertyui.model.BrokerRequest;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.Token;
 import com.property.dao.GetPropertyDataDao;
+import com.property.dao.impl.GetPropertyDataDaoImpl;
 import com.property.entity.AdminDto;
 import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
@@ -35,23 +36,27 @@ import com.property.util.Status;
 
 public class GetPropertyServiceImpl implements BaseService {
 
-	private final String retailServiceUrl;
+	private String retailServiceUrl;
 	private final RestTemplate restTemplate;
 
 	private static final Logger logger = Logger
 			.getLogger(GetPropertyServiceImpl.class);
 
-	@Autowired
-	GetPropertyDataDao getPropertyDao;
+	GetPropertyDataDao getPropertyDao = new GetPropertyDataDaoImpl();
 
 	public enum Mode {
 		ENCRYPT_MODE, DECRYPT_MODE
 	}
 
-	public GetPropertyServiceImpl() throws Exception {
+	public GetPropertyServiceImpl() {
 
 		restTemplate = new RestTemplate();
-		retailServiceUrl = ServiceUrl.getInstance().getRetailServiceUrl();
+		try {
+			retailServiceUrl = ServiceUrl.getInstance().getRetailServiceUrl();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public Response login(final String username, final Response response)
@@ -106,7 +111,7 @@ public class GetPropertyServiceImpl implements BaseService {
 
 	public void sendUserProperty(UserProperty userProperty) throws Exception {
 		logger.info("Entered into sendUserProperty "
-				+ userProperty.getPropertyForEx());
+				+ userProperty.getPropertyForEx()+" by user "+userProperty.getUserName());
 		logger.info("Image Public Id "+ userProperty.getImagePublicId());
 		userProperty.setType("UserProperty");
 		UserPropertyDTO userPropertyDto = new UserPropertyDTO();
@@ -166,7 +171,7 @@ public class GetPropertyServiceImpl implements BaseService {
 		Future<String> asyncResult = AsyncExecutor.queueAndExecute(asyncTask);
 		asyncResult.get();
 	}
-	
+
 	public boolean createAdmin(AdminDto adminDto) throws Exception {
 		try {
 			return getPropertyDao.createAdmin(adminDto);
@@ -179,7 +184,7 @@ public class GetPropertyServiceImpl implements BaseService {
 		// TODO Auto-generated method stub
 		try {
 			brokerDto
-					.setPwd(enDeCryption(brokerDto.getPwd(), Mode.ENCRYPT_MODE));
+			.setPwd(enDeCryption(brokerDto.getPwd(), Mode.ENCRYPT_MODE));
 			return getPropertyDao.createBroker(brokerDto);
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block
@@ -188,37 +193,71 @@ public class GetPropertyServiceImpl implements BaseService {
 		}
 	}
 
+	@Override
 	public List<UserProperty> searchProperty(SearchProperty searchRequest)
 			throws Exception {
+		String key="";
 		List<UserProperty> userPropertyList = new ArrayList<UserProperty>();
+		List<UserPropertyDTO> userPropertyDtoList = new ArrayList<UserPropertyDTO>();
 		logger.info("Entered into searchProperty " + searchRequest);
 		SearchPropertyDTO searchRequestDto = new SearchPropertyDTO();
 		populateSearchRequestDto(searchRequest, searchRequestDto);
 		try {
-			List<UserPropertyDTO> userPropertyDtoList = getPropertyDao
-					.searchProperty(searchRequestDto);
-			for (UserPropertyDTO userPropertyDto : userPropertyDtoList) {
-				UserProperty userProperty = new UserProperty();
-				userProperty.setId(userPropertyDto.getId());
-				userProperty.setPropertyForEx(userPropertyDto
-						.getPropertyForEx());
-				userProperty.setPropertyTypeEx(userPropertyDto
-						.getPropertyTypeEx());
-				userProperty.setBhk(userPropertyDto.getBhk());
-				userProperty.setLocality(userPropertyDto.getLocality());
-				userProperty.setContractPeriod(userPropertyDto
-						.getContractPeriod());
-				userProperty.setHouseNumber(userPropertyDto.getHouseNumber());
-				userProperty.setSecurityAmount(userPropertyDto
-						.getSecurityAmount());
-				userProperty.setAddress(userPropertyDto.getAddress());
-				userProperty.setPrice(userPropertyDto.getPrice());
-				userProperty.setPropertyDescription(userPropertyDto
-						.getPropertyDescription());
-				userProperty.setType(userPropertyDto.getType());
-				userProperty.setImagePublicId(userPropertyDto
-						.getImagePublicId());
-				userPropertyList.add(userProperty);
+			if(searchRequestDto.getPropertySearchFor().equals("Sale")) {
+				logger.info("Enter into Property for "+ searchRequestDto.getPropertySearchFor());
+				if(searchRequestDto.getPropertySearchType().equals("House")) {
+					key=key+searchRequestDto.getLocality()+"_"+searchRequestDto.getPropertySearchFor()+"_"+searchRequestDto.getPropertySearchType()+"_"+searchRequestDto.getBhk();
+				} else if(searchRequestDto.getPropertySearchType().equals("Land")) {
+					key=key+searchRequestDto.getLocality()+"_"+searchRequestDto.getPropertySearchFor()+"_"+searchRequestDto.getPropertySearchType();
+				}
+			} else  {
+				logger.info("Enter into Property for "+ searchRequestDto.getPropertySearchFor());
+				if(searchRequestDto.getPropertySearchType().equals("House")) {
+					key=key+searchRequestDto.getLocality()+"_"+searchRequestDto.getPropertySearchFor()+"_"+searchRequestDto.getPropertySearchType()+"_"+searchRequestDto.getBhk();
+				} 
+			}
+			List<String> propertyDocList= getPropertyDao.getUserPropertyDocByStaus(Status.APPROVED);
+			System.out.println("Approved Documents List Size: "+propertyDocList.size());
+			for(String propertyDocId : propertyDocList) {
+				String propertyDocIdTemp = propertyDocId.substring(0, propertyDocId.lastIndexOf('_'));
+				//System.out.println(propertyDocIdTemp);
+				String propertyPrice = propertyDocIdTemp.substring(propertyDocIdTemp.lastIndexOf('_')+1);
+				double price = Double.parseDouble(propertyPrice);
+				//System.out.println("Property Price: "+price);
+				UserPropertyDTO userPropertyDto = null;
+				if(((propertyDocIdTemp.substring(0, propertyDocIdTemp.lastIndexOf('_'))).equalsIgnoreCase(key)) && (price>=searchRequest.getMinPrice() && price<=searchRequest.getMaxPrice())){
+					logger.info("Document Id being searched: "+propertyDocId);
+					userPropertyDto = getPropertyDao.viewUserPropertyByDocId(propertyDocId);
+					if(userPropertyDto!=null){
+						userPropertyDtoList.add(userPropertyDto);
+					}
+				}
+			}
+			if(userPropertyDtoList.size()!=0){
+				logger.info("Inside if documents found");
+				for (UserPropertyDTO userPropertyDto : userPropertyDtoList) {
+					UserProperty userProperty = new UserProperty();
+					userProperty.setId(userPropertyDto.getId());
+					userProperty.setPropertyForEx(userPropertyDto
+							.getPropertyForEx());
+					userProperty.setPropertyTypeEx(userPropertyDto
+							.getPropertyTypeEx());
+					userProperty.setBhk(userPropertyDto.getBhk());
+					userProperty.setLocality(userPropertyDto.getLocality());
+					userProperty.setContractPeriod(userPropertyDto
+							.getContractPeriod());
+					userProperty.setHouseNumber(userPropertyDto.getHouseNumber());
+					userProperty.setSecurityAmount(userPropertyDto
+							.getSecurityAmount());
+					userProperty.setAddress(userPropertyDto.getAddress());
+					userProperty.setPrice(userPropertyDto.getPrice());
+					userProperty.setPropertyDescription(userPropertyDto
+							.getPropertyDescription());
+					userProperty.setType(userPropertyDto.getType());
+					userProperty.setImagePublicId(userPropertyDto
+							.getImagePublicId());
+					userPropertyList.add(userProperty);
+				}
 			}
 		} catch (Exception e) {
 			throw e;
@@ -312,7 +351,7 @@ public class GetPropertyServiceImpl implements BaseService {
 		return searchRequestDTO;
 
 	}
-	
+
 	private StatusDto populateStatusDto(
 			UpdateStatus updateStatus, StatusDto statusDto) {
 		BeanUtil.copyProperties(updateStatus, statusDto);
@@ -327,28 +366,35 @@ public class GetPropertyServiceImpl implements BaseService {
 
 	@Override
 	public boolean updateUserProperty(UserPropertyDTO propertyDTO) throws Exception {
-	
+
 		return getPropertyDao.updateUser(propertyDTO);
 	}
 
 	@Override
 	public List<UserPropertyDTO> viewUserProperties() throws Exception {
-		
+
 		List<UserPropertyDTO> userPropertyDtoList=new ArrayList<UserPropertyDTO>();
 		List<String> propertyDocList= getPropertyDao.getUserPropertyDocByStaus(Status.NONE);
 		for(String propertyDocId :propertyDocList) {
 			UserPropertyDTO userPropertyDto= getPropertyDao.viewUserPropertyByDocId(propertyDocId);
-			 userPropertyDtoList.add(userPropertyDto);
+			userPropertyDtoList.add(userPropertyDto);
 		}
 		return userPropertyDtoList;
 	}
+	
 	@Override
 	public boolean updatePropertyStatus(UpdateStatus updateStatus) throws Exception {
 		logger.info("Service "+updateStatus.getDocumentId()+updateStatus.getStatus()+updateStatus.getReason());
 		StatusDto statusDto=new StatusDto();
 		populateStatusDto(updateStatus, statusDto);
 		logger.info("Service "+statusDto.getDocumentId()+statusDto.getStatus()+statusDto.getReason());
-		
+
 		return getPropertyDao.updatePropertyStatus(statusDto);
+	}
+
+	@Override
+	public List<UserPropertyDTO> propertyByUser(String userName) {
+		logger.info("PropertyByUser "+userName);
+		return getPropertyDao.propertryByUser(userName);
 	}
 }

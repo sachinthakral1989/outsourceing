@@ -11,6 +11,7 @@ public class UserPropertyDTO implements Serializable  {
 	private static final long serialVersionUID = 1L;
 
 	private String id;
+	private String userName;
 	private String type;
 	private String propertyForEx;
 	private String propertyTypeEx;
@@ -30,6 +31,12 @@ public class UserPropertyDTO implements Serializable  {
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	public String getLocality() {
 		return locality;

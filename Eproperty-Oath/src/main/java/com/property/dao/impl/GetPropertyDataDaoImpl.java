@@ -74,27 +74,26 @@ public UserDTO loadUserByUserName(String userName) throws Exception {
 	}
 
 	public void sendUserProperty(UserPropertyDTO userRequestDto) throws Exception {
-		logger.info("Entered into sendUserProperty() "+userRequestDto.getPropertyForEx()+userRequestDto.getBhk());
-		StatusDto statusDto=new StatusDto();
+		logger.info("Entered into sendUserProperty() "+userRequestDto.getPropertyForEx()+userRequestDto.getBhk()+" by user "+userRequestDto.getUserName());
+		StatusDto statusDto = new StatusDto();
 		try {
 		String key="";
 		
 		if(userRequestDto.getPropertyForEx().equals("Sale")) {
 			logger.info("Enter into Property for "+ userRequestDto.getPropertyForEx());
 			if(userRequestDto.getPropertyTypeEx().equals("House")) {
-				key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getBhk()+"_"+userRequestDto.getHouseNumber();
+				key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getBhk()+"_"+userRequestDto.getPrice()+"_"+userRequestDto.getHouseNumber();
 			} else if(userRequestDto.getPropertyTypeEx().equals("Land")) {
-				key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getHouseNumber();
+				key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getPrice()+"_"+userRequestDto.getHouseNumber();
 			}
 		} else  {
 			logger.info("Enter into Property for "+ userRequestDto.getPropertyForEx());
 				if(userRequestDto.getPropertyTypeEx().equals("House")) {
-					key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getBhk()+"_"+userRequestDto.getHouseNumber();
+					key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getBhk()+"_"+userRequestDto.getPrice()+"_"+userRequestDto.getHouseNumber();
 				} else if(userRequestDto.getPropertyTypeEx().equals("Land")) {
-					key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getHouseNumber();
+					key=key+userRequestDto.getLocality()+"_"+userRequestDto.getPropertyForEx()+"_"+userRequestDto.getPropertyTypeEx()+"_"+userRequestDto.getPrice()+"_"+userRequestDto.getHouseNumber();
 				}
 			}
-		
 		
 		userRequestDto.setId(key);
 		logger.info("Send User Property Key is"+key);
@@ -374,11 +373,11 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 		return brokerDto;
 	}
 
-	@Override
-	public List<UserPropertyDTO> searchProperty(SearchPropertyDTO searchRequestDto)throws Exception{
+	/*@Override
+	public UserPropertyDTO searchProperty(SearchPropertyDTO searchRequestDto, String key)throws Exception{
 		
-        String key="";
-        List<UserPropertyDTO> userPropertyDtos =null;
+        //String key="";
+        UserPropertyDTO userPropertyDto = null;
 		try {
 		if(searchRequestDto.getPropertySearchFor().equals("Sale")) {
 			logger.info("Enter into Property for "+ searchRequestDto.getPropertySearchFor());
@@ -393,7 +392,7 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 					key=key+searchRequestDto.getLocality()+"_"+searchRequestDto.getPropertySearchFor()+"_"+searchRequestDto.getPropertySearchType()+"_"+searchRequestDto.getBhk();
 				} 
 			}
-		System.out.println("Key : "+key );
+			logger.info("Inside searchProperty() "+key);
 			CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 					    .getConnection();
 					  View view = couchbaseClient.getView(
@@ -406,25 +405,19 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 					ComplexKey endKey = ComplexKey.of(key.trim(),  searchRequestDto.getMaxPrice());
 					query.setRange(startKey, endKey);
 					  //query.setKey(ComplexKey.of(key.trim()));
-					ViewResponse result = couchbaseClient.query(view, query);
-					Iterator<ViewRow> iter = result.iterator();
+					ViewResponse response = couchbaseClient.query(view, query);
 					Gson gson = new Gson();
-					userPropertyDtos = new ArrayList<>();
-					while(iter.hasNext()) {
-					    ViewRow row = iter.next();   
-					    userPropertyDtos.add(gson.fromJson((String) row.getDocument(), UserPropertyDTO.class));
-					    /*System.out.println(row.getId()); // ID of the document
-					    System.out.println(row.getKey()); // Key of the view row
-					    System.out.println(row.getValue()); // Value of the view row
-					    System.out.println(row.getDocument()); // Full document if included
-*/					    
-					    }
+					for (ViewRow row : response) {
+						userPropertyDto = gson.fromJson((String) row.getDocument(),
+								UserPropertyDTO.class);
+						System.out.println(userPropertyDto.toString());
+					}
 		} catch (Exception e) {
 			logger.error("Exception has occured "+e);
 			throw e;
 		}
-		return userPropertyDtos;
-	}
+		return userPropertyDto;
+	}*/
 	@Override
 	public boolean updateBroker(BrokerDto brokerDto) throws Exception {
 		try{
@@ -438,7 +431,6 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 	public UserPropertyDTO viewUserPropertyByDocId(String docId) throws Exception {
 		
 		logger.info("*** Inside viewUserProperties ******");
-		List<UserPropertyDTO> userPropertyDTOs = null;
 		UserPropertyDTO userPropertyDTO = null;
 		try {
 			CouchbaseClient couchbaseClient = CouchbaseConnectionManager
@@ -448,14 +440,9 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 					ViewConstants.PROPERTY_FILTER_USERS_PROPERTY_VIEW);
 			Query query = new Query();
 			query.setIncludeDocs(true);
-			// query.setStale(Stale.FALSE);
-			// activeStatus="true";
-			String type="UserProperty";
-			 query.setKey(ComplexKey.of(docId.trim()));
+			query.setKey(ComplexKey.of(docId.trim()));
 			ViewResponse response = couchbaseClient.query(view, query);
 			Gson gson = new Gson();
-			userPropertyDTOs = new ArrayList<UserPropertyDTO>();
-			
 			for (ViewRow row : response) {
 				userPropertyDTO = gson.fromJson((String) row.getDocument(),
 						UserPropertyDTO.class);
@@ -477,7 +464,7 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 		query.setKey(ComplexKey.of(status.toString().trim()));
 		ViewResponse response = couchbaseClient.query(view, query);
 		for (ViewRow row : response) {
-			System.out.println(row.getValue());
+			//System.out.println(row.getValue());
 			propertyDocList.add(row.getValue());
 		}
 		return propertyDocList;
@@ -501,6 +488,33 @@ public void sendBrokerProperty(BrokerRequestDto brokerRequestDto) throws Excepti
 			throw ex;
 		}
 
+	}
+
+	@Override
+	public List<UserPropertyDTO> propertryByUser(String userName) {
+		logger.info("*** Inside propertyByUser ***");
+		List<UserPropertyDTO> userPropertyDTOs = new ArrayList<UserPropertyDTO>();
+		try {
+			CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+					.getConnection();
+			View view = couchbaseClient.getView(
+					ViewConstants.PROPERTY_DESIGN_DOCUMENT,
+					ViewConstants.PROPERTY_FILTER_BY_USERNAME);
+			Query query = new Query();
+			query.setIncludeDocs(true);
+			query.setKey(ComplexKey.of(userName.trim()));
+			ViewResponse response = couchbaseClient.query(view, query);
+			Gson gson = new Gson();
+			for (ViewRow row : response) {
+				UserPropertyDTO userPropertyDTO = new UserPropertyDTO();
+				userPropertyDTO = gson.fromJson((String) row.getDocument(),
+						UserPropertyDTO.class);
+				userPropertyDTOs.add(userPropertyDTO);
+			}
+		} catch (Exception ex) {
+			throw ex;
+		}
+		return userPropertyDTOs;
 	}
 
 		

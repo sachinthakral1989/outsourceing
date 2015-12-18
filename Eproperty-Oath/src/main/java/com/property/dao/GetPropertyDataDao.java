@@ -38,14 +38,16 @@ public interface GetPropertyDataDao {
 
 	public boolean updateBroker(BrokerDto brokerDto) throws Exception;
 
-	public List<UserPropertyDTO> searchProperty(
-			SearchPropertyDTO searchRequestDto) throws Exception;
+	//public UserPropertyDTO searchProperty(SearchPropertyDTO searchRequestDto, String key) throws Exception;
 
 	public UserPropertyDTO viewUserPropertyByDocId(String docId) throws Exception;
 
 	public boolean updateUser(UserPropertyDTO propertyDTO) throws Exception;
 
 	public boolean updatePropertyStatus(StatusDto statusDto) throws Exception;
-	
+
 	public List<String> getUserPropertyDocByStaus(Status status) throws Exception;
+
+	public List<UserPropertyDTO> propertryByUser(String userName);
+	
 }

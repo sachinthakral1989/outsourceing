@@ -7,8 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.property.entity.AdminDto;
 import com.property.entity.BrokerDto;
 import com.property.entity.Response;
+import com.property.entity.SearchProperty;
 import com.property.entity.StatusDto;
 import com.property.entity.UpdateStatus;
+import com.property.entity.UserProperty;
 import com.property.entity.UserPropertyDTO;
 
 @Transactional
@@ -31,4 +33,9 @@ public interface BaseService {
 	public List<UserPropertyDTO> viewUserProperties() throws Exception;
 	
 	public boolean updatePropertyStatus(UpdateStatus updateStatus) throws Exception;
+	
+	public List<UserProperty> searchProperty(SearchProperty searchProperty)throws Exception;
+	
+	public List<UserPropertyDTO> propertyByUser(String userName)throws Exception;
+
 }
