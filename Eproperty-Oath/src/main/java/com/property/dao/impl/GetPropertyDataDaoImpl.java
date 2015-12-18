@@ -100,7 +100,7 @@ public UserDTO loadUserByUserName(String userName) throws Exception {
 		String userRequestDoc = JsonUtil.marshal(userRequestDto);
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
-		couchbaseClient.add(userRequestDto.getId(), userRequestDoc);
+		couchbaseClient.set(userRequestDto.getId(), userRequestDoc);
 		statusDto.setDocumentId(userRequestDto.getId());
 		statusDto.setStatus(Status.NONE.toString());
 		statusDto.setReason("Not Approved Yet");

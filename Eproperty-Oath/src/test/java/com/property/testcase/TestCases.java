@@ -64,22 +64,22 @@ public class TestCases {
 		System.out.println(userProperty.getHouseNumber());
 		System.out.println(userProperty.getId());
 	}
-	@Ignore
 	@Test
 	public void searchProperty() throws Exception {
 		SearchProperty searchProperty = new SearchProperty();
-		searchProperty.setLocality("Shipra Suncity");
-		searchProperty.setPropertySearchFor("Sale");
+		searchProperty.setLocality("Ashoka Road");
+		searchProperty.setPropertySearchFor("Rent");
 		searchProperty.setPropertySearchType("House");
 		searchProperty.setBhk("2BHK");
 		searchProperty.setMinPrice(10000);
-		searchProperty.setMaxPrice(12000);
+		searchProperty.setMaxPrice(20000);
 		List<UserProperty> userPropertyList = getPropertyService.searchProperty(searchProperty);
 		for(UserProperty userProperty : userPropertyList){
 			System.out.println(userProperty.getHouseNumber());
 			System.out.println(userProperty.getId());
 		}
 	}
+	@Ignore
 	@Test
 	public void propertyByUser() throws Exception {
 		List<UserPropertyDTO> userPropertyDTOs = getPropertyService.propertyByUser("sachinthakral1989@gmail.com");

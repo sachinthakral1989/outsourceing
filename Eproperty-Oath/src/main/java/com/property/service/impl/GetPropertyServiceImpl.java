@@ -238,6 +238,7 @@ public class GetPropertyServiceImpl implements BaseService {
 				for (UserPropertyDTO userPropertyDto : userPropertyDtoList) {
 					UserProperty userProperty = new UserProperty();
 					userProperty.setId(userPropertyDto.getId());
+					userProperty.setUserName(userPropertyDto.getUserName());
 					userProperty.setPropertyForEx(userPropertyDto
 							.getPropertyForEx());
 					userProperty.setPropertyTypeEx(userPropertyDto

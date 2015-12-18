@@ -24,8 +24,7 @@ public class UserPropertyDTO implements Serializable  {
 	private String locality;
 	private String houseNumber;
 	private String imagePublicId;
-	 private String approvedStatus;
-
+	
 	public String getType() {
 		return type;
 	}
@@ -109,12 +108,6 @@ public class UserPropertyDTO implements Serializable  {
 	}
 	public void setImagePublicId(String imagePublicId) {
 		this.imagePublicId = imagePublicId;
-	}
-	public String getApprovedStatus() {
-		return approvedStatus;
-	}
-	public void setApprovedStatus(String approvedStatus) {
-		this.approvedStatus = approvedStatus;
 	}
 
 }
