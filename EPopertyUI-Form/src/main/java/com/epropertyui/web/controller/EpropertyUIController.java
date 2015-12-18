@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
@@ -460,26 +462,36 @@ public class EpropertyUIController {
 	
 		@Secured(value = { "ROLE_USER" })
 		@RequestMapping(value="/viewPropertyByUser.html", method=RequestMethod.GET)
-		public ModelAndView viewUserProperties() {
+		public @ResponseBody String viewPropertyByUser() {
 		        
 			logger.info("###################viewPropertyByUser()###############################");
 			
 			ModelAndView model = new ModelAndView();
+			Map<String, UserProperty> userPropertyMap=null;
+			String jsonProperty="";
 			
 			try {
-				Map<String, UserProperty> userProperties =ePropertyUIService.viewPropertyByUser();
-				for(Map.Entry<String, UserProperty> userProperty : userProperties.entrySet()) {
+				userPropertyMap =ePropertyUIService.viewPropertyByUser();
+				for(Map.Entry<String, UserProperty> userProperty : userPropertyMap.entrySet()) {
 					logger.info(userProperty.getKey());
 				}
-				model.addObject("userProperties", userProperties);
-				model.setViewName("userPropertyRegistration");
-				return model;
-			} catch (Exception e) {
+				
+				ObjectMapper mapper = new ObjectMapper();
+				jsonProperty = "";
+		        	jsonProperty = mapper.writeValueAsString(userPropertyMap);
+		        	System.out.println(jsonProperty);
+		        
+			 } catch (JsonProcessingException e) {
+	            // TODO Auto-generated catch block
+	            e.printStackTrace();
+	        }
+		        catch (Exception e) {
 				logger.error("Exception has occured "+e);
 				model.addObject("error", "Internal Error has occured.Please contact Administrator.");
 				model.setViewName("userPropertyRegistration");
-				return model;	
+				
 			}
+			return jsonProperty;
 		}
 		
 }
