@@ -59,6 +59,37 @@
 }
 </style>
 <script>
+        function actionFunction(period)
+		{
+		
+		    
+	        if (period == ""){
+
+			$("#add").addClass("MyDisplayNone");
+		
+			$("#update").addClass("MyDisplayNone");
+
+			$("#delete").addClass("MyDisplayNone");
+		}
+		   if (period == "add"){
+
+			$("#update").addClass("MyDisplayNone");
+		    $("#delete").addClass("MyDisplayNone");
+			$("#add").removeClass("MyDisplayNone");
+
+		}
+		 if (period == "update"){
+			$("#add").addClass("MyDisplayNone");
+		    $("#delete").addClass("MyDisplayNone");
+			$("#update").removeClass("MyDisplayNone");
+			
+
+		}
+		 
+	}
+	
+
+
 	function formSubmit() {
 		document.getElementById("logoutForm").submit();
 	}
@@ -233,18 +264,56 @@
 						<div class="page-header">
 							<h1>Register Property</h1>
 						</div>
+					        
+							<form class="form-horizontal " role="form">
+							<div class="form-group " >
+								<label for="select" class="col-lg-4 control-label">Action&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+								<div class="col-lg-8">
+									<select class="form-control" id="select" name="Ex"
+										onchange="actionFunction(this.value)">
+										<option value="">Please select</option>
+										<option value="add">Add</option>
+										<option value="update">Update</option>
+										<option value="delete">Delete</option>
+									</select> <br>
+
+								</div>
+							</div>
+							</form>
+				
+                     <ul class="nav MyDisplayNone" id="update">
+<li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+      Update <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+                     <c:forEach var="listValue" items="${userProperties }">
+					
+
+   
+                          <li><a href="#" data-toggle="tab" >${listValue.key}</a></li>
+        
+   
+      
+</c:forEach>
+                         </ul>
+                         </li>
+		               </ul>	
+   
+   
+						<br>
 						<c:if test="${not empty emailMsg}">
 							<div class="msg">${emailMsg}</div>
 						</c:if>
 						<c:if test="${not empty errMsg1}">
 							<div class="msg">${errMsg1}</div>
 						</c:if>
-						<form class="form-horizontal" role="form"
+						<form class="form-horizontal MyDisplayNone" role="form"
 							action="userPropertyRegistration.html?${_csrf.parameterName}=${_csrf.token}"
 							method="POST" modelAttribute="uploadForm"
-							enctype="multipart/form-data">
+							enctype="multipart/form-data" id="add">
 
-							<div class="form-group">
+							<div class="form-group " >
 								<label for="select" class="col-lg-4 control-label">Property
 									For&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
 								<div class="col-lg-8">
@@ -384,6 +453,8 @@
 							<%--  <input type="hidden" name="${_csrf.parameterName}"
 			value="${_csrf.token}" /> --%>
 						</form>
+						
+						
 					</div>
 				</div>
 				<div class="col-md-3"></div>

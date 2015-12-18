@@ -1,5 +1,7 @@
 package com.epropertyui.service;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -77,8 +79,6 @@ public class EpropertyUIService implements UserDetailsService {
 
 	public boolean createBroker(BrokerDto brokerDto) throws Exception {
 		return epropertyClient.createBroker(brokerDto);
-		// TODO Auto-generated method stub
-		
 	}
 
 	public List<BrokerDto> viewBrokers() {
@@ -87,8 +87,17 @@ public class EpropertyUIService implements UserDetailsService {
 	}
 	
 	public List<UserProperty> viewUsers() {
-		// TODO Auto-generated method stub
 		return epropertyClient.viewUsersProperties();
+	}
+	
+	public Map<String, UserProperty> viewPropertyByUser() {
+		logger.info("Inside viewPropertyByUser()");
+		List<UserProperty> userPropertyList = epropertyClient.viewPropertyByUser();
+		Map<String, UserProperty> userPropertyMap = new HashMap<String, UserProperty>();
+		for(UserProperty userProperty : userPropertyList){
+			userPropertyMap.put(userProperty.getId(), userProperty);
+		}
+		return userPropertyMap;
 	}
 	
     public boolean updatePropertyStatus(String id,Status status) throws Exception {

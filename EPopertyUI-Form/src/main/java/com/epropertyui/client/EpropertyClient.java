@@ -132,6 +132,8 @@ public class EpropertyClient {
 		try {
 		session = getSession();
 		String accessToken = (String) session.getAttribute("accessToken");
+		String userName = (String) session.getAttribute("username");
+		userProperty.setUserName(userName);
 		String url = propertyServiceUrl + "secure/" + "sendUserProperty"
 				+ "?access_token=" + accessToken;
 		logger.info("-----------Sending Request with Url with token is -" + url+"----------------");
@@ -289,7 +291,25 @@ public class EpropertyClient {
 		 return false;
 		
 	}
-	
-	
+
+	public List<UserProperty> viewPropertyByUser() {
+		 UserProperty[] userProperty = null;
+		 	session = getSession();
+			logger.info("Get session object "+ session );
+		String accessToken = (String) session.getAttribute("accessToken");
+		String username = (String) session.getAttribute("username");
+		String url = propertyServiceUrl + "secure/" + "viewPropertyByUser/"+username+"/"
+				+ "?access_token=" + accessToken;
+		logger.info("Url with token is " + url);
+		logger.info("UserName " + username);
+		try { 
+			ResponseEntity<UserProperty[]> responseEntity = restTemplate.getForEntity(url, UserProperty[].class);
+		userProperty = responseEntity.getBody();
+		} catch (Exception e) {
+			logger.error("Exception has occured "+e);
+			throw e;
+		}
+		 return Arrays.asList(userProperty);
+	}
 	
 }

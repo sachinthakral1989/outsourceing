@@ -216,13 +216,13 @@ function propertyLand(period) {
     </div>
 	<div class="input-group formElement">
       
-      <input type="number" class="form-control  place"  id="InputMinPrice" placeholder="min price" >
+      <input type="number" class="form-control  place" name="minPrice" id="InputMinPrice" placeholder="min price" >
 	  
       
     </div>
 	<div class="input-group formElement">
       
-      <input type="number" class="form-control place" id="InputMaxPrice" placeholder="max price"  >
+      <input type="number" class="form-control place" name="maxPrice" id="InputMaxPrice" placeholder="max price"  >
 	  
       
     </div>

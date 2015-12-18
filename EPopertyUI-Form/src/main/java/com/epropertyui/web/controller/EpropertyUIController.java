@@ -3,6 +3,7 @@ package com.epropertyui.web.controller;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.mail.AuthenticationFailedException;
@@ -163,10 +164,10 @@ public class EpropertyUIController {
 		ModelAndView model = new ModelAndView();
 		
 		logger.info("###################propertyRegistration()###############################");
-		
 		logger.info("Property Registration "+userProperty.getPropertyForEx() + " "
 				+ userProperty.getPropertyTypeEx() + " "
-				+ userProperty.getBhk() + " " + userProperty.getPrice() + " "
+				+ userProperty.getBhk() + " " 
+				+ userProperty.getPrice() + " "
 				+ userProperty.getContractPeriod() + " "
 				+ userProperty.getSecurityAmount() + " "
 				+ userProperty.getHouseNumber() + " "
@@ -231,7 +232,7 @@ public class EpropertyUIController {
 			@ModelAttribute SearchProperty searchProperty) {
 	        
 		logger.info("###################searchProperty()###############################");
-		
+		logger.info(searchProperty.getMinPrice()+" "+searchProperty.getMaxPrice());
 		ModelAndView model = new ModelAndView();
 		
 		try {
@@ -313,7 +314,6 @@ public class EpropertyUIController {
 	}
 	
 	private Registeration polpulateRegisteration(Registeration register ) {
-		
 		
 		logger.info("Inside polpulateRegisteration() email id is " + register.getUserName());
 		String enkey = EncryptionUtil.Encode(register.getEnKey());
@@ -405,6 +405,7 @@ public class EpropertyUIController {
 
 		}
 		
+		@Secured(value = { "ROLE_ADMIN" })
 		@RequestMapping(value="/viewUsers.html", method=RequestMethod.GET)
 		public ModelAndView viewUsers() {
 		        
@@ -457,8 +458,28 @@ public class EpropertyUIController {
 			
 		}
 	
+		@Secured(value = { "ROLE_USER" })
+		@RequestMapping(value="/viewPropertyByUser.html", method=RequestMethod.GET)
+		public ModelAndView viewUserProperties() {
+		        
+			logger.info("###################viewPropertyByUser()###############################");
+			
+			ModelAndView model = new ModelAndView();
+			
+			try {
+				Map<String, UserProperty> userProperties =ePropertyUIService.viewPropertyByUser();
+				for(Map.Entry<String, UserProperty> userProperty : userProperties.entrySet()) {
+					logger.info(userProperty.getKey());
+				}
+				model.addObject("userProperties", userProperties);
+				model.setViewName("userPropertyRegistration");
+				return model;
+			} catch (Exception e) {
+				logger.error("Exception has occured "+e);
+				model.addObject("error", "Internal Error has occured.Please contact Administrator.");
+				model.setViewName("userPropertyRegistration");
+				return model;	
+			}
+		}
 		
-		
-		
-
 }
