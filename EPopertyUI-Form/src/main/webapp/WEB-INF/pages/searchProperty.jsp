@@ -1,6 +1,8 @@
-<!DOCTYPE html>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<html lang="en">
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <head>
 
@@ -9,27 +11,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-  <style>
-
-
-body {
-    width: 100%;
-    height: 100%;
-    font-family: Lora,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    color: #fff;
-    background-color: #000;
-}
-
-html {
-    width: 100%;
-    height: 100%;
-}
-.MyDisplayNone{
+  
+ <title>Sale&Rent</title>
+ <style>
+ .MyDisplayNone{
 	   display:none;
 	   }
-	   
-
-.formElement {
+	   .formElement {
     float:left;
     width:150px;
 	
@@ -38,177 +26,9 @@ html {
 	
 	height:50px;font-size:20px;
 }
-h4
- {
-    margin: -100px 0 35px;
-    text-transform: uppercase;
-    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    font-weight: 500;
-    letter-spacing: 1px;
-}
 
 
-
-
-
-a {
-    color: #42dca3;
-    -webkit-transition: all .2s ease-in-out;
-    -moz-transition: all .2s ease-in-out;
-    transition: all .2s ease-in-out;
-}
-
-
-
-
-
-.navbar-custom {
-    margin-bottom: 0;
-    border-bottom: 1px solid rgba(255,255,255,.3);
-    text-transform: uppercase;
-    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
-    background-color: #000;
-}
-
-
-
-
-.navbar-custom button {
-    color: #fff;
-}
-
-
-
-
-.navbar-custom a {
-    color: #fff;
-}
-
-
-
-.navbar-custom .nav li a:hover {
-    outline: 0;
-    color: rgba(255,255,255,.8);
-    background-color: transparent;
-}
-
-.navbar-custom .nav li a:focus,
-.navbar-custom .nav li a:active {
-    outline: 0;
-    background-color: transparent;
-}
-
-.navbar-custom .nav li.active {
-    outline: 0;
-}
-
-.navbar-custom .nav li.active a {
-    background-color: rgba(255,255,255,.3);
-}
-
-.navbar-custom .nav li.active a:hover {
-    color: #fff;
-}
-
-@media(min-width:768px) {
-    .navbar-custom {
-        padding: 20px 0;
-        border-bottom: 0;
-        letter-spacing: 1px;
-        background: 0 0;
-        -webkit-transition: background .5s ease-in-out,padding .5s ease-in-out;
-        -moz-transition: background .5s ease-in-out,padding .5s ease-in-out;
-        transition: background .5s ease-in-out,padding .5s ease-in-out;
-    }
-
-    .navbar-custom.top-nav-collapse {
-        padding: 0;
-        border-bottom: 1px solid rgba(255,255,255,.3);
-        background: #000;
-    }
-}
-
-.intro {
-    display: table;
-    width: 100%;
-    height: auto;
-    padding: 100px 0;
-    text-align: center;
-    color: #fff;
-    background: url(/img/intro-bg.jpg) no-repeat bottom center scroll;
-    background-color: #000;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    background-size: cover;
-    -o-background-size: cover;
-}
-
-.intro .intro-body {
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.intro .intro-body .brand-heading {
-    font-size: 40px;
-}
-
-.intro .intro-body .intro-text {
-    font-size: 18px;
-}
-
-@media(min-width:768px) {
-    .intro {
-        height: 100%;
-        padding: 0;
-    }
-
-    .intro .intro-body .brand-heading {
-        font-size: 100px;
-    }
-
-    .intro .intro-body .intro-text {
-        font-size: 26px;
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-	   
-	   .place{
-	   color: #999;opacity: 1;
-	   }
-  </style>
-     <title>Sale&Rent</title>
-	     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
-
-   </script>
-
+ </style>
 <script>
 function sale() {
     
@@ -246,9 +66,13 @@ function propertyLand(period) {
 </head>
 
 <body id="page-top"  >
+   
+  
 
+   
+   
     <!-- Navigation -->
-    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             
 
@@ -270,32 +94,34 @@ function propertyLand(period) {
         </div>
         <!-- /.container -->
     </nav>
-
+</br>
+</br>
     <!-- Intro Header -->
     <header class="intro">
         <div class="intro-body">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-8 col-md-offset-2">
-                        <h4 class="brand-heading">Sale & Rent</h4>
+                        
 						
 						 <nav class="navbar  navbar-custom" >
+						 <br>
+						 <br>
+						 <br>
         <div class="container-fluid">
            
 
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse navbar-main-collapse">
-                <ul class="nav navbar-nav">
-                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+            <div class="">
+                
                    
-                    <li>
-                        <a  href="#" onclick="sale()" >Sale</a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="rent()">Rent</a>
-                    </li>
                     
-                </ul>
+                        <button class="btn btn-primary btn-lg"  onclick="sale()" >&nbsp&nbsp Sale &nbsp&nbsp</button>
+                    
+					
+                    
+                        <button class="btn btn-primary btn-lg"  onclick="rent()">&nbsp&nbsp Rent &nbsp&nbsp</button>
+                
             </div>
             <!-- /.navbar-collapse -->
         </div>
@@ -306,7 +132,7 @@ function propertyLand(period) {
   <div class="form-group">
     <div class="input-group formElement">
       <input type="hidden" value="Sale" name="propertySearchFor">
-	  <select class="form-control inputBox place"   name="propertySearchType"   onchange="propertyLand(this.value)">
+	  <select class="form-control  place"   name="propertySearchType"   onchange="propertyLand(this.value)">
           
          
           <option value="House">House</option>
@@ -320,7 +146,7 @@ function propertyLand(period) {
 	
 	<div class="MyDisplayNone  input-group formElement " id="inputmine">
       
-	  <select class="form-control inputBox place"  name="bhk"   >
+	  <select class="form-control  place"  name="bhk"   >
           
           
           <option value="1BHK">1BHK</option>
@@ -333,27 +159,27 @@ function propertyLand(period) {
     </div>
     <div class="input-group formElement">
       
-      <input type="text" class="form-control inputBox place" id="InputAmount" name="locality" placeholder="Locality"  >
+      <input type="text" class="form-control place" id="InputAmount" name="locality" placeholder="Locality"  >
 	  
       
     </div>
 	
 	<div class="input-group formElement">
       
-      <input type="number" class="form-control inputBox place" id="InputMinPrice" name="minPrice" placeholder="min price" >
+      <input type="number" class="form-control  place" id="InputMinPrice" name="minPrice" placeholder="min price" >
 	  
       
     </div>
 	<div class="input-group formElement">
       
-      <input type="number" class="form-control inputBox place" id="InputMaxPrice" name="maxPrice" placeholder="max price"  >
+      <input type="number" class="form-control  place" id="InputMaxPrice" name="maxPrice" placeholder="max price"  >
 	  
       
     </div>
-	
+	&nbsp
 	<div class="input-group ">
       
-<button type="submit" class="btn btn-primary inputBox" >Submit</button>	  
+<button type="submit" class="btn btn-primary" >&nbsp&nbspSearch&nbsp&nbsp</button>	  
       
     </div>
 	
@@ -390,20 +216,20 @@ function propertyLand(period) {
     </div>
 	<div class="input-group formElement">
       
-      <input type="number" class="form-control inputBox place"  id="InputMinPrice" placeholder="min price" >
+      <input type="number" class="form-control  place"  id="InputMinPrice" placeholder="min price" >
 	  
       
     </div>
 	<div class="input-group formElement">
       
-      <input type="number" class="form-control inputBox place" id="InputMaxPrice" placeholder="max price"  >
+      <input type="number" class="form-control place" id="InputMaxPrice" placeholder="max price"  >
 	  
       
     </div>
-	
+	&nbsp
 	<div class="input-group ">
       
-<button type="submit" class="btn btn-primary inputBox" >Submit</button>	  
+<button type="submit" class="btn btn-primary " >&nbsp&nbsp Search &nbsp&nbsp</button>	  
       
     </div>
 	

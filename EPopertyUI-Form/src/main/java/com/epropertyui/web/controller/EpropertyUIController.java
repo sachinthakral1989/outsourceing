@@ -3,9 +3,11 @@ package com.epropertyui.web.controller;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import javax.mail.AuthenticationFailedException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +19,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 
 import com.epropertyui.constants.ApplicationConstants;
 import com.epropertyui.constants.EpropertyConstants;
@@ -81,7 +86,7 @@ public class EpropertyUIController {
     public String accessDenied(Locale locale, Model model) 
     {
 
-        model.addAttribute("accessDenied", "CSRF Token is expired.Permission denied - please login");
+        model.addAttribute("accessDenied", "Session has been Expired.Please login.");
 
         return "login";
     }
@@ -208,6 +213,19 @@ public class EpropertyUIController {
 
 	}
 	
+	@ExceptionHandler(Exception.class)
+	  public ModelAndView handleException(Exception ex, HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+			if(ex instanceof MaxUploadSizeExceededException) {
+				logger.error("Exception has occured "+ ex);
+		    	mav.addObject("errMsg1","Max Image Upload Size Exceeded.");
+		    	mav.setViewName("userPropertyRegistration");
+		}
+			return mav;
+	
+	  }
+	
+	
 	@RequestMapping(value="/searchProperty.html", method=RequestMethod.POST)
 	public ModelAndView searchProperty(
 			@ModelAttribute SearchProperty searchProperty) {
@@ -301,10 +319,10 @@ public class EpropertyUIController {
 		String enkey = EncryptionUtil.Encode(register.getEnKey());
 		
 		String verifyToken;
-		// generate a 6 digit integer 1000 <10000
-		int randomPIN = (int) (Math.random() * 900000) + 100000;
-		// Store integer in a string
-		verifyToken = String.valueOf(randomPIN);
+		
+		 //generate Base64 based verification Token 
+		
+		verifyToken = UUID.randomUUID().toString();
 		register.setEnKey(enkey);
 		register.setType("User");
 		register.setActive("N");
@@ -417,31 +435,25 @@ public class EpropertyUIController {
 			logger.info("Id to Approve Post is "+id);
 			try {
 				ePropertyUIService.updatePropertyStatus(id,Status.APPROVED);
-				/*userProperty.setApprovedStatus("Y");
-				ePropertyUIService.sendUserProperty(userProperty);*/
-				//model.setViewName("showUserResult");
+				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error has occured in approving the request "+ e);
 			}
-			return "Approved";
+			return EpropertyConstants.USER_PROPERTY_APPROVED;
 			
 		}
 		
 		@RequestMapping(value="/rejectPost.html/{id}", method=RequestMethod.GET, produces="text/plain")
 		public @ResponseBody String rejectPost(@PathVariable("id")String id) {
-			logger.info("Inside Approve post");
 			logger.info("Id to Approve Post is "+id);
 			try {
 				ePropertyUIService.updatePropertyStatus(id,Status.REJECTED);
-				/*userProperty.setApprovedStatus("Y");
-				ePropertyUIService.sendUserProperty(userProperty);*/
-				//model.setViewName("showUserResult");
+				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Error has occured in approving the request "+ e);
 			}
-			return "Rejected";
+			
+			return EpropertyConstants.USER_PROPERTY_REJECTED;
 			
 		}
 	

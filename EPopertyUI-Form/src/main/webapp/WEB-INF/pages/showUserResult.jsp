@@ -32,26 +32,46 @@ footer {
 
    </style>
    
-
+<script>
+  function formSubmit() {
+  document.getElementById("logoutForm").submit();
+ }</script> 
 
 </head>
 
 <body>
 
-    <!-- Navigation -->
+
+     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
            
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                 <ul class="nav navbar-nav">
-        
-        <li><a href="#">Admin</a></li>
+                <ul class="nav navbar-nav">
+                   <li class="dropdown">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="">
+      Select User<span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <li>
+                        <a href="<c:url value="/viewUsers.html"/>">User</a>
+                    </li>
+                    <li>
+                        <a href="<c:url value="/viewBrokers.html"/>">Broker</a>
+                    </li>
+    </ul>
+  </li>
           </ul>
           
           <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+        <c:url value="/j_spring_security_logout" var="logoutUrl" />
+ <form action="${logoutUrl}" method="post" id="logoutForm">
+  <input type="hidden" name="${_csrf.parameterName}"
+   value="${_csrf.token}" />
+ </form>
+   <li><a onclick="formSubmit()"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
       </ul>
                    
             </div>
@@ -79,18 +99,6 @@ footer {
       
        <c:forEach var="listValue" items="${userProperties}">
        
-         <c:choose>
-		    
-    <c:when test="${listValue.approvedStatus == 'Y'}">
-       <c:set  var="status"  value=' none'/>
-    </c:when>
-    <c:when test="${listValue.approvedStatus == 'N'}">
-        <c:set var="status" value=''/>
-    </c:when>
-    <c:otherwise>
-        <c:set var="status"  value=''/>
-    </c:otherwise>
-</c:choose>
 
 	   
    <tr>

@@ -11,7 +11,6 @@ public class Registeration {
 		private String createdDate;
 		private String createdUser;
 		private String role;
-		private String approvedStatus;
 		
 		public String getRole() {
 			return role;
@@ -73,12 +72,6 @@ public class Registeration {
 		}
 		public void setUserName(String userName) {
 			this.userName = userName;
-		}
-		public String getApprovedStatus() {
-			return approvedStatus;
-		}
-		public void setApprovedStatus(String approvedStatus) {
-			this.approvedStatus = approvedStatus;
 		}
 		
 

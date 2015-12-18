@@ -1,4 +1,3 @@
-
 <html lang="en">
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <head>
@@ -13,13 +12,13 @@
 
     <!-- Bootstrap Core CSS -->
     <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-	
-	<style>
-	.MyDisplayNone{
-	   display:none;
-	   }
+ 
+ <style>
+ .MyDisplayNone{
+    display:none;
+    }
    body {
-    padding-top: 70px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+    padding-top: 70px; / Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. /
 }
 
 footer {
@@ -28,13 +27,16 @@ footer {
 
    </style>
 
-   
+  <script>
+  function formSubmit() {
+  document.getElementById("logoutForm").submit();
+ }</script> 
    
 
 </head>
 
 <body>
-	
+ 
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -59,7 +61,12 @@ footer {
           </ul>
           
           <ul class="nav navbar-nav navbar-right">
-        <li><a href="<c:url value="j_spring_security_logout"/>"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+        <c:url value="/j_spring_security_logout" var="logoutUrl" />
+ <form action="${logoutUrl}" method="post" id="logoutForm">
+  <input type="hidden" name="${_csrf.parameterName}"
+   value="${_csrf.token}" />
+ </form>
+   <li><a onclick="formSubmit()"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
       </ul>
                    
             </div>

@@ -18,7 +18,7 @@
 			username-parameter="username"
 			password-parameter="password" />
 			<access-denied-handler error-page="/accessdenied"/>
-		<logout logout-success-url="/login?logout"  />
+			<logout logout-success-url="/login?logout"  logout-url="/j_spring_security_logout"/>
 		<!-- enable csrf protection -->
 		<csrf/>
 	</http>
