@@ -467,18 +467,19 @@ public class EpropertyUIController {
 			logger.info("###################viewPropertyByUser()###############################");
 			
 			ModelAndView model = new ModelAndView();
-			Map<String, UserProperty> userPropertyMap=null;
+			/*Map<String, UserProperty> userPropertyMap=null;*/
+			List<UserProperty> userPropertyList=null;
 			String jsonProperty="";
 			
 			try {
-				userPropertyMap =ePropertyUIService.viewPropertyByUser();
-				for(Map.Entry<String, UserProperty> userProperty : userPropertyMap.entrySet()) {
+				userPropertyList =ePropertyUIService.viewPropertyByUser();
+				/*for(Map.Entry<String, UserProperty> userProperty : userPropertyMap.entrySet()) {
 					logger.info(userProperty.getKey());
 				}
-				
+				*/
 				ObjectMapper mapper = new ObjectMapper();
 				jsonProperty = "";
-		        	jsonProperty = mapper.writeValueAsString(userPropertyMap);
+		        	jsonProperty = mapper.writeValueAsString(userPropertyList);
 		        	System.out.println(jsonProperty);
 		        
 			 } catch (JsonProcessingException e) {

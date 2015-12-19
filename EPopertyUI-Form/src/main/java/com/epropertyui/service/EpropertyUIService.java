@@ -90,7 +90,7 @@ public class EpropertyUIService implements UserDetailsService {
 		return epropertyClient.viewUsersProperties();
 	}
 	
-	public Map<String, UserProperty> viewPropertyByUser() {
+	/*public Map<String, UserProperty> viewPropertyByUser() {
 		logger.info("Inside viewPropertyByUser()");
 		List<UserProperty> userPropertyList = epropertyClient.viewPropertyByUser();
 		Map<String, UserProperty> userPropertyMap = new HashMap<String, UserProperty>();
@@ -98,6 +98,15 @@ public class EpropertyUIService implements UserDetailsService {
 			userPropertyMap.put(userProperty.getId(), userProperty);
 		}
 		return userPropertyMap;
+	}*/
+	public List<UserProperty> viewPropertyByUser() {
+		logger.info("Inside viewPropertyByUser()");
+		List<UserProperty> userPropertyList = epropertyClient.viewPropertyByUser();
+		Map<String, UserProperty> userPropertyMap = new HashMap<String, UserProperty>();
+		for(UserProperty userProperty : userPropertyList){
+			userPropertyMap.put(userProperty.getId(), userProperty);
+		}
+		return userPropertyList;
 	}
 	
     public boolean updatePropertyStatus(String id,Status status) throws Exception {
