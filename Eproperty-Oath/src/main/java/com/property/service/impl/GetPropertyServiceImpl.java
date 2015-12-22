@@ -25,6 +25,8 @@ import com.property.dao.impl.GetPropertyDataDaoImpl;
 import com.property.entity.AdminDto;
 import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
+import com.property.entity.Deal;
+import com.property.entity.DealDTO;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.Response;
 import com.property.entity.SearchProperty;
@@ -102,9 +104,7 @@ public class GetPropertyServiceImpl implements BaseService {
 	@Override
 	public GetProductByLimitResponse getProductsByLimit(final String category,
 			final PaginationDto pagination) throws Exception {
-		
 		Callable<GetProductByLimitResponse> asyncTask = new Callable<GetProductByLimitResponse>(){
-			
 			@Override
 			public GetProductByLimitResponse call() throws Exception{
 				GetProductByLimitResponse response = new GetProductByLimitResponse();
@@ -115,7 +115,6 @@ public class GetPropertyServiceImpl implements BaseService {
 					products = new ArrayList<ProductMetaData>();
 					String nextStartKey = null;
 					String nextStartDocId = null;
-
 					for (ViewRow row : resultSet) {
 						String rowContents = row.getValue();
 						ProductVirtual prodVirtual = new ProductVirtual();
@@ -125,7 +124,6 @@ public class GetPropertyServiceImpl implements BaseService {
 						products.add(productDto);
 						nextStartDocId = row.getId();
 						nextStartKey = row.getKey();
-
 					}
 					if (products.size() > pagination.getLimit()) {
 						// cache next_keys for future mapping against offset value.
@@ -138,12 +136,9 @@ public class GetPropertyServiceImpl implements BaseService {
 					}
 					response.setProducts(products);
 					response.setPagination(pagination);
-
 				}
 				return response;
-				
 			}
-			
 		};
 		Future<GetProductByLimitResponse> asyncResult = AsyncExecutor.queueAndExecute(asyncTask);
 		GetProductByLimitResponse response = asyncResult.get();
@@ -192,9 +187,7 @@ public class GetPropertyServiceImpl implements BaseService {
 				// System.out.println("entity = " + entity);
 			} catch (Exception e) {
 				e.printStackTrace();
-
 			}
-
 		}
 		
 		private void cacheOffsetKeyMapping(String nextStartKey,
@@ -275,6 +268,26 @@ public class GetPropertyServiceImpl implements BaseService {
 		}
 
 	}
+	//share a deal
+	public void sendDeal(Deal deal) throws Exception {
+		logger.info("Entered into send Deal "
+				+ deal.getTopic()+" by user "+deal.getTitle());
+		logger.info("Image Public Id "+ deal.getImagePublicId());
+		deal.setType("category");
+		DealDTO dealDto = new DealDTO();
+		populateDealDto(deal,dealDto);
+		try {
+			getPropertyDao.sendDeal(dealDto);
+		} catch (Exception e) {
+			throw e;
+		}
+
+	}
+	
+	
+	
+	
+	
 
 	/*
 	 * public void createUser(Registeration register) {
@@ -286,6 +299,12 @@ public class GetPropertyServiceImpl implements BaseService {
 	 * 
 	 * System.out.println("sendUserProperty"); }
 	 */
+
+	private DealDTO populateDealDto(Deal deal, DealDTO dealDto) {
+		// TODO Auto-generated method stub
+		BeanUtil.copyProperties(deal, dealDto);
+		return dealDto;
+	}
 
 	public void sendBrokerProperty(BrokerRequest brokerRequest) {
 		logger.info("Entered into sendUserProperty " + brokerRequest);

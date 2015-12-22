@@ -5,11 +5,13 @@ import java.util.List;
 
 
 
+
 import com.couchbase.client.protocol.views.ViewResponse;
 import com.gl.poc.couchbase.dto.PaginationDto;
 import com.property.entity.AdminDto;
 import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
+import com.property.entity.DealDTO;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.SearchProperty;
 import com.property.entity.SearchPropertyDTO;
@@ -57,5 +59,7 @@ public interface GetPropertyDataDao {
 	public List<String> getUserPropertyDocByStaus(Status status) throws Exception;
 
 	public List<UserPropertyDTO> propertryByUser(String userName);
+
+	public void sendDeal(DealDTO dealDto) throws Exception ;
 	
 }

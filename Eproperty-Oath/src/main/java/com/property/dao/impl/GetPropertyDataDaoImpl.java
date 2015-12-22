@@ -30,6 +30,7 @@ import com.property.dao.GetPropertyDataDao;
 import com.property.entity.AdminDto;
 import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
+import com.property.entity.DealDTO;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.SearchPropertyDTO;
 import com.property.entity.StatusDto;
@@ -38,7 +39,6 @@ import com.property.entity.UserPropertyDTO;
 import com.property.util.CouchbaseConnectionManager;
 import com.property.util.JsonUtil;
 import com.property.util.Status;
-import com.windstream.retail.helper.OffsetIdentifierMapper;
 
 
 public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
@@ -48,8 +48,8 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		View view = couchbaseClient.getView(
-				ViewConstants.RETAIL_DESIGN_DOCUMENT,
-				ViewConstants.RETAIL_FILTER_CATEGORIES_VIEW);
+				ViewConstants.PROPERTY_DESIGN_DOCUMENT,
+				ViewConstants.PROPERTY_FILTER_CATEGORY_VIEW);
 		Query query = new Query();
 		ViewResponse response = couchbaseClient.query(view, query);
 		return response;
@@ -77,8 +77,8 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
 				.getConnection();
 		View view = couchbaseClient.getView(
-				ViewConstants.RETAIL_DESIGN_DOCUMENT,
-				ViewConstants.RETAIL_FILTER_PRODUCTS_VIEW);
+				ViewConstants.PROPERTY_DESIGN_DOCUMENT,
+				ViewConstants.PROPERTY_FILTER_PRODUCTS_VIEW);
 		Query query = new Query();
 		query.setIncludeDocs(false);
 		String isVirtual = "Y";
@@ -160,6 +160,45 @@ public UserDTO loadUserByUserName(String userName) throws Exception {
 	} 
 
 	}
+	
+	
+	//share a deal
+	@Override
+	public void sendDeal(DealDTO dealDto) throws Exception {
+		logger.info("Entered into sendDeal() "+dealDto.getTopic()+dealDto.getTitle()+" by user "+dealDto.getCreatedUser());
+		StatusDto statusDto = new StatusDto();
+		try {
+		String key="";
+		
+		
+			logger.info("Enter into send deal for "+ dealDto.getTitle());
+			
+				key=key+dealDto.getTopic()+"_"+dealDto.getPrice()+"_"+dealDto.getImagePublicId();
+		
+		dealDto.setId(key);
+		
+		logger.info("Send deal Key is"+key);
+		String userRequestDoc = JsonUtil.marshal(dealDto);
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
+		couchbaseClient.set(dealDto.getId(), userRequestDoc);
+		statusDto.setDocumentId(dealDto.getId());
+		statusDto.setStatus(Status.NONE.toString());
+		statusDto.setReason("Not Approved Yet");
+		updatePropertyStatus(statusDto);
+	} catch(Exception ex) {
+		logger.error("Exception has occured "+ ex);
+		throw ex;
+	} 
+
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	public boolean updatePropertyStatus(StatusDto status) throws Exception {
 		logger.info("update status for docId " +status.getDocumentId()+"to "+status.getStatus());

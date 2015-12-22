@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.epropertyui.model.BrokerRequest;
 import com.property.entity.BrokerDto;
+import com.property.entity.Deal;
 import com.property.entity.Response;
 import com.property.entity.StatusDto;
 import com.property.entity.UpdateStatus;
@@ -56,6 +57,21 @@ public class PropertyServiceApi {
 
 	}
 
+	//share a deal
+
+	
+	@RequestMapping(value = "/sendDeal", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+	public @ResponseBody Response sendDeal(@RequestBody Deal deal) throws Exception {
+
+		System.out.println("Inside send deal Controller");
+
+		getPropertyService.sendDeal(deal);
+		return null;
+
+	}
+
+	
+	
 	/*@RequestMapping(value ="/viewBrokerDetails",method = RequestMethod.POST,produces = "application/json", consumes = "application/json")
 	public @ResponseBody boolean viewBrokerDetails (@RequestBody Request request) throws Exception{
 		return false;
