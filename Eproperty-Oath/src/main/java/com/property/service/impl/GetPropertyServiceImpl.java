@@ -1,5 +1,6 @@
 package com.property.service.impl;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -11,9 +12,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
+import com.couchbase.client.protocol.views.ViewResponse;
+import com.couchbase.client.protocol.views.ViewRow;
 import com.epropertyui.model.BrokerRequest;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.Token;
+import com.gl.poc.couchbase.dto.CategoryDto;
+import com.gl.poc.couchbase.dto.PaginationDto;
+import com.gl.poc.couchbase.response.GetProductByLimitResponse;
 import com.property.dao.GetPropertyDataDao;
 import com.property.dao.impl.GetPropertyDataDaoImpl;
 import com.property.entity.AdminDto;
@@ -33,6 +39,10 @@ import com.property.util.AsyncExecutor;
 import com.property.util.BeanUtil;
 import com.property.util.ServiceUrl;
 import com.property.util.Status;
+import com.gl.poc.couchbase.dto.ProductMetaData;
+import com.property.entity.ProductVirtual;
+import com.property.helper.OffsetIdentifierMapper;
+
 
 public class GetPropertyServiceImpl implements BaseService {
 
@@ -58,6 +68,148 @@ public class GetPropertyServiceImpl implements BaseService {
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public List<CategoryDto> getAllCategories() throws Exception {
+		
+		Callable<List<CategoryDto>> asyncTask = new Callable<List<CategoryDto>> () {
+			
+			@Override
+			public List<CategoryDto> call() throws Exception {
+				List<CategoryDto> categories = null;
+				ViewResponse response = getPropertyDao.getAllCategories();
+				if (response != null) {
+					categories = new ArrayList<CategoryDto>();
+					for (ViewRow row : response) {
+						String id = row.getId();
+						String title = row.getValue();
+						CategoryDto category = new CategoryDto();
+						category.setId(id);
+						category.setTitle(title);
+						categories.add(category);
+
+					}
+				}
+				return categories;
+			}
+		};
+		
+		Future<List<CategoryDto>> asyncResult = AsyncExecutor.queueAndExecute(asyncTask);
+		List<CategoryDto> categories = asyncResult.get();
+	    return categories;
+	}
+
+	@Override
+	public GetProductByLimitResponse getProductsByLimit(final String category,
+			final PaginationDto pagination) throws Exception {
+		
+		Callable<GetProductByLimitResponse> asyncTask = new Callable<GetProductByLimitResponse>(){
+			
+			@Override
+			public GetProductByLimitResponse call() throws Exception{
+				GetProductByLimitResponse response = new GetProductByLimitResponse();
+				ViewResponse resultSet = getPropertyDao.getProductByLimit(category,
+						pagination);
+				List<ProductMetaData> products = null;
+				if (resultSet != null) {
+					products = new ArrayList<ProductMetaData>();
+					String nextStartKey = null;
+					String nextStartDocId = null;
+
+					for (ViewRow row : resultSet) {
+						String rowContents = row.getValue();
+						ProductVirtual prodVirtual = new ProductVirtual();
+						parseRowSet(rowContents, prodVirtual);
+						ProductMetaData productDto = new ProductMetaData();
+						populateProductMetaDataDto(productDto, prodVirtual);
+						products.add(productDto);
+						nextStartDocId = row.getId();
+						nextStartKey = row.getKey();
+
+					}
+					if (products.size() > pagination.getLimit()) {
+						// cache next_keys for future mapping against offset value.
+						products.remove(pagination.getLimit());
+						pagination.setHasNext(true); 
+						cacheOffsetKeyMapping(nextStartKey, nextStartDocId, category,
+								pagination);
+					}else{
+						pagination.setHasNext(false);
+					}
+					response.setProducts(products);
+					response.setPagination(pagination);
+
+				}
+				return response;
+				
+			}
+			
+		};
+		Future<GetProductByLimitResponse> asyncResult = AsyncExecutor.queueAndExecute(asyncTask);
+		GetProductByLimitResponse response = asyncResult.get();
+		return response;
+	}
+		
+		private void populateProductMetaDataDto(ProductMetaData productDto,
+				ProductVirtual prodVirtual) {
+			productDto.setId(prodVirtual.getId());
+			productDto.setTitle(prodVirtual.getTitle());
+			productDto.setImage(prodVirtual.getImage());
+			String price = prodVirtual.getPrice();
+			if (price != null && !price.trim().isEmpty()) {
+				productDto.setPrice(Float.parseFloat(price));
+			}
+
+		}
+
+		private <T> void parseRowSet(String rowContents, T entity) {
+			rowContents = rowContents.replaceAll("\\[|\\]|\"", "");  
+			String items[] = rowContents.split(",");
+			try {
+				for (String item : items) {
+					String[] pair = item.split("=");
+					String key = pair[0];
+					String value = pair[1];
+					// System.out.println("[key = " + key + ",value = " + value +
+					// ']');
+					String methodName = "set" + (key.charAt(0) + "").toUpperCase()
+							+ key.substring(1);
+					try {
+						Method setter = entity.getClass().getMethod(methodName,
+								String.class);
+						setter.invoke(entity, value);
+					} catch (NoSuchMethodException e) {
+						if ("type".equals(key)) {
+							/*
+							 * Don't want to throw an error as we are not creating
+							 * setter/getter for 'type' property in some entity classes.
+							 */
+						} else {
+							throw e;
+						}
+					}
+				}
+				// System.out.println("entity = " + entity);
+			} catch (Exception e) {
+				e.printStackTrace();
+
+			}
+
+		}
+		
+		private void cacheOffsetKeyMapping(String nextStartKey,
+				String nextStartDocId, String category, PaginationDto pagination) {
+			OffsetIdentifierMapper mapper = OffsetIdentifierMapper.getInstance();
+			OffsetIdentifierMapper.Identifier pointer = new OffsetIdentifierMapper.Identifier();
+			pointer.setStartDocId(nextStartDocId);
+			pointer.setStartKey(nextStartKey);
+			int nextOffset = pagination.getOffset();
+			if (nextOffset == 0) {
+				nextOffset = 1;
+			}
+			nextOffset = nextOffset + pagination.getLimit();
+			mapper.setIdentifier(new Integer(nextOffset), category, pointer);
+		}
 
 	public Response login(final String username, final Response response)
 			throws Exception {

@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gl.poc.couchbase.dto.CategoryDto;
+import com.gl.poc.couchbase.dto.PaginationDto;
+import com.gl.poc.couchbase.response.GetProductByLimitResponse;
 import com.property.entity.AdminDto;
 import com.property.entity.BrokerDto;
 import com.property.entity.Response;
@@ -33,9 +36,15 @@ public interface BaseService {
 	public List<UserPropertyDTO> viewUserProperties() throws Exception;
 	
 	public boolean updatePropertyStatus(UpdateStatus updateStatus) throws Exception;
-	
+
 	public List<UserProperty> searchProperty(SearchProperty searchProperty)throws Exception;
 	
 	public List<UserPropertyDTO> propertyByUser(String userName)throws Exception;
+	
+	public List<CategoryDto> getAllCategories() throws Exception;
+	
+	public GetProductByLimitResponse getProductsByLimit(final String category,
+			final PaginationDto pagination) throws Exception;
+
 
 }

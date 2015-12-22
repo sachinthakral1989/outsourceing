@@ -3,19 +3,29 @@ package com.property.dao;
 import java.util.List;
 
 
+
+
+import com.couchbase.client.protocol.views.ViewResponse;
+import com.gl.poc.couchbase.dto.PaginationDto;
 import com.property.entity.AdminDto;
 import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.RegisterationDTO;
+import com.property.entity.SearchProperty;
 import com.property.entity.SearchPropertyDTO;
 import com.property.entity.StatusDto;
 import com.property.entity.UpdateStatus;
 import com.property.entity.UserDTO;
+import com.property.entity.UserProperty;
 import com.property.entity.UserPropertyDTO;
 import com.property.util.Status;
 
 public interface GetPropertyDataDao {
 
+	public ViewResponse getAllCategories() throws Exception;
+	
+	public ViewResponse getProductByLimit(String category,PaginationDto pagination);
+	
 	public UserDTO loadUserByUserName(String userName) throws Exception;
 
 	public void sendUserProperty(UserPropertyDTO userRequestDto)
@@ -37,8 +47,6 @@ public interface GetPropertyDataDao {
 	public BrokerDto viewBroker(String brokerId) throws Exception;
 
 	public boolean updateBroker(BrokerDto brokerDto) throws Exception;
-
-	//public UserPropertyDTO searchProperty(SearchPropertyDTO searchRequestDto, String key) throws Exception;
 
 	public UserPropertyDTO viewUserPropertyByDocId(String docId) throws Exception;
 

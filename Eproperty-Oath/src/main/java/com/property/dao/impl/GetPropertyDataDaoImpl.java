@@ -22,6 +22,7 @@ import com.couchbase.client.protocol.views.Stale;
 import com.couchbase.client.protocol.views.View;
 import com.couchbase.client.protocol.views.ViewResponse;
 import com.couchbase.client.protocol.views.ViewRow;
+import com.gl.poc.couchbase.dto.PaginationDto;
 import com.google.gson.Gson;
 import com.property.constants.EntityTypeConstants;
 import com.property.constants.ViewConstants;
@@ -38,8 +39,39 @@ import com.property.util.CouchbaseConnectionManager;
 import com.property.util.JsonUtil;
 import com.property.util.Status;
 
+
 public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 	private static final Logger logger = Logger.getLogger(GetPropertyDataDaoImpl.class);
+	
+	public ViewResponse getAllCategories() throws Exception {
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
+		View view = couchbaseClient.getView(
+				ViewConstants.RETAIL_DESIGN_DOCUMENT,
+				ViewConstants.RETAIL_FILTER_CATEGORIES_VIEW);
+		Query query = new Query();
+		ViewResponse response = couchbaseClient.query(view, query);
+		return response;
+	}
+	
+	@Override
+	public ViewResponse getProductByLimit(String category,
+			PaginationDto pagination) {
+		CouchbaseClient couchbaseClient = CouchbaseConnectionManager
+				.getConnection();
+		View view = couchbaseClient.getView(
+				ViewConstants.RETAIL_DESIGN_DOCUMENT,
+				ViewConstants.RETAIL_FILTER_PRODUCTS_VIEW);
+		Query query = new Query();
+		query.setIncludeDocs(false);
+		String isVirtual = "Y";
+		query.setKey(ComplexKey.of(category.trim(), isVirtual));
+		query.setLimit(pagination.getLimit() + 1);
+		updatePaginationParams(query, pagination, category);
+		ViewResponse response = couchbaseClient.query(view, query);
+		return response;
+	}
+	
 public UserDTO loadUserByUserName(String userName) throws Exception {
 		
 		logger.info("GetPropertyDataDaoImpl.loadUserByUserName "+userName);

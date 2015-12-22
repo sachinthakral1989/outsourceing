@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.epropertyui.model.Registeration;
+import com.gl.poc.couchbase.dto.CategoryDto;
+import com.gl.poc.couchbase.dto.LandingScreenDetailDTO;
+import com.gl.poc.couchbase.dto.PaginationDto;
+import com.gl.poc.couchbase.response.GetProductByLimitResponse;
 import com.property.entity.AdminDto;
 import com.property.entity.BrokerDto;
 import com.property.entity.Response;
@@ -20,6 +24,8 @@ import com.property.entity.SearchProperty;
 import com.property.entity.UserProperty;
 import com.property.entity.UserPropertyDTO;
 import com.property.service.impl.GetPropertyServiceImpl;
+import com.property.util.JsonUtil;
+
 
 
 @Controller
@@ -31,6 +37,26 @@ public class RestServiceApi {
 	
 	@Autowired
 	GetPropertyServiceImpl getPropertyService;
+	
+	
+	public LandingScreenDetailDTO getAllCategories() throws Exception {
+		LandingScreenDetailDTO landingScreenDetailDTO = new LandingScreenDetailDTO();
+		List<CategoryDto> categoriesDto = getPropertyService.getAllCategories();
+		landingScreenDetailDTO.getCategoryList().addAll(categoriesDto);
+		return landingScreenDetailDTO;
+	}
+
+	public String getProductsByLimit(String category,
+			int offset, int limit) throws Exception {
+		PaginationDto pagination = new PaginationDto();
+		pagination.setOffset(offset);
+		pagination.setLimit(limit);
+		GetProductByLimitResponse response = getPropertyService
+				.getProductsByLimit(category, pagination);
+		String sResponse = JsonUtil.marshal(response);
+		return sResponse;
+	}
+  
 
 	@RequestMapping(value = "/login/{username}", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody Response login(@PathVariable String username) throws Exception {

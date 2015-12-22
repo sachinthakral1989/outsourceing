@@ -1,4 +1,4 @@
-package com.property.testcase;
+/*package com.property.testcase;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,3 +29,4 @@ public class TestCase {
 	}
 
 }
+*/

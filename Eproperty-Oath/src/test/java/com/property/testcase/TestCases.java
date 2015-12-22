@@ -1,4 +1,4 @@
-package com.property.testcase;
+/*package com.property.testcase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,3 +89,4 @@ public class TestCases {
 		
 	}
 }
+*/
