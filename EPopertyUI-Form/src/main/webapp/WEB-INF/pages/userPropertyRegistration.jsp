@@ -59,9 +59,107 @@
 }
 </style>
 <script>
+
+
+function getXMLHttpRequestObject()
+{
+  var xmlhttp;
+  
+  if (!xmlhttp && typeof XMLHttpRequest != 'undefined') {
+    try {
+      xmlhttp = new XMLHttpRequest();
+    } catch (e) {
+      xmlhttp = false;
+    }
+  }
+  return xmlhttp;
+}
+
+	
+
         function actionFunction(period)
 		{
+        	alert(period);
 		
+        	var currentUrl=window.location.href;
+        	var tempUrl = currentUrl.substring(0,currentUrl.lastIndexOf("/"));
+        	
+        	   
+        		var url=tempUrl+"/"+"viewPropertyByUser.html";
+        		alert(period);
+        	
+         var http = new getXMLHttpRequestObject();
+         alert(url);
+         http.open("GET", url, true);
+        
+        
+         http.onreadystatechange = function() {//Handler function for call back on state change.
+             if(http.readyState == 4) {
+                 
+                	
+                // document.getElementById(id).value=http.responseText;
+                
+                var list = JSON.parse(http.responseText);
+
+                var div = document.querySelector("#dropDown"),
+                frag = document.createDocumentFragment(),
+                select = document.createElement("select");
+
+            for(var i=0;i<list.length;i++)
+            {
+            select.options.add( new Option(list[i].id,list[i].id) );
+
+            frag.appendChild(select);
+            div.appendChild(frag);
+            }
+            select.onchange = function() {
+                
+            	var myId=this.value;
+            	for(var i=0;i<list.length;i++)
+            {
+                 if(list[i].id==myId)
+            	 {
+            	   
+            	   $("#hiddenForm").removeClass("MyDisplayNone");
+            	   document.getElementById("idinputPrice").value=list[i].price;
+            	   
+            	    document.getElementById("idinputContractPeriod").value=list[i].contractPeriod;
+            		document.getElementById("idinputSecurityAmount").value=list[i].securityAmount;
+            		
+            		document.getElementById("idinputhouseNumber").value=list[i].houseNumber;
+            				
+            		document.getElementById("idinputLocality").value=list[i].locality;
+            		
+            		document.getElementById("idinputAddress").value=list[i].address;
+                            
+            		document.getElementById("idinputPropertyDescription").value=list[i].propertyDescription;
+            		
+            		
+                    document.getElementById("idinputPropertyType").value=list[i].propertyTypeEx;
+            		document.getElementById("idinputPropertyFor").value=list[i].propertyForEx;
+                    if(list[i].propertyForEx=="Sale")
+            		{
+            		    
+            	
+            		$("#idcontractPeriod").addClass("MyDisplayNone");
+            		$("#idsecurityAmount").addClass("MyDisplayNone");
+            		}
+            		if(list[i].propertyForEx=="Rent")
+            		{
+            		    
+            			$("#idcontractPeriod").removeClass("MyDisplayNone");
+            		   $("#idsecurityAmount").removeClass("MyDisplayNone");
+            		}
+
+            	 }
+            }
+            }
+                             
+             }
+             
+         }
+         http.send(); 
+        	
 		    
 	        if (period == ""){
 
@@ -267,38 +365,23 @@
 					        
 							<form class="form-horizontal " role="form">
 							<div class="form-group " >
-								<label for="select" class="col-lg-4 control-label">Action&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+								<label for="select" class="col-lg-4 control-label">Property Action&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
 								<div class="col-lg-8">
 									<select class="form-control" id="select" name="Ex"
 										onchange="actionFunction(this.value)">
 										<option value="">Please select</option>
-										<option value="add">Add</option>
-										<option value="update">Update</option>
-										<option value="delete">Delete</option>
+										<option value="add">Add Propertry</option>
+										<option value="update">Update Propertry</option>
+										<option value="delete">Delete Propertry</option>
 									</select> <br>
 
 								</div>
 							</div>
 							</form>
 				
-                     <ul class="nav MyDisplayNone" id="update">
-<li class="dropdown">
-    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-      Update <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu">
-                     <c:forEach var="listValue" items="${userProperties }">
-					
-
-   
-                          <li><a href="#" data-toggle="tab" >${listValue.key}</a></li>
-        
-   
-      
-</c:forEach>
-                         </ul>
-                         </li>
-		               </ul>	
+                     <div id="dropDown" class="MyDisplayNone" id="update">   
+    
+</div> 
    
    
 						<br>
@@ -309,7 +392,7 @@
 							<div class="msg">${errMsg1}</div>
 						</c:if>
 						<form class="form-horizontal MyDisplayNone" role="form"
-							action="userPropertyRegistration.html?${_csrf.parameterName}=${_csrf.token}"
+<%-- 							action="userPropertyRegistration.html?${_csrf.parameterName}=${_csrf.token}" --%>
 							method="POST" modelAttribute="uploadForm"
 							enctype="multipart/form-data" id="add">
 
@@ -460,6 +543,147 @@
 				<div class="col-md-3"></div>
 			</div>
 		</div>
+		
+		<!-- update Form -->
+		<div class="row MyDisplayNone" id="hiddenForm">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="page-header">
+							<h1>Update Property</h1>
+						</div>
+<form class="form-horizontal " role="form"
+							action="userPropertyRegistration.html?${_csrf.parameterName}=${_csrf.token}"
+							method="POST" modelAttribute="uploadForm"
+							enctype="multipart/form-data" >
+                          <div class="form-group " >
+								<label for="select" class="col-lg-4 control-label">Property
+									Type&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+								<div class="col-lg-8">
+									<input type="text" class="form-control" id="idinputPropertyType"
+										  name="propertyTypeEx" required disabled>
+								</div>
+							</div>
+							
+                             <div class="form-group " >
+								<label for="select" class="col-lg-4 control-label">Property
+									For&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+								<div class="col-lg-8">
+									<input type="text" class="form-control" id="idinputPropertyFor"
+										  name="propertyForEx" required disabled>
+								</div>
+							</div>
+							
+
+
+							<div class="form-group " id="price">
+								<label for="inputEmail" class="col-lg-4 control-label">Price&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+								<div class="col-lg-8">
+									<input type="text" class="form-control" id="idinputPrice"
+										 name="price" onblur="blurPrice()" required>
+								</div>
+							</div>
+
+							<div class="form-group MyDisplayNone" id="idcontractPeriod">
+								<label for="inputEmail" class="col-lg-4 control-label">Contract
+									Period&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+								<div class="col-lg-8">
+									<input type="number" class="form-control"
+										id="idinputContractPeriod" 
+										name="contractPeriod" value="0"
+										onfocus="focusContractPeriod()" onblur="blurContractPeriod()">
+								</div>
+							</div>
+
+							<div class="form-group MyDisplayNone" id="idsecurityAmount">
+								<label for="inputEmail" class="col-lg-4 control-label">Security
+									Amount&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+								<div class="col-lg-8">
+									<input type="number" class="form-control"
+										id="idinputSecurityAmount" 
+										name="securityAmount" value="0"
+										onfocus="focusSecurityAmount()" onblur="blurSecurityAmount()">
+								</div>
+							</div>
+							<div class="form-group " id="houseNumber">
+								<label for="inputEmail" class="col-lg-4 control-label">House/Plot
+									Number&nbsp&nbsp&nbsp</label>
+								<div class="col-lg-8">
+									<input type="text" class="form-control" id="idinputhouseNumber"
+										 name="houseNumber" required disabled>
+								</div>
+							</div>
+
+							<div class="form-group " id="locality">
+								<label for="inputEmail" class="col-lg-4 control-label">Locality&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+								<div class="col-lg-8">
+									<input type="text" class="form-control" id="idinputLocality"
+										 name="locality" required>
+								</div>
+							</div>
+
+							<div class="form-group " id="address">
+								<label for="inputEmail" class="col-lg-4 control-label">Address&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+								<div class="col-lg-8">
+									<input type="text" class="form-control" id="idinputAddress"
+										 name="address" required>
+								</div>
+							</div>
+
+							<div class="form-group " id="propertyDescription">
+								<label for="textArea" class="col-lg-4 control-label">Property
+									Description</label>
+								<div class="col-lg-8">
+									<textarea class="form-control" rows="3" 
+										name="propertyDescription" id="idinputPropertyDescription"></textarea>
+
+								</div>
+							</div>
+
+
+							<div class="form-group " id="image">
+								<label for="inputEmail" class="col-lg-4 control-label">Image&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</label>
+
+								<div class="col-lg-8">
+									<div style="position: relative;">
+										<a class='btn btn-default' href='javascript:;'> Browse
+											Image <input type="file" name='file'
+											style='position: absolute; z-index: 2; top: 0; left: 0; filter: alpha(opacity = 0); -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"; opacity: 0; background-color: transparent; color: transparent;'
+											name="image" size="40"
+											onchange='$("#upload-file-info").html($(this).val());'>
+										</a> &nbsp; <span class='label label-info' id="upload-file-info"></span>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="form-group " id="submitButton">
+								<div class="col-sm-offset-2 col-sm-10">
+									<div class="col-sm-3"></div>
+
+									<div class="col-sm-6">
+
+										<!-- <button type="reset" class="btn btn-default">&nbspReset&nbsp</button> -->
+										<button type="submit" class="btn btn-primary">Submit</button>
+									</div>
+									<div class="col-sm-3"></div>
+								</div>
+							</div>
+					
+						</form>
+						
+	</div>
+				</div>
+				<div class="col-md-3"></div>
+			</div>
+		</div>
+		
+		
+		
+		
+		
+		
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<link rel="stylesheet"

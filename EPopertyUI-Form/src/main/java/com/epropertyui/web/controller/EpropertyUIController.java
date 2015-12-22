@@ -37,6 +37,7 @@ import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 import com.epropertyui.constants.ApplicationConstants;
 import com.epropertyui.constants.EpropertyConstants;
 import com.epropertyui.model.BrokerDto;
+import com.epropertyui.model.Deal;
 /*import com.epropertyui.model.FileUploadForm;*/
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.SearchProperty;
@@ -123,7 +124,7 @@ public class EpropertyUIController {
 
 		if (hasRole(EpropertyConstants.ROLE_USER)) {
 			logger.info("userRole");
-			model.setViewName("userPropertyRegistration");
+			model.setViewName("shareADeal");
 		}
 		if (hasRole(EpropertyConstants.ROLE_ADMIN)) {
 			logger.info("adminRole");
@@ -158,6 +159,47 @@ public class EpropertyUIController {
 	 * 
 	 * }
 	 */
+	
+	@RequestMapping(value = "/submitDeal.html", method = RequestMethod.POST)
+	public ModelAndView dealRegistration(@ModelAttribute Deal deal,@ ModelAttribute UploadForm uploadForm, Model map ) {
+		
+		ModelAndView model = new ModelAndView();
+		
+		logger.info("###################submit deal()###############################");
+		logger.info("Property Registration "+deal.getUrl() + " "
+				+ deal.getTopic() + " "
+				+ deal.getTitle()+ " " 
+				+ deal.getPrice() );
+		
+		try {
+			MultipartFile file = uploadForm.getFile();
+			if(null != file ) {
+	            String fileName = file.getOriginalFilename();
+	            logger.info("FIle name is "+fileName);
+			}
+			
+			// Upload image to cloudinary 
+		
+			CloudinayUtil.uploadImage(uploadForm);
+			deal.setImagePublicId(uploadForm.getPublicId());
+			logger.info("Image Public Id "+ deal.getImagePublicId());
+			ePropertyUIService.sendDeal(deal);
+		} catch (Exception e) {
+			logger.error("Exception has occured "+e);
+			model.addObject("errMsg1",
+					"Internal Server error has occured.Please contact Administrator.");
+			model.setViewName("shareADeal");
+			return model;
+		}
+		model.addObject("emailMsg",
+				"Property Details has been Sumitted successfully.Thank You.");
+		model.setViewName("shareADeal");
+		return model;
+	}
+	 
+	 
+	 
+	 
 
 	@Secured(value = { "ROLE_USER" })
 	@RequestMapping(value = "/userPropertyRegistration.html", method = RequestMethod.POST)

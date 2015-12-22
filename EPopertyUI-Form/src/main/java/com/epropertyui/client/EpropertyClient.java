@@ -3,6 +3,8 @@ package com.epropertyui.client;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -17,6 +19,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.epropertyui.model.BrokerDto;
+import com.epropertyui.model.Deal;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.Response;
 import com.epropertyui.model.Role;
@@ -145,6 +148,35 @@ public class EpropertyClient {
 		}
 		 return "true";
 	}
+	
+	//share a deal
+	public String sendDeal(Deal deal) throws Exception {
+		logger.info("Inside sendDeal "+ deal);
+		try {
+			session = getSession();
+			String accessToken = (String) session.getAttribute("accessToken");
+			
+			String url = propertyServiceUrl + "secure/" + "sendDeal"
+					+ "?access_token=" + accessToken;
+			logger.info("-----------Sending Request with Url with token is -" + url+"----------------");
+		   //Date date=new Date();
+		   
+		   //String dateString=String.valueOf(date.getDate());
+			//deal.setCreatedDate(dateString);
+		    
+		   deal.setCreatedUser("appUser");
+		
+		 restTemplate.postForEntity(url, deal, String.class);
+		} catch(Exception ex) {
+			logger.info("Exception has occured "+ex);
+			String errorMsg="Rest Client Exception has occured";
+			throw new Exception(errorMsg);
+		}
+		 return "true";
+	}
+	
+	
+	
 	
 	public String verifyToken(String token) throws Exception {
 		logger.info("VerifyToken "+ token);

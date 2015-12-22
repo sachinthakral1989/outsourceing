@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.epropertyui.client.EpropertyClient;
 import com.epropertyui.model.BrokerDto;
+import com.epropertyui.model.Deal;
 import com.epropertyui.model.Registeration;
 import com.epropertyui.model.SearchProperty;
 import com.epropertyui.model.Token;
@@ -53,6 +54,16 @@ public class EpropertyUIService implements UserDetailsService {
 		}
 		return epropertyClient.sendUserProperty(userProperty);
 	}
+	
+	//Share a Deal
+	public String sendDeal(Deal deal) throws Exception {
+		logger.info("Inside sendDeal "+deal.getTitle());
+		
+		return epropertyClient.sendDeal(deal);
+	}
+	
+	
+	
 	
 	public Token getAuthenticatedToken() throws Exception {
 		logger.info("Inside getAuthenticatedToken ");
