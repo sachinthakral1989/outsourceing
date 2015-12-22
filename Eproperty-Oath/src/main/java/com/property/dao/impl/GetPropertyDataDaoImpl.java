@@ -38,6 +38,7 @@ import com.property.entity.UserPropertyDTO;
 import com.property.util.CouchbaseConnectionManager;
 import com.property.util.JsonUtil;
 import com.property.util.Status;
+import com.windstream.retail.helper.OffsetIdentifierMapper;
 
 
 public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
@@ -53,6 +54,22 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		ViewResponse response = couchbaseClient.query(view, query);
 		return response;
 	}
+	
+	private void updatePaginationParams(Query query, PaginationDto pagination,
+			String category) {
+		int offset = pagination.getOffset();
+		com.property.helper.OffsetIdentifierMapper mapper = com.property.helper.OffsetIdentifierMapper.getInstance();
+		com.property.helper.OffsetIdentifierMapper.Identifier pointer = mapper
+				.getIdentifierByOffset(offset, category);
+		if (pointer != null) {
+			query.setStartkeyDocID(pointer.getStartDocId());
+			query.setRangeStart(pointer.getStartKey());
+		} else {
+			pagination.setOffset(0);
+		}
+	}
+
+
 	
 	@Override
 	public ViewResponse getProductByLimit(String category,
