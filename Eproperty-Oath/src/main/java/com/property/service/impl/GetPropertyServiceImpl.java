@@ -19,7 +19,7 @@ import com.epropertyui.model.Registeration;
 import com.epropertyui.model.Token;
 import com.gl.poc.couchbase.dto.CategoryDto;
 import com.gl.poc.couchbase.dto.PaginationDto;
-import com.gl.poc.couchbase.response.GetProductByLimitResponse;
+//import com.gl.poc.couchbase.response.GetProductByLimitResponse;
 import com.property.dao.GetPropertyDataDao;
 import com.property.dao.impl.GetPropertyDataDaoImpl;
 import com.property.entity.AdminDto;
@@ -27,6 +27,8 @@ import com.property.entity.BrokerDto;
 import com.property.entity.BrokerRequestDto;
 import com.property.entity.Deal;
 import com.property.entity.DealDTO;
+import com.property.entity.GetProductByLimitResponse;
+import com.property.entity.ProductMetaData;
 import com.property.entity.RegisterationDTO;
 import com.property.entity.Response;
 import com.property.entity.SearchProperty;
@@ -41,7 +43,7 @@ import com.property.util.AsyncExecutor;
 import com.property.util.BeanUtil;
 import com.property.util.ServiceUrl;
 import com.property.util.Status;
-import com.gl.poc.couchbase.dto.ProductMetaData;
+//import com.gl.poc.couchbase.dto.ProductMetaData;
 import com.property.entity.ProductVirtual;
 import com.property.helper.OffsetIdentifierMapper;
 
@@ -117,6 +119,7 @@ public class GetPropertyServiceImpl implements BaseService {
 					String nextStartDocId = null;
 					for (ViewRow row : resultSet) {
 						String rowContents = row.getValue();
+						System.out.println("RowContent is " +rowContents);
 						ProductVirtual prodVirtual = new ProductVirtual();
 						parseRowSet(rowContents, prodVirtual);
 						ProductMetaData productDto = new ProductMetaData();
@@ -124,7 +127,11 @@ public class GetPropertyServiceImpl implements BaseService {
 						products.add(productDto);
 						nextStartDocId = row.getId();
 						nextStartKey = row.getKey();
+						System.out.println("nextStartDocId " +nextStartDocId);
+						System.out.println("nextStartKey "+nextStartKey);
 					}
+					System.out.println("product size is "+products.size());
+					System.out.println("Pagination Limit "+pagination.getLimit());
 					if (products.size() > pagination.getLimit()) {
 						// cache next_keys for future mapping against offset value.
 						products.remove(pagination.getLimit());
@@ -149,10 +156,10 @@ public class GetPropertyServiceImpl implements BaseService {
 				ProductVirtual prodVirtual) {
 			productDto.setId(prodVirtual.getId());
 			productDto.setTitle(prodVirtual.getTitle());
-			productDto.setImage(prodVirtual.getImage());
+			productDto.setImagePublicId(prodVirtual.getImagePublicId());
 			String price = prodVirtual.getPrice();
 			if (price != null && !price.trim().isEmpty()) {
-				productDto.setPrice(Float.parseFloat(price));
+				productDto.setPrice(Double.parseDouble(price));
 			}
 
 		}
@@ -163,6 +170,7 @@ public class GetPropertyServiceImpl implements BaseService {
 			try {
 				for (String item : items) {
 					String[] pair = item.split("=");
+					System.out.println(pair[0]);
 					String key = pair[0];
 					String value = pair[1];
 					// System.out.println("[key = " + key + ",value = " + value +
@@ -192,6 +200,7 @@ public class GetPropertyServiceImpl implements BaseService {
 		
 		private void cacheOffsetKeyMapping(String nextStartKey,
 				String nextStartDocId, String category, PaginationDto pagination) {
+			System.out.println("inisde");
 			OffsetIdentifierMapper mapper = OffsetIdentifierMapper.getInstance();
 			OffsetIdentifierMapper.Identifier pointer = new OffsetIdentifierMapper.Identifier();
 			pointer.setStartDocId(nextStartDocId);

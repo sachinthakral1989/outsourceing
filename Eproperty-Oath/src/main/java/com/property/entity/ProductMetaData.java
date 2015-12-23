@@ -1,21 +1,13 @@
 package com.property.entity;
 
+public class ProductMetaData {
 
-
-public class ProductVirtual {
-	
 	private String id;
 	private String url;
 	private String title;
 	private String topic;
 	private String type;
-	private String price;
-	public String getPrice() {
-		return price;
-	}
-	public void setPrice(String price) {
-		this.price = price;
-	}
+	private Double price;
 	private String imagePublicId;
 
 	public String getId() {
@@ -49,7 +41,12 @@ public class ProductVirtual {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+	public Double getPrice() {
+		return price;
+	}
+	public void setPrice(Double price) {
+		this.price = price;
+	}
 	public String getImagePublicId() {
 		return imagePublicId;
 	}

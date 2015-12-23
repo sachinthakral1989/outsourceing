@@ -16,15 +16,17 @@ import com.epropertyui.model.Registeration;
 import com.gl.poc.couchbase.dto.CategoryDto;
 import com.gl.poc.couchbase.dto.LandingScreenDetailDTO;
 import com.gl.poc.couchbase.dto.PaginationDto;
-import com.gl.poc.couchbase.response.GetProductByLimitResponse;
+//import com.gl.poc.couchbase.response.GetProductByLimitResponse;
 import com.property.entity.AdminDto;
 import com.property.entity.BrokerDto;
+import com.property.entity.GetProductByLimitResponse;
 import com.property.entity.Response;
 import com.property.entity.SearchProperty;
 import com.property.entity.UserProperty;
 import com.property.entity.UserPropertyDTO;
 import com.property.service.impl.GetPropertyServiceImpl;
 import com.property.util.JsonUtil;
+
 
 
 
@@ -45,16 +47,17 @@ public class RestServiceApi {
 		landingScreenDetailDTO.getCategoryList().addAll(categoriesDto);
 		return landingScreenDetailDTO;
 	}
-
-	public String getProductsByLimit(String category,
-			int offset, int limit) throws Exception {
+	
+	@RequestMapping(value = "/getProductsByLimit/{category}/{offset}/{limit}", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody GetProductByLimitResponse getProductsByLimit(@PathVariable String category,
+			@PathVariable int offset, @PathVariable int limit) throws Exception {
 		PaginationDto pagination = new PaginationDto();
 		pagination.setOffset(offset);
 		pagination.setLimit(limit);
 		GetProductByLimitResponse response = getPropertyService
 				.getProductsByLimit(category, pagination);
-		String sResponse = JsonUtil.marshal(response);
-		return sResponse;
+		//String sResponse = JsonUtil.marshal(response);
+		return response;
 	}
   
 

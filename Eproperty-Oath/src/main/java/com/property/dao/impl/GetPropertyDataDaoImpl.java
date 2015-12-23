@@ -86,6 +86,7 @@ public class GetPropertyDataDaoImpl implements GetPropertyDataDao {
 		query.setLimit(pagination.getLimit() + 1);
 		updatePaginationParams(query, pagination, category);
 		ViewResponse response = couchbaseClient.query(view, query);
+		System.out.println(response);
 		return response;
 	}
 	
@@ -192,13 +193,6 @@ public UserDTO loadUserByUserName(String userName) throws Exception {
 	} 
 
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	public boolean updatePropertyStatus(StatusDto status) throws Exception {
 		logger.info("update status for docId " +status.getDocumentId()+"to "+status.getStatus());

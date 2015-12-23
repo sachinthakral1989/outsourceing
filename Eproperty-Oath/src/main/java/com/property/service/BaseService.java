@@ -6,9 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gl.poc.couchbase.dto.CategoryDto;
 import com.gl.poc.couchbase.dto.PaginationDto;
-import com.gl.poc.couchbase.response.GetProductByLimitResponse;
+//import com.gl.poc.couchbase.response.GetProductByLimitResponse;
 import com.property.entity.AdminDto;
 import com.property.entity.BrokerDto;
+import com.property.entity.GetProductByLimitResponse;
 import com.property.entity.Response;
 import com.property.entity.SearchProperty;
 import com.property.entity.StatusDto;

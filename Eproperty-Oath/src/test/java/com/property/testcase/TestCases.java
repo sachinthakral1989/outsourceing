@@ -7,6 +7,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 
+
+
+import com.gl.poc.couchbase.dto.PaginationDto;
+import com.gl.poc.couchbase.response.GetProductByLimitResponse;
 import com.google.gson.Gson;
 import com.property.dao.impl.GetPropertyDataDaoImpl;
 import com.property.entity.AdminDto;
@@ -64,6 +68,7 @@ public class TestCases {
 		System.out.println(userProperty.getHouseNumber());
 		System.out.println(userProperty.getId());
 	}
+	@Ignore
 	@Test
 	public void searchProperty() throws Exception {
 		SearchProperty searchProperty = new SearchProperty();
@@ -88,5 +93,18 @@ public class TestCases {
 		}
 		
 	}
+	
+	@Test
+	public void getProductByLimit() throws Exception {
+		
+		PaginationDto paginationDto=new PaginationDto();
+		paginationDto.setOffset(0);
+		paginationDto.setLimit(4);
+		GetProductByLimitResponse response=getPropertyService.getProductsByLimit("Mobiles", paginationDto);
+		System.out.println(response.getProducts().get(0).getTitle());
+		
+	}
+	
+	
 }
 */
